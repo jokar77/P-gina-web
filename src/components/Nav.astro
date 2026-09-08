@@ -1,6 +1,6 @@
 ---
-import site from '../data/site.json';
 import { SECCIONES as enlaces } from '../data/navegacion';
+import Marca from './Marca.astro';
 ---
 
 <header
@@ -8,7 +8,7 @@ import { SECCIONES as enlaces } from '../data/navegacion';
   data-nav
 >
   <nav class="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 sm:px-8" aria-label="Principal">
-    <a href="/" class="font-display text-xl no-underline sm:text-2xl">{site.marca}</a>
+    <a href="/" class="no-underline"><Marca class="text-xl sm:text-2xl" /></a>
 
     <ul class="ml-auto hidden items-center gap-7 text-[15px] lg:flex">
       {

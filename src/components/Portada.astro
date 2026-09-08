@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import grupo from '../assets/piezas/_portada/grupo.jpg';
+import Marca from './Marca.astro';
 import { ZONAS } from '../data/portada';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
@@ -16,7 +17,7 @@ const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter
 
 <section id="inicio" class="px-5 pt-10 pb-section sm:px-8">
   <div class="mx-auto max-w-3xl text-center">
-    <h1 class="font-display text-[clamp(2.75rem,9vw,5.5rem)]">{site.marca}</h1>
+    <h1><Marca class="text-[clamp(2.75rem,9vw,5.5rem)]" /></h1>
     <p class="mx-auto mt-5 max-w-[46ch] text-lg text-ink-soft">{site.frasePortada}</p>
   </div>
 

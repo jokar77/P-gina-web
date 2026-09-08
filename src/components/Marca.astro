@@ -1,0 +1,20 @@
+---
+/**
+ * El logotipo, en un único sitio.
+ *
+ * Ahora mismo es el nombre compuesto en Gloock. Cuando llegue el logotipo real
+ * (script sobre serif condensada) se sustituye aquí dentro y cambia en toda la web:
+ * barra de navegación, portada y pie. Requisitos del archivo: SVG, o PNG con fondo
+ * transparente — el papel de la web es gris verdoso y un fondo blanco o crema se vería
+ * como un recuadro.
+ */
+import site from '../data/site.json';
+
+interface Props {
+  class?: string;
+}
+
+const { class: clase } = Astro.props;
+---
+
+<span class:list={['font-display', clase]}>{site.marca}</span>
