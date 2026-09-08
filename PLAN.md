@@ -86,16 +86,12 @@ Pendiente de verdad:
 - [ ] **Aviso legal** (LSSI-CE art. 10): nombre, NIF, domicilio y contacto de quien vende.
       **Ojo, esto choca de frente con §4:** publicar NIF y domicilio es exactamente lo que
       se está evitando. Es una decisión para la gestoría, no para el código.
-- [ ] **Política de privacidad** (RGPD). Hoy la web no recoge ningún dato, pero ella sí
-      trata datos personales en cuanto guarda un nombre y una dirección de envío. Ella es
-      la responsable del tratamiento.
-- [ ] **Condiciones de venta** como página propia. Ahora los envíos, el pago y las
-      devoluciones están redactados dentro de "El taller", que está bien para leerlo pero
-      no es una página de condiciones.
-- [ ] **Derecho de desistimiento**: 14 días en piezas de colección, y el formulario modelo
-      de desistimiento. Las piezas por encargo quedan fuera por ser personalizadas
-      (TRLGDCU art. 103.c) — ya está dicho en la web, pero conviene que esté en la página
-      formal.
+- [x] **Política de privacidad, condiciones de venta y desistimiento** escritas y enlazadas
+      desde el pie. Redactadas sobre lo que la web hace de verdad, no sobre una plantilla:
+      la de privacidad nombra la clave real del carrito y explica por qué no hay banner.
+      **Les faltan 16 datos**, todos marcados en el texto como `[PENDIENTE: ...]`. El más
+      urgente es **quién paga la devolución**: si no se dice antes de comprar, por ley lo
+      paga la vendedora.
 - [ ] Registro de actividades de tratamiento (versión simplificada para actividad pequeña).
 
 > Nada de esto es asesoramiento legal. Son los puntos a llevar a la gestoría para que ella

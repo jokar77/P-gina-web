@@ -1,0 +1,160 @@
+---
+import Layout from '../layouts/Layout.astro';
+import site from '../data/site.json';
+import { precio } from '../lib/formato';
+
+const { envios } = site;
+---
+
+<Layout
+  titulo="Condiciones de venta — Sakina Platero"
+  descripcion="Cómo se compra, cómo se paga, cómo se envía y qué pasa si algo no sale bien."
+>
+  <section class="px-5 py-section sm:px-8">
+    <div class="mx-auto max-w-[68ch]">
+      <h1 class="font-display text-[clamp(2.25rem,7vw,4rem)]">Condiciones de venta</h1>
+
+      <p class="mt-6 text-lg text-ink-soft">
+        Estas condiciones se aplican a los pedidos que salen de esta web y se cierran hablando
+        por WhatsApp. Están escritas para que se entiendan a la primera; si algo no queda
+        claro, pregunta antes de pagar.
+      </p>
+
+      <p class="mt-6 text-[15px] text-ink-soft">
+        Última actualización: [PENDIENTE: fecha en la que se publica esta versión]
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Quién vende</h2>
+      <ul class="mt-4 grid gap-2">
+        <li>Nombre o razón social: [PENDIENTE: nombre y apellidos o razón social de quien vende]</li>
+        <li>NIF: [PENDIENTE: NIF de quien vende]</li>
+        <li>Domicilio: [PENDIENTE: domicilio a efectos de notificaciones]</li>
+        <li>Correo de contacto: [PENDIENTE: dirección de correo electrónico de contacto]</li>
+      </ul>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Qué se vende</h2>
+      <p class="mt-4">
+        Piezas hechas a mano, de una en una. Hay dos clases y no funcionan igual:
+      </p>
+      <ul class="mt-4 grid gap-3">
+        <li>
+          <strong class="font-normal">Piezas de colección.</strong> Son las que ves en la web, ya
+          hechas. Cada una es única: no hay dos iguales y, cuando se vende una, no se repite
+          exactamente. La foto es la pieza que recibes.
+        </li>
+        <li>
+          <strong class="font-normal">Piezas por encargo.</strong> Los bolsos de «Diseña tu bolso»
+          y los conjuntos de niño, que se cosen por talla. Se hacen para ti, con la forma, el
+          color y los detalles que elijas. Al ser personalizadas, no tienen derecho de
+          desistimiento; está explicado en la
+          <a href="/desistimiento">página del desistimiento</a>.
+        </li>
+      </ul>
+      <p class="mt-4">
+        Al ser trabajo a mano, cada pieza tiene sus irregularidades: un punto que no cae
+        exactamente igual, una diferencia mínima de tono entre partidas de lana, medidas con
+        un pequeño margen. Eso no es un defecto, es la pieza.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Cómo se hace un pedido</h2>
+      <p class="mt-4">
+        En la web reúnes lo que te gusta y le das a enviar por WhatsApp. Eso abre una
+        conversación con el pedido escrito: todavía no has comprado nada y no has pagado nada.
+      </p>
+      <p class="mt-4">
+        La compra queda cerrada cuando Sakina te confirma que la pieza sigue disponible y el
+        precio final. Es importante: no hay control de existencias automático, las piezas son
+        únicas y dos personas pueden preguntar por la misma el mismo día. Si te la han quitado
+        por delante, te lo dice y te propone alternativas.
+      </p>
+      <p class="mt-4">El contrato se cierra en español.</p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Precios</h2>
+      <p class="mt-4">
+        Los precios están en euros. [PENDIENTE: confirmar con la gestoría si los precios llevan
+        IVA incluido y cómo hay que indicarlo].
+      </p>
+      <p class="mt-4">
+        En los encargos, el precio que sale en la web es orientativo: se cierra hablando,
+        según el material que lleve la pieza y las horas que salgan. Siempre sabrás el precio
+        final antes de pagar nada.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Pago</h2>
+      <p class="mt-4">
+        Por Bizum o transferencia, acordado por WhatsApp.
+      </p>
+      <p class="mt-4">
+        En esta web no se paga. No hay pasarela de pago y no se piden datos de tarjeta en
+        ningún momento, ni en la web ni en la conversación. Si alguien te pide una tarjeta
+        diciendo que es de parte de esta tienda, no lo es.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Envíos</h2>
+      <ul class="mt-4 grid gap-2">
+        <li>Zona de envío: {envios.zona}.</li>
+        <li>A punto de recogida: {precio(envios.puntoRecogida)}.</li>
+        <li>A domicilio: {precio(envios.domicilio)}.</li>
+        <li>Gratis a partir de {precio(envios.gratisDesde)} en piezas.</li>
+        <li>Siempre con seguimiento.</li>
+      </ul>
+      <p class="mt-4">
+        Canarias, Ceuta y Melilla se quedan fuera de momento, por el papeleo de aduana.
+      </p>
+      <p class="mt-4">
+        Las piezas de colección salen del taller en {envios.plazoDias} desde que se confirma
+        el pago. Los encargos hay que tejerlos o coserlos antes: el plazo depende de la cola
+        que haya en ese momento y se te dice al confirmar el pedido. Una vez sale el paquete,
+        la entrega depende del transporte [PENDIENTE: plazo de entrega estimado que da la
+        empresa de transporte].
+      </p>
+      <p class="mt-4">
+        La dirección la das tú, en el panel del pedido o hablando. Si te equivocas en algo,
+        avisa cuanto antes: mientras el paquete no haya salido, se corrige sin problema.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Devoluciones y desistimiento</h2>
+      <p class="mt-4">
+        Tienes catorce días naturales para devolver una pieza de colección sin tener que dar
+        explicaciones. Las piezas por encargo, al estar hechas a tu medida y a tu gusto, quedan
+        fuera de ese derecho (TRLGDCU art. 103.c).
+      </p>
+      <p class="mt-4">
+        Cómo se hace, quién paga qué y el formulario para pedirlo están en la
+        <a href="/desistimiento">página del derecho de desistimiento</a>.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Si la pieza llega mal</h2>
+      <p class="mt-4">
+        Eso no es una devolución por arrepentimiento: es la garantía legal, y cubre también a
+        los encargos. Las piezas tienen la garantía de conformidad de tres años que marca la
+        ley (TRLGDCU). Si llega rota, con un defecto o no es lo que se había acordado,
+        escríbele con una foto y se arregla: se repara, se rehace o se te devuelve el dinero,
+        y el coste del envío de vuelta no lo pagas tú.
+      </p>
+      <p class="mt-4">
+        Si el paquete llega visiblemente dañado, dilo cuanto antes; cuanto antes se avise al
+        transporte, más fácil es reclamarlo.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Reclamaciones</h2>
+      <p class="mt-4">
+        Lo primero, escribir: por WhatsApp o a [PENDIENTE: dirección de correo electrónico para
+        reclamaciones]. Se contesta.
+      </p>
+      <p class="mt-4">
+        [PENDIENTE: confirmar con la gestoría qué vía de resolución de conflictos hay que
+        ofrecer al cliente y si hay que tener hojas de reclamaciones oficiales].
+      </p>
+      <p class="mt-4">
+        Se aplica la ley española. Si compras como consumidor, conservas los derechos que te
+        dé la ley del país de la Unión Europea en el que vivas.
+      </p>
+
+      <ul class="filete mt-14 grid gap-3 pt-8">
+        <li><a href="/desistimiento" class="text-lg">Derecho de desistimiento</a></li>
+        <li><a href="/privacidad" class="text-lg">Política de privacidad</a></li>
+      </ul>
+    </div>
+  </section>
+</Layout>

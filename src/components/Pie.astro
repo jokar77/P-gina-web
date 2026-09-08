@@ -1,5 +1,5 @@
 ---
-import { SECCIONES } from '../data/navegacion';
+import { LEGALES, SECCIONES } from '../data/navegacion';
 import Marca from './Marca.astro';
 import Redes from './Redes.astro';
 import site from '../data/site.json';
@@ -41,9 +41,18 @@ const ano = new Date().getFullYear();
   </div>
 
   <div
-    class="mx-auto mt-16 flex max-w-7xl flex-wrap gap-x-8 gap-y-2 border-t border-paper/20 pt-6 text-[14px] text-paper/50"
+    class="mx-auto mt-16 flex max-w-7xl flex-wrap items-center gap-x-7 gap-y-2 border-t border-paper/20 pt-6 text-[14px] text-paper/50"
   >
     <p>© {ano} {site.marca}</p>
     <p>Hecho a mano en España.</p>
+    <nav class="flex flex-wrap gap-x-7 gap-y-2 sm:ml-auto" aria-label="Información legal">
+      {
+        LEGALES.map((l) => (
+          <a href={l.href} class="no-underline hover:text-paper hover:underline">
+            {l.texto}
+          </a>
+        ))
+      }
+    </nav>
   </div>
 </footer>

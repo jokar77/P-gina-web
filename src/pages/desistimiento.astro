@@ -1,0 +1,136 @@
+---
+import Layout from '../layouts/Layout.astro';
+import site from '../data/site.json';
+import { precio } from '../lib/formato';
+
+const { envios } = site;
+---
+
+<Layout
+  titulo="Derecho de desistimiento — Sakina Platero"
+  descripcion="Catorce días para devolver una pieza de colección, cómo se hace y el formulario modelo. Las piezas por encargo quedan fuera por estar personalizadas."
+>
+  <section class="px-5 py-section sm:px-8">
+    <div class="mx-auto max-w-[68ch]">
+      <h1 class="font-display text-[clamp(2.25rem,7vw,4rem)]">Derecho de desistimiento</h1>
+
+      <p class="mt-6 text-lg text-ink-soft">
+        Si compras una pieza de colección y al tenerla delante no te convence, tienes catorce
+        días para devolverla sin dar ninguna explicación. Las piezas por encargo son otra cosa,
+        y está explicado más abajo.
+      </p>
+
+      <p class="mt-6 text-[15px] text-ink-soft">
+        Última actualización: [PENDIENTE: fecha en la que se publica esta versión]
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Cuánto tiempo tienes</h2>
+      <p class="mt-4">
+        Catorce días naturales desde que recibes el paquete, tú o la persona que lo reciba por
+        ti. Si el pedido son varias piezas y llegan por separado, cuentan desde la última.
+      </p>
+      <p class="mt-4">
+        Basta con avisar dentro de esos catorce días. Después tienes otros catorce para
+        mandarla de vuelta.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Qué queda fuera, y por qué</h2>
+      <p class="mt-4">
+        Las piezas por encargo no tienen derecho de desistimiento. Son los bolsos de «Diseña tu
+        bolso» y los conjuntos de niño cosidos por talla: se hacen para ti, con la forma, el
+        color, los detalles y la medida que has elegido. La ley lo dice así para los bienes
+        confeccionados conforme a las especificaciones del consumidor o claramente
+        personalizados (TRLGDCU art. 103.c).
+      </p>
+      <p class="mt-4">
+        El motivo es sencillo: esa pieza se teje o se cose entera para una sola persona, son
+        entre ocho y doce horas de mano, y no se puede ofrecer a otra. Por eso, en los
+        encargos, antes de empezar se acuerda todo por escrito en la conversación: forma,
+        color, medidas, plazo y precio final. Si algo no encaja, ese es el momento de decirlo.
+      </p>
+      <p class="mt-4">
+        Que un encargo no se pueda devolver por arrepentimiento no quita nada de la garantía:
+        si llega con un defecto o no es lo acordado, se arregla. Eso está en las
+        <a href="/condiciones">condiciones de venta</a>.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Cómo desistir</h2>
+      <ol class="mt-4 grid list-decimal gap-3 pl-5">
+        <li>
+          <strong class="font-normal">Avisa dentro de los catorce días.</strong> Por WhatsApp, en
+          la misma conversación del pedido, o por correo a [PENDIENTE: dirección de correo
+          electrónico para comunicar el desistimiento]. Vale cualquier declaración clara; puedes
+          usar el formulario de abajo, pero no es obligatorio.
+        </li>
+        <li>
+          <strong class="font-normal">Manda la pieza de vuelta</strong> en los catorce días
+          siguientes a ese aviso, a [PENDIENTE: dirección postal a la que se devuelven las
+          piezas]. Guarda el resguardo del envío: es la prueba de que la mandaste a tiempo.
+        </li>
+      </ol>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">En qué estado tiene que volver</h2>
+      <p class="mt-4">
+        En el mismo en que llegó. Puedes mirarla, abrirla y probártela, igual que harías en una
+        tienda. Si se ha usado más de lo necesario para ver cómo es y vuelve estropeada,
+        manchada o con olor, se puede descontar del importe lo que haya perdido de valor.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Quién paga el envío de vuelta</h2>
+      <p class="mt-4">
+        [PENDIENTE: decidir y confirmar quién asume el coste de devolver la pieza. La ley obliga
+        a decirlo antes de comprar; si no se dice, lo paga la vendedora].
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Cuándo recuperas el dinero</h2>
+      <p class="mt-4">
+        Como muy tarde, catorce días naturales desde que avisas de que desistes. Puede
+        retenerse hasta que la pieza llegue de vuelta o le enseñes el resguardo del envío, lo
+        que ocurra antes.
+      </p>
+      <p class="mt-4">
+        Se te devuelve lo que pagaste por la pieza y lo que pagaste por el envío de ida. Si
+        elegiste envío a domicilio ({precio(envios.domicilio)}) pudiendo elegir punto de
+        recogida ({precio(envios.puntoRecogida)}), se devuelve el importe del punto de recogida,
+        que es la opción estándar. Si devuelves solo una parte del pedido, el envío de ida no se
+        devuelve.
+      </p>
+      <p class="mt-4">
+        El dinero vuelve por el mismo camino por el que llegó, Bizum o transferencia, sin coste
+        para ti. Para eso hará falta que digas el número de cuenta o el teléfono del Bizum.
+      </p>
+
+      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Formulario modelo de desistimiento</h2>
+      <p class="mt-4">
+        No hace falta usarlo: con decirlo claro es suficiente. Si prefieres tenerlo escrito,
+        copia esto, rellénalo y mándalo por WhatsApp o por correo.
+      </p>
+
+      <div class="mt-6 bg-panel px-6 py-7">
+        <p class="text-[15px] text-ink-soft">
+          (Rellena y envía este formulario solo si deseas desistir del contrato)
+        </p>
+        <ul class="mt-5 grid gap-4">
+          <li>
+            A la atención de [PENDIENTE: nombre o razón social, domicilio postal y correo
+            electrónico de quien vende]:
+          </li>
+          <li>
+            Por la presente le comunico que desisto de mi contrato de venta del siguiente bien:
+            ______________________________
+          </li>
+          <li>Pedido el / recibido el: ______________________________</li>
+          <li>Nombre del consumidor: ______________________________</li>
+          <li>Domicilio del consumidor: ______________________________</li>
+          <li>Firma del consumidor (solo si se presenta en papel): ______________________________</li>
+          <li>Fecha: ______________________________</li>
+        </ul>
+      </div>
+
+      <ul class="filete mt-14 grid gap-3 pt-8">
+        <li><a href="/condiciones" class="text-lg">Condiciones de venta</a></li>
+        <li><a href="/privacidad" class="text-lg">Política de privacidad</a></li>
+      </ul>
+    </div>
+  </section>
+</Layout>
