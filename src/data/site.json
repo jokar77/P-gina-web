@@ -1,0 +1,18 @@
+{
+  "marca": "Sakina Platero",
+  "whatsapp": "34600000000",
+  "instagram": "",
+  "frasePortada": "Bolsos de ganchillo y lino cosido a mano. Piezas únicas, hechas de una en una.",
+  "descripcion": "Bolsos de ganchillo hechos a mano en trapillo de algodón y lana, y conjuntos de lino cosidos a mano para niños. Piezas únicas.",
+  "taller": {
+    "titulo": "El taller",
+    "texto": ""
+  },
+  "envios": {
+    "puntoRecogida": 5,
+    "domicilio": 7,
+    "gratisDesde": 90,
+    "plazoDias": "2-3 días laborables",
+    "zona": "Península y Baleares"
+  }
+}

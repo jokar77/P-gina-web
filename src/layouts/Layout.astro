@@ -1,0 +1,46 @@
+---
+import '@fontsource/gloock/400.css';
+import '@fontsource-variable/karla';
+import '../styles/global.css';
+import site from '../data/site.json';
+
+interface Props {
+  titulo: string;
+  descripcion?: string;
+  imagen?: string;
+}
+
+const { titulo, descripcion = site.descripcion, imagen } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={canonical} />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.marca} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonical} />
+    {imagenAbsoluta && <meta property="og:image" content={imagenAbsoluta} />}
+
+    <meta name="twitter:card" content={imagenAbsoluta ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    {imagenAbsoluta && <meta name="twitter:image" content={imagenAbsoluta} />}
+
+    <meta name="theme-color" content="#e6e8e5" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

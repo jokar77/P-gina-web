@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import site from '../data/site.json';
+---
+
+<Layout titulo={site.marca}>
+  <main class="mx-auto max-w-3xl px-6 py-section">
+    <h1 class="text-5xl">{site.marca}</h1>
+    <p class="mt-6 text-ink-soft">{site.frasePortada}</p>
+  </main>
+</Layout>

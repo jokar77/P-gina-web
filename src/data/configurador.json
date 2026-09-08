@@ -1,0 +1,15 @@
+{
+  "formas": [
+    { "id": "tote", "nombre": "Tote de mano", "precio": 55 },
+    { "id": "hombro", "nombre": "De hombro", "precio": 60 },
+    { "id": "sin-asa", "nombre": "De mano sin asa", "precio": 45 }
+  ],
+  "extras": [
+    { "id": "flor", "nombre": "Flor", "precio": 6 },
+    { "id": "lazos", "nombre": "Lazos", "precio": 4 },
+    { "id": "flecos", "nombre": "Flecos", "precio": 5 },
+    { "id": "monedero", "nombre": "Monedero a juego", "precio": 12 },
+    { "id": "forro", "nombre": "Forro interior", "precio": 8 },
+    { "id": "cremallera", "nombre": "Bolsillo con cremallera", "precio": 6 }
+  ]
+}
