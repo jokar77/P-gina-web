@@ -14,37 +14,31 @@ import { getCollection } from 'astro:content';
 import { precio } from '../lib/formato';
 
 const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
-
-// La lista va dos veces: así el bucle se cierra sin salto visible.
-const vuelta = [...bolsos, ...bolsos];
 ---
 
 <div class="tira" data-tira aria-label="Todas las piezas">
   <ul class="pista" data-pista>
     {
-      vuelta.map((b, i) => {
-        const copia = i >= bolsos.length;
-        return (
-          <li class="pieza" aria-hidden={copia ? 'true' : undefined}>
-            <a href={`/bolsos/${b.id}`} class="block no-underline" tabindex={copia ? -1 : undefined}>
-              <Image
-                src={b.data.foto}
-                alt={copia ? '' : `Bolso ${b.data.nombre}`}
-                widths={[220, 440]}
-                sizes="13rem"
-                class="aspect-[3/4] w-full bg-panel object-cover"
-                loading="lazy"
-              />
-              <div class="mt-2 flex items-baseline justify-between gap-3 text-[15px]">
-                <span class="font-display text-lg">{b.data.nombre}</span>
-                <span class:list={[b.data.estado === 'vendido' && 'text-ink-soft']}>
-                  {b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio)}
-                </span>
-              </div>
-            </a>
-          </li>
-        );
-      })
+      bolsos.map((b) => (
+        <li class="pieza">
+          <a href={`/bolsos/${b.id}`} class="block no-underline">
+            <Image
+              src={b.data.foto}
+              alt={`Bolso ${b.data.nombre}`}
+              widths={[220, 440]}
+              sizes="13rem"
+              class="aspect-[3/4] w-full bg-panel object-cover"
+              loading="lazy"
+            />
+            <div class="mt-2 flex items-baseline justify-between gap-3 text-[15px]">
+              <span class="font-display text-lg">{b.data.nombre}</span>
+              <span class:list={[b.data.estado === 'vendido' && 'text-ink-soft']}>
+                {b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio)}
+              </span>
+            </div>
+          </a>
+        </li>
+      ))
     }
   </ul>
 </div>
@@ -99,24 +93,18 @@ const vuelta = [...bolsos, ...bolsos];
      */
     let pos = tira.scrollLeft;
 
-    const paso = (ahora: number) => {
-      const dt = Math.min((ahora - anterior) / 1000, 0.1);
-      anterior = ahora;
-
-      if (!pausado) {
-        const mitad = pista.scrollWidth / 2;
-        pos += VELOCIDAD * dt;
-        if (pos >= mitad) pos -= mitad; // el bucle se cierra al llegar a la copia
-        tira.scrollLeft = pos;
-      }
-      requestAnimationFrame(paso);
-    };
-    requestAnimationFrame(paso);
+    /**
+     * Va y vuelve en lugar de dar la vuelta en bucle. Un bucle sin costura obliga a pintar
+     * la lista dos veces, y entonces cada bolso sale dos veces en la tira. Yendo y
+     * volviendo, cada pieza aparece una sola vez.
+     */
+    let sentido = 1;
 
     const parar = () => {
       clearTimeout(reanudar);
       pausado = true;
     };
+
     const seguir = (espera = 0) => {
       clearTimeout(reanudar);
       reanudar = setTimeout(() => {
@@ -126,6 +114,33 @@ const vuelta = [...bolsos, ...bolsos];
         pausado = false;
       }, espera);
     };
+
+    const paso = (ahora: number) => {
+      const dt = Math.min((ahora - anterior) / 1000, 0.1);
+      anterior = ahora;
+
+      const tope = pista.scrollWidth - tira.clientWidth;
+
+      // Si caben todas a la vez no hay nada que desplazar.
+      if (!pausado && tope > 1) {
+        pos += VELOCIDAD * dt * sentido;
+
+        if (pos >= tope) {
+          pos = tope;
+          sentido = -1;
+          parar();
+          seguir(1200); // un respiro en el extremo: parece intención, no rebote
+        } else if (pos <= 0) {
+          pos = 0;
+          sentido = 1;
+          parar();
+          seguir(1200);
+        }
+        tira.scrollLeft = pos;
+      }
+      requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
 
     // Señalar o enfocar la para: nadie debería perseguir un enlace en movimiento.
     tira.addEventListener('pointerenter', parar);
