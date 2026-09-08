@@ -26,6 +26,30 @@ paleta por defecto de toda la artesanía en internet y aquí está descartada.
 `--paper` y `--panel` están muy cerca en luminosidad a propósito. La separación entre
 secciones la hace el filete de 1px, nunca una caja ni una sombra.
 
+## Marca
+
+Tres piezas, cada una con su sitio. No se mezclan.
+
+| Pieza | Dónde | Por qué |
+|---|---|---|
+| **Logotipo** (script sobre serif condensada) | Portada y pie | Es la firma completa: va donde se declara quién es. |
+| **Símbolo** (el lazo de pincel) | Barra de navegación y favicon | El logotipo completo a 40px sería ilegible; el lazo aguanta. |
+| **Firma** (rotulador) | Cierre de "El taller" | Es una firma: significa algo al final de un texto en primera persona, no en una cabecera. |
+
+Llegaron en JPEG sobre crema. El alfa está derivado de la luminancia del propio dibujo
+—no es un recorte de contorno—, lo que conserva los pelos del pincel y el antialias. El
+color se fija a tinta plana para que el borde componga bien sobre el papel.
+
+Sobre superficies oscuras van las variantes `-claro`, teñidas de papel: la tinta negra
+sobre el `--deep` del pie desaparece.
+
+El favicon lleva el papel horneado detrás, porque un símbolo negro sobre transparente se
+pierde en una pestaña oscura, y el alfa va con ganancia a 32px para que el trazo fino no
+se apague.
+
+**"Sakina Studio" no está en esta web.** Es otra marca, no otra versión de esta, y usar
+las dos haría que no se supiera quién vende.
+
 ## Tipografía
 
 - **Gloock** — marca, títulos de sección, nombre de pieza, precio en ficha.

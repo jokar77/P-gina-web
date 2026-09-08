@@ -1,0 +1,30 @@
+---
+/**
+ * El símbolo: el lazo de pincel. Llegó ya con transparencia, sin tocar.
+ *
+ * Va donde el logotipo completo no cabe o no se leería — la barra de navegación—,
+ * y en el favicon. La variante clara es para superficies oscuras.
+ */
+import { Image } from 'astro:assets';
+import simbolo from '../assets/marca/simbolo.png';
+import simboloClaro from '../assets/marca/simbolo-claro.png';
+
+interface Props {
+  class?: string;
+  claro?: boolean;
+  alt?: string;
+  sizes?: string;
+  cargaDiferida?: boolean;
+}
+
+const { class: clase, claro = false, alt = '', sizes = '3rem', cargaDiferida = true } = Astro.props;
+---
+
+<Image
+  src={claro ? simboloClaro : simbolo}
+  alt={alt}
+  widths={[64, 128, 256]}
+  sizes={sizes}
+  class:list={['h-auto', clase]}
+  loading={cargaDiferida ? 'lazy' : 'eager'}
+/>

@@ -41,7 +41,9 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
     {imagenAbsoluta && <meta name="twitter:image" content={imagenAbsoluta} />}
 
     <meta name="theme-color" content="#e6e8e5" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/icono-512.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>

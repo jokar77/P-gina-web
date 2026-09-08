@@ -17,7 +17,13 @@ const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter
 
 <section id="inicio" class="px-5 pt-10 pb-section sm:px-8">
   <div class="mx-auto max-w-3xl text-center">
-    <h1><Marca class="text-[clamp(2.75rem,9vw,5.5rem)]" /></h1>
+    <h1>
+      <Marca
+        class="mx-auto w-[min(26rem,74vw)]"
+        sizes="(min-width: 640px) 26rem, 74vw"
+        cargaDiferida={false}
+      />
+    </h1>
     <p class="mx-auto mt-5 max-w-[46ch] text-lg text-ink-soft">{site.frasePortada}</p>
   </div>
 

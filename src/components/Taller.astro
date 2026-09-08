@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import detalle from '../assets/piezas/cacao/04.jpg';
+import firma from '../assets/marca/firma.png';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
 
@@ -14,6 +15,15 @@ const parrafos = site.taller.texto.split('\n\n');
       <div class="max-w-[62ch]">
         <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{site.taller.titulo}</h2>
         {parrafos.map((p) => <p class="mt-5 text-lg">{p}</p>)}
+
+        <Image
+          src={firma}
+          alt="Firmado, Sakina."
+          widths={[220, 440]}
+          sizes="13rem"
+          class="mt-8 h-auto w-[13rem]"
+          loading="lazy"
+        />
       </div>
 
       <Image

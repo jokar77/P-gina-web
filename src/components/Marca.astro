@@ -1,20 +1,31 @@
 ---
 /**
- * El logotipo, en un único sitio.
+ * El logotipo: la script sobre la serif condensada.
  *
- * Ahora mismo es el nombre compuesto en Gloock. Cuando llegue el logotipo real
- * (script sobre serif condensada) se sustituye aquí dentro y cambia en toda la web:
- * barra de navegación, portada y pie. Requisitos del archivo: SVG, o PNG con fondo
- * transparente — el papel de la web es gris verdoso y un fondo blanco o crema se vería
- * como un recuadro.
+ * Llegó en JPEG sobre crema; el alfa está sacado de la luminancia del propio dibujo,
+ * así que se apoya en el papel sin recuadro. La variante clara es la misma pieza
+ * teñida de papel, para el pie y cualquier superficie oscura.
  */
+import { Image } from 'astro:assets';
+import logotipo from '../assets/marca/logotipo.png';
+import logotipoClaro from '../assets/marca/logotipo-claro.png';
 import site from '../data/site.json';
 
 interface Props {
   class?: string;
+  claro?: boolean;
+  sizes?: string;
+  cargaDiferida?: boolean;
 }
 
-const { class: clase } = Astro.props;
+const { class: clase, claro = false, sizes = '22rem', cargaDiferida = true } = Astro.props;
 ---
 
-<span class:list={['font-display', clase]}>{site.marca}</span>
+<Image
+  src={claro ? logotipoClaro : logotipo}
+  alt={site.marca}
+  widths={[280, 440, 640, 1005]}
+  sizes={sizes}
+  class:list={['h-auto', clase]}
+  loading={cargaDiferida ? 'lazy' : 'eager'}
+/>
