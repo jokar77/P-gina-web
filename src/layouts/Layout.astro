@@ -6,6 +6,7 @@ import Carrito from '../components/Carrito.astro';
 import Nav from '../components/Nav.astro';
 import Pie from '../components/Pie.astro';
 import site from '../data/site.json';
+import { esProvisional } from '../lib/sitio';
 
 interface Props {
   titulo: string;
@@ -18,8 +19,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
 
 /**
- * Mientras la web viva en la URL provisional de Cloudflare, se pide a los buscadores
- * que no la indexen: si Google se queda con la dirección `.pages.dev`, al comprar el
+ * Mientras la web viva en una dirección provisional de Cloudflare, se pide a los
+ * buscadores que no la indexen: si Google se queda con esa dirección, al comprar el
  * dominio aparecerían las dos y con contenido duplicado.
  *
  * Se desactiva solo en cuanto SITE_URL apunte al dominio de verdad. No hay que acordarse
@@ -28,7 +29,7 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
  * Se usa una meta y no un Disallow en robots.txt a propósito: si se bloquea el rastreo,
  * Google no llega a leer el "no indexes" y puede acabar listando la URL igualmente.
  */
-const esProvisional = Astro.site?.hostname.endsWith('.pages.dev') ?? false;
+const provisional = esProvisional(Astro.site);
 ---
 
 <!doctype html>
@@ -37,7 +38,7 @@ const esProvisional = Astro.site?.hostname.endsWith('.pages.dev') ?? false;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonical} />
-    {esProvisional && <meta name="robots" content="noindex, nofollow" />}
+    {provisional && <meta name="robots" content="noindex, nofollow" />}
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
 
