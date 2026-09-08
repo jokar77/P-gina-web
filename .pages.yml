@@ -1,0 +1,209 @@
+# Configuración del CMS (pagescms.org).
+#
+# Describe el contenido con formularios, para que Sakina pueda cambiar textos, precios y
+# fotos sin tocar código ni pedírselo a nadie. Ella entra en pagescms.org, entra con su
+# cuenta de GitHub, y ve estas pantallas.
+#
+# Al guardar se hace un commit en el repositorio y Cloudflare reconstruye sola: en un
+# minuto está online. Y como cada cambio es un commit, todo se puede deshacer.
+#
+# Los campos de aquí tienen que coincidir con el esquema de src/content.config.ts. Si se
+# añade un campo allí, hay que añadirlo aquí.
+
+media:
+  input: src/assets/piezas
+  output: ../../assets/piezas
+  categories: [image]
+
+content:
+  - name: bolsos
+    label: Bolsos
+    type: collection
+    path: src/content/bolsos
+    filename: '{fields.nombre}.md'
+    view:
+      fields: [nombre, precio, estado]
+      primary: nombre
+    fields:
+      - name: nombre
+        label: Nombre de la pieza
+        type: string
+        required: true
+      - name: precio
+        label: Precio en euros
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+      - name: estado
+        label: Estado
+        type: select
+        required: true
+        default: disponible
+        options:
+          values:
+            - { value: disponible, label: Disponible }
+            - { value: vendido, label: Vendido (se queda expuesto) }
+            - { value: encargo, label: Solo por encargo }
+        description: Nunca se pone solo. Lo cambias tú cuando la pieza encuentra dueña.
+      - name: color
+        label: Color
+        type: select
+        required: true
+        options:
+          values:
+            - turquesa
+            - rojo
+            - granate
+            - coral
+            - teja
+            - amarillo
+            - crudo
+            - dorado
+            - chocolate
+            - gris
+            - bicolor
+        description: Es el que agrupa la pieza en los filtros de la colección.
+      - name: material
+        label: Material
+        type: string
+        required: true
+        description: 'Ej.: Trapillo de algodón, flecos largos'
+      - name: ancho
+        label: Ancho en cm
+        type: number
+        required: true
+        options: { min: 1, step: 1 }
+      - name: alto
+        label: Alto en cm
+        type: number
+        required: true
+        options: { min: 1, step: 1 }
+      - name: orden
+        label: Orden
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+        description: El número más bajo sale primero en la colección.
+      - name: foto
+        label: Foto principal
+        type: image
+        required: true
+        description: Vertical, formato 3:4. Es la que se ve en la rejilla y al compartir.
+      - name: fotos
+        label: Más fotos
+        type: image
+        list: true
+
+  - name: ninos
+    label: Conjuntos de niño
+    type: collection
+    path: src/content/ninos
+    filename: '{fields.nombre}.md'
+    view:
+      fields: [nombre, precioDesde]
+      primary: nombre
+    fields:
+      - { name: nombre, label: Nombre, type: string, required: true }
+      - name: precioDesde
+        label: Precio desde (euros)
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+      - { name: tallas, label: Tallas, type: string, required: true }
+      - { name: material, label: Material, type: string, required: true }
+      - name: estado
+        label: Estado
+        type: select
+        default: encargo
+        options:
+          values:
+            - { value: encargo, label: Por encargo }
+            - { value: disponible, label: Disponible }
+            - { value: vendido, label: Vendido }
+      - name: orden
+        label: Orden
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+      - { name: foto, label: Foto principal, type: image, required: true }
+      - { name: fotos, label: Más fotos, type: image, list: true }
+
+  - name: ajustes
+    label: Textos y datos de la web
+    type: file
+    path: src/data/site.json
+    fields:
+      - { name: marca, label: Nombre de la marca, type: string }
+      - name: whatsapp
+        label: WhatsApp
+        type: string
+        description: Con prefijo de país y sin signos ni espacios. Ejemplo, 34612345678.
+      - name: instagram
+        label: Instagram
+        type: string
+        description: La dirección completa. Si lo dejas en blanco, el icono no aparece.
+      - { name: tiktok, label: TikTok, type: string, description: Dirección completa. En blanco, no aparece. }
+      - { name: youtube, label: YouTube, type: string, description: Dirección completa. En blanco, no aparece. }
+      - name: frasePortada
+        label: Frase de la portada
+        type: text
+        description: La línea que va debajo del nombre, en la primera pantalla.
+      - name: descripcion
+        label: Descripción para buscadores
+        type: text
+        description: Lo que se lee en Google y al compartir un enlace.
+      - name: taller
+        label: El taller
+        type: object
+        fields:
+          - { name: titulo, label: Título, type: string }
+          - name: texto
+            label: Texto
+            type: text
+            options: { rows: 10 }
+            description: Deja una línea en blanco entre párrafos.
+          - name: pendiente
+            label: Nota interna
+            type: string
+            description: No sale en la web. Bórrala cuando el texto sea el definitivo.
+      - name: envios
+        label: Envíos
+        type: object
+        fields:
+          - name: puntoRecogida
+            label: A punto de recogida (euros)
+            type: number
+            options: { min: 0, step: 1 }
+          - name: domicilio
+            label: A domicilio (euros)
+            type: number
+            options: { min: 0, step: 1 }
+          - name: gratisDesde
+            label: Envío gratis a partir de (euros)
+            type: number
+            options: { min: 0, step: 1 }
+            description: Ojo, a partir de aquí el envío lo pagas tú.
+          - { name: plazoDias, label: Plazo de salida, type: string }
+          - { name: zona, label: Zona de envío, type: string }
+
+  - name: configurador
+    label: Precios del configurador
+    type: file
+    path: src/data/configurador.json
+    fields:
+      - name: formas
+        label: Formas
+        type: object
+        list: true
+        fields:
+          - { name: id, label: Identificador, type: string }
+          - { name: nombre, label: Nombre, type: string }
+          - { name: precio, label: Precio base (euros), type: number, options: { min: 0, step: 1 } }
+      - name: extras
+        label: Detalles que se pueden añadir
+        type: object
+        list: true
+        fields:
+          - { name: id, label: Identificador, type: string }
+          - { name: nombre, label: Nombre, type: string }
+          - { name: precio, label: Suma al precio (euros), type: number, options: { min: 0, step: 1 } }

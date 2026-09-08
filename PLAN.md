@@ -139,8 +139,12 @@ Lo que sí aplica, por orden de utilidad real:
 Era el requisito número uno y sigue pendiente. La base está: cada pieza es un archivo con
 esquema tipado, que es justo lo que un CMS de formularios necesita.
 
-- [ ] Montar el CMS **git-based** encima del contenido actual. Requiere el sitio ya
-      desplegado, porque el editor se autentica contra el repositorio.
+- [x] **Configuración del CMS escrita** en `.pages.yml`: formularios para las piezas, los
+      conjuntos, los textos de la web y los precios del configurador. Validada contra el
+      esquema real de `content.config.ts` — ningún campo falta ni sobra.
+- [ ] **Conectarlo**: cuenta de GitHub para Sakina, acceso al repositorio, y entrar en
+      pagescms.org. Esa parte no se puede probar desde el entorno de trabajo, así que hay
+      que comprobarla la primera vez con ella delante.
 - [ ] Enseñarle el flujo: entra, cambia una foto o un precio, guarda, y en un minuto está
       online. Sin tocar código y sin pedírselo a nadie.
 - [ ] Repasar que pueda hacer sola lo que hace a menudo: añadir pieza, marcar vendida,
