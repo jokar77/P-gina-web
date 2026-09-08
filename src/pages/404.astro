@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SECCIONES } from '../data/navegacion';
+---
+
+<Layout
+  titulo="Esta página no está — Sakina Platero"
+  descripcion="La página que buscabas no existe o ha cambiado de sitio."
+>
+  <section class="px-5 py-section sm:px-8">
+    <div class="mx-auto max-w-[52ch]">
+      <h1 class="font-display text-[clamp(2.25rem,7vw,4rem)]">Esta página no está</h1>
+
+      <p class="mt-6 text-lg text-ink-soft">
+        Puede que la pieza que buscabas se vendiera y cambiara de sitio, o que el enlace
+        venga con alguna letra de más. Desde aquí se llega a todo:
+      </p>
+
+      <ul class="filete mt-8 grid gap-3 pt-6">
+        {
+          SECCIONES.map((s) => (
+            <li>
+              <a href={s.href} class="text-lg">
+                {s.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Layout>

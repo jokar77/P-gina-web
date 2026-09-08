@@ -1,0 +1,17 @@
+{
+  // Configuración para desplegar en Cloudflare Workers con archivos estáticos.
+  //
+  // Cloudflare ya no ofrece Pages a las cuentas nuevas, así que la web se sirve como
+  // "static assets" de un Worker. Para un sitio estático el resultado es el mismo: los
+  // archivos se reparten por la red de Cloudflare y no se ejecuta código propio.
+  //
+  // No hay campo "main" a propósito: no hay Worker que ejecutar, solo archivos.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sakina-platero",
+  "compatibility_date": "2026-09-08",
+  "assets": {
+    "directory": "./dist",
+    // Sirve nuestra propia página de error en vez de la genérica de Cloudflare.
+    "not_found_handling": "404-page"
+  }
+}
