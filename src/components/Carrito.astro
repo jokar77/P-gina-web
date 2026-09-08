@@ -2,12 +2,19 @@
 /**
  * Panel del pedido. Reúne las piezas y las entrega escritas por WhatsApp: no cobra.
  * Vive en el layout, así que cualquier página puede añadir con un botón [data-anadir].
+ *
+ * Los datos de envío se escriben aquí solo para redactar el mensaje. No se guardan en
+ * ningún sitio —ni en el navegador ni en un servidor—: van directos al texto que se
+ * manda por WhatsApp, igual que si se hubieran tecleado allí.
  */
+import { METODOS } from '../lib/envio';
+import site from '../data/site.json';
+import { precio } from '../lib/formato';
 ---
 
 <dialog
   data-carrito
-  class="oscuro m-0 ml-auto h-dvh max-h-none w-full max-w-[26rem] p-0"
+  class="oscuro m-0 ml-auto h-dvh max-h-none w-full max-w-[28rem] p-0"
   aria-label="Tu pedido"
 >
   <div class="flex h-full flex-col">
@@ -16,26 +23,95 @@
       <button type="button" class="ml-auto text-[15px] underline" data-cerrar-carrito>Cerrar</button>
     </div>
 
-    <p class="px-6 pb-6 text-[15px] text-paper/70" data-carrito-vacio>
-      Todavía no has añadido nada. Cada pieza es única: cuando añadas una, aquí verás el
-      resumen que le llega a Sakina.
-    </p>
+    <div class="flex-1 overflow-y-auto px-6">
+      <p class="pb-6 text-[15px] text-paper/70" data-carrito-vacio>
+        Todavía no has añadido nada. Cada pieza es única: cuando añadas una, aquí verás el
+        resumen que le llega a Sakina.
+      </p>
 
-    <ul class="flex-1 overflow-y-auto px-6" data-carrito-lista></ul>
+      <ul data-carrito-lista></ul>
 
-    <div class="border-t border-paper/20 px-6 py-6" data-carrito-pie hidden>
-      <div class="flex items-baseline justify-between gap-4">
-        <span class="text-[15px] text-paper/70">Total</span>
-        <span class="font-display text-2xl" data-carrito-total></span>
+      <div data-carrito-envio hidden>
+        <fieldset class="mt-7">
+          <legend class="text-[15px] text-paper/70">Cómo lo recibes</legend>
+          <div class="mt-3 grid gap-2">
+            {
+              METODOS.map((m, i) => (
+                <label class="opcion-envio">
+                  <input
+                    type="radio"
+                    name="envio"
+                    value={m.id}
+                    checked={i === 0}
+                    class="sr-only"
+                    data-metodo
+                  />
+                  <span class="marca-radio" aria-hidden="true" />
+                  <span class="flex-1">{m.nombre}</span>
+                  <span class="text-paper/60">{precio(m.precio)}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="mt-2 text-[14px] text-paper/55">
+            Gratis a partir de {precio(site.envios.gratisDesde)}. {site.envios.zona}.
+          </p>
+        </fieldset>
+
+        <fieldset class="filete-envio mt-7 pt-6">
+          <legend class="text-[15px] text-paper/70">Dónde te lo mandamos</legend>
+          <p class="mt-1 mb-4 text-[14px] text-paper/55">
+            Puedes dejarlo en blanco y acordarlo por WhatsApp. Si lo rellenas, va escrito en
+            el mensaje y Sakina no tiene que preguntártelo.
+          </p>
+          <div class="grid gap-3">
+            <label class="campo">
+              <span>Nombre y apellidos</span>
+              <input type="text" name="nombre" autocomplete="name" data-dato />
+            </label>
+            <label class="campo">
+              <span>Dirección</span>
+              <input
+                type="text"
+                name="direccion"
+                autocomplete="street-address"
+                placeholder="Calle, número, piso"
+                data-dato
+              />
+            </label>
+            <div class="grid grid-cols-[7rem_1fr] gap-3">
+              <label class="campo">
+                <span>Código postal</span>
+                <input type="text" name="cp" inputmode="numeric" autocomplete="postal-code" data-dato />
+              </label>
+              <label class="campo">
+                <span>Población</span>
+                <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+              </label>
+            </div>
+          </div>
+        </fieldset>
       </div>
+    </div>
+
+    <div class="border-t border-paper/20 px-6 py-5" data-carrito-pie hidden>
+      <dl class="grid grid-cols-[1fr_auto] gap-y-1 text-[15px]">
+        <dt class="text-paper/70">Piezas</dt>
+        <dd class="text-right" data-carrito-subtotal></dd>
+        <dt class="text-paper/70">Envío</dt>
+        <dd class="text-right" data-carrito-coste-envio></dd>
+        <dt class="mt-1 self-baseline">Total</dt>
+        <dd class="mt-1 text-right font-display text-2xl" data-carrito-total></dd>
+      </dl>
+
       <p class="mt-1 text-[13px] text-paper/60" data-carrito-aviso hidden>
         Orientativo: las piezas por encargo se cierran hablando.
       </p>
-      <p class="mt-4 text-[14px] text-paper/70">
-        El envío se calcula al confirmar. No se paga nada aquí: Sakina te contesta y lo
-        acordáis por WhatsApp.
-      </p>
-      <a class="boton boton-claro mt-5 w-full" data-carrito-enviar href="#">Enviar por WhatsApp</a>
+
+      <a class="boton boton-claro mt-4 w-full" data-carrito-enviar href="#">Enviar por WhatsApp</a>
+      <button type="button" class="boton mt-2 w-full border border-paper/30" data-seguir>
+        Seguir mirando
+      </button>
       <button type="button" class="mt-3 w-full text-[14px] underline" data-carrito-vaciar>
         Vaciar el pedido
       </button>
@@ -60,35 +136,136 @@
       transform: translateX(100%);
     }
   }
+
+  .opcion-envio {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    cursor: pointer;
+    padding: 10px 12px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 22%, transparent);
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .opcion-envio:has(input:checked) {
+    box-shadow: inset 0 0 0 1px var(--color-paper);
+  }
+  .opcion-envio:has(input:focus-visible) {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 2px;
+  }
+  .marca-radio {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 55%, transparent);
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .opcion-envio:has(input:checked) .marca-radio {
+    box-shadow:
+      inset 0 0 0 1px var(--color-paper),
+      inset 0 0 0 5px var(--color-deep),
+      inset 0 0 0 16px var(--color-paper);
+  }
+
+  /* El filete va por encima del fieldset entero, no partido por su propio título:
+     un <legend> se sienta sobre el borde y lo corta por la mitad. */
+  .filete-envio {
+    position: relative;
+  }
+  .filete-envio::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-paper) 20%, transparent);
+  }
+
+  .campo {
+    display: grid;
+    gap: 5px;
+  }
+  .campo > span {
+    font-size: 14px;
+    color: color-mix(in srgb, var(--color-paper) 70%, transparent);
+  }
+  .campo input {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: transparent;
+    color: var(--color-paper);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 30%, transparent);
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .campo input:hover {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 50%, transparent);
+  }
+  .campo input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--color-paper);
+  }
 </style>
 
 <script>
   import { anadir, contiene, hayOrientativos, leer, quitar, suscribir, total, vaciar } from '../lib/carrito';
   import type { Linea } from '../lib/carrito';
+  import { costeEnvio, nombreMetodo, type Metodo } from '../lib/envio';
   import { precio } from '../lib/formato';
   import site from '../data/site.json';
 
   const panel = document.querySelector<HTMLDialogElement>('[data-carrito]');
   const lista = document.querySelector<HTMLUListElement>('[data-carrito-lista]');
   const pie = document.querySelector<HTMLElement>('[data-carrito-pie]');
+  const bloqueEnvio = document.querySelector<HTMLElement>('[data-carrito-envio]');
   const vacio = document.querySelector<HTMLElement>('[data-carrito-vacio]');
+  const marcaSubtotal = document.querySelector<HTMLElement>('[data-carrito-subtotal]');
+  const marcaEnvio = document.querySelector<HTMLElement>('[data-carrito-coste-envio]');
   const marcaTotal = document.querySelector<HTMLElement>('[data-carrito-total]');
   const aviso = document.querySelector<HTMLElement>('[data-carrito-aviso]');
   const enviar = document.querySelector<HTMLAnchorElement>('[data-carrito-enviar]');
 
+  const metodoElegido = (): Metodo =>
+    (document.querySelector<HTMLInputElement>('[data-metodo]:checked')?.value as Metodo) ??
+    'recogida';
+
+  const dato = (nombre: string) =>
+    document.querySelector<HTMLInputElement>(`[data-dato][name="${nombre}"]`)?.value.trim() ?? '';
+
   function mensaje(lineas: Linea[]) {
+    const piezas = total();
+    const metodo = metodoElegido();
+    const envioCoste = costeEnvio(piezas, metodo);
+
     const cuerpo = lineas
       .map((l) => {
         const cabeza = `· ${l.nombre} — ${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
         return l.detalle ? `${cabeza}\n  ${l.detalle}` : cabeza;
       })
       .join('\n');
-    const cierre = `Total: ${precio(total())}${hayOrientativos() ? ' (orientativo)' : ''}`;
-    return `Hola Sakina, me gustaría encargar:\n\n${cuerpo}\n\n${cierre}`;
+
+    const partes = [
+      'Hola Sakina, me gustaría encargar:',
+      '',
+      cuerpo,
+      '',
+      `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
+      `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
+    ];
+
+    // Los datos de envío solo se añaden si se han escrito.
+    const direccion = [
+      dato('nombre'),
+      dato('direccion'),
+      [dato('cp'), dato('poblacion')].filter(Boolean).join(' '),
+    ].filter(Boolean);
+
+    if (direccion.length) partes.push('', 'Mis datos:', ...direccion);
+
+    return partes.join('\n');
   }
 
   function pintar(lineas: Linea[]) {
-    // Contador de la barra de navegación.
     const cuenta = document.querySelector<HTMLElement>('[data-cuenta-carrito]');
     const cuentaTexto = document.querySelector<HTMLElement>('[data-cuenta-texto]');
     if (cuenta) {
@@ -97,14 +274,9 @@
     }
     if (cuentaTexto) {
       cuentaTexto.textContent =
-        lineas.length === 0
-          ? 'vacío'
-          : lineas.length === 1
-            ? '1 pieza'
-            : `${lineas.length} piezas`;
+        lineas.length === 0 ? 'vacío' : lineas.length === 1 ? '1 pieza' : `${lineas.length} piezas`;
     }
 
-    // Botones de añadir repartidos por la página.
     for (const boton of document.querySelectorAll<HTMLButtonElement>('[data-anadir]')) {
       const linea = JSON.parse(boton.dataset.anadir!) as Linea;
       const dentro = contiene(linea.id);
@@ -112,7 +284,7 @@
       boton.dataset.dentro = String(dentro);
     }
 
-    if (!lista || !pie || !vacio || !marcaTotal || !enviar) return;
+    if (!lista || !pie || !vacio || !marcaTotal || !enviar || !bloqueEnvio) return;
 
     lista.replaceChildren(
       ...lineas.map((l) => {
@@ -165,15 +337,25 @@
 
     const hay = lineas.length > 0;
     pie.hidden = !hay;
+    bloqueEnvio.hidden = !hay;
     vacio.hidden = hay;
-    marcaTotal.textContent = precio(total());
+
+    const piezas = total();
+    const envioCoste = costeEnvio(piezas, metodoElegido());
+    if (marcaSubtotal) marcaSubtotal.textContent = precio(piezas);
+    if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
+    marcaTotal.textContent = precio(piezas + envioCoste);
     if (aviso) aviso.hidden = !hayOrientativos();
+
     enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
   }
 
   suscribir(pintar);
 
-  // Delegación: sirve para los botones que ya están y para los que se pinten después.
+  // Cambiar de método de envío o escribir la dirección rehace el mensaje y el total.
+  panel?.addEventListener('change', () => pintar(leer()));
+  panel?.addEventListener('input', () => pintar(leer()));
+
   document.addEventListener('click', (e) => {
     const boton = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-anadir]');
     if (!boton) return;
@@ -190,9 +372,9 @@
     b.addEventListener('click', () => panel?.showModal());
   }
   document.querySelector('[data-cerrar-carrito]')?.addEventListener('click', () => panel?.close());
+  document.querySelector('[data-seguir]')?.addEventListener('click', () => panel?.close());
   document.querySelector('[data-carrito-vaciar]')?.addEventListener('click', () => vaciar());
 
-  // Clic en el fondo oscuro: el dialog ocupa media pantalla, el resto es backdrop.
   panel?.addEventListener('click', (e) => {
     if (e.target === panel) panel.close();
   });

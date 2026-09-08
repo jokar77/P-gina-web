@@ -37,7 +37,7 @@ Nada de esto es código. Son datos que solo tiene ella.
 | Qué | Por qué bloquea |
 |---|---|
 | **Número de WhatsApp real** | Ahora hay un `34600000000` de relleno: **ningún botón de la web funciona**. Está en `src/data/site.json`. |
-| **Enlace de Instagram** | El pie lo oculta si está vacío, así que no rompe nada, pero es de donde va a venir la gente. |
+| **Enlaces de las redes** | Instagram, TikTok y YouTube en `site.json`. Cada icono del pie aparece solo cuando su URL está rellena, así que ahora mismo solo se ve WhatsApp. Instagram es de donde va a venir la gente. |
 | **Nombres, precios y medidas reales** | Los actuales vienen del boceto y son inventados. Ver §6. |
 | **Texto de "El taller"** | Hay uno provisional escrito por mí, marcado como tal en `site.json`. |
 | **Consulta con la gestoría** | Ver §4. Esto condiciona qué se puede publicar. |

@@ -1,8 +1,8 @@
 ---
 import { SECCIONES } from '../data/navegacion';
 import Marca from './Marca.astro';
+import Redes from './Redes.astro';
 import site from '../data/site.json';
-import { enlaceWhatsapp } from '../lib/whatsapp';
 
 const ano = new Date().getFullYear();
 ---
@@ -33,23 +33,10 @@ const ano = new Date().getFullYear();
 
     <div>
       <h2 class="font-sans text-[15px] tracking-normal text-paper/60">Escríbeme</h2>
-      <ul class="mt-3 grid gap-2">
-        <li>
-          <a
-            href={enlaceWhatsapp('Hola Sakina, te escribo desde la web.')}
-            class="no-underline hover:underline">WhatsApp</a
-          >
-        </li>
-        {
-          site.instagram && (
-            <li>
-              <a href={site.instagram} rel="me noopener" class="no-underline hover:underline">
-                Instagram
-              </a>
-            </li>
-          )
-        }
-      </ul>
+      <div class="mt-4"><Redes claro /></div>
+      <p class="mt-4 max-w-[30ch] text-[15px] text-paper/60">
+        Lo más rápido es WhatsApp: Sakina contesta ella misma.
+      </p>
     </div>
   </div>
 

@@ -1,0 +1,108 @@
+---
+/**
+ * Enlaces a las redes. Solo salen las que tienen dirección en site.json, así que
+ * añadir TikTok o YouTube el día de mañana es escribir la URL y ya.
+ *
+ * Los iconos están dibujados aquí, con el mismo trazo y el mismo tamaño de caja, para
+ * que se lean como una familia y no como cuatro logos pegados de sitios distintos.
+ */
+import site from '../data/site.json';
+import { enlaceWhatsapp } from '../lib/whatsapp';
+
+interface Props {
+  claro?: boolean;
+}
+
+const { claro = false } = Astro.props;
+
+const redes = [
+  {
+    nombre: 'WhatsApp',
+    href: enlaceWhatsapp('Hola Sakina, te escribo desde la web.'),
+    activa: true,
+  },
+  { nombre: 'Instagram', href: site.instagram, activa: !!site.instagram },
+  { nombre: 'TikTok', href: site.tiktok, activa: !!site.tiktok },
+  { nombre: 'YouTube', href: site.youtube, activa: !!site.youtube },
+].filter((r) => r.activa);
+---
+
+<ul class="flex flex-wrap items-center gap-2.5">
+  {
+    redes.map((r) => (
+      <li>
+        <a
+          href={r.href}
+          class:list={['red', claro && 'red-clara']}
+          rel="me noopener"
+          target="_blank"
+          aria-label={r.nombre}
+          title={r.nombre}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+            {r.nombre === 'WhatsApp' && (
+              <>
+                <path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2Z" />
+                <path d="M9.1 8.2c.2-.5.4-.5.6-.5h.5c.2 0 .4 0 .6.5l.7 1.7c.1.2 0 .4-.1.5l-.5.6c-.1.2-.2.3-.1.5a5.6 5.6 0 0 0 2.7 2.4c.2.1.4 0 .5-.1l.5-.6c.2-.2.3-.2.5-.1l1.6.8c.2.1.4.2.4.4a2 2 0 0 1-1.4 1.7c-.7.2-1.7.1-3.5-.9a9.3 9.3 0 0 1-3.4-3.6c-.7-1.4-.5-2.4-.1-3Z" />
+              </>
+            )}
+            {r.nombre === 'Instagram' && (
+              <>
+                <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5" />
+                <circle cx="12" cy="12" r="4.1" />
+                <circle cx="17.2" cy="6.8" r="1.15" class="relleno" />
+              </>
+            )}
+            {r.nombre === 'TikTok' && (
+              <path d="M13.6 3.2v10.9a3.1 3.1 0 1 1-2.6-3.06M13.6 6.1a4.7 4.7 0 0 0 4.4 3.1" />
+            )}
+            {r.nombre === 'YouTube' && (
+              <>
+                <rect x="2.6" y="5.6" width="18.8" height="12.8" rx="4" />
+                <path d="M10.4 9.4 15 12l-4.6 2.6V9.4Z" class="relleno" />
+              </>
+            )}
+          </svg>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .red {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    transition:
+      background-color 200ms var(--ease-salida),
+      box-shadow 200ms var(--ease-salida);
+  }
+  .red:hover {
+    background-color: color-mix(in srgb, var(--color-line) 28%, transparent);
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+
+  .red svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .red svg .relleno {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  .red-clara {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 40%, transparent);
+  }
+  .red-clara:hover {
+    background-color: color-mix(in srgb, var(--color-paper) 14%, transparent);
+    box-shadow: inset 0 0 0 1px var(--color-paper);
+  }
+</style>
