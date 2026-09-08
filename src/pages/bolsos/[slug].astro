@@ -5,7 +5,6 @@ import Layout from '../../layouts/Layout.astro';
 import { COLORES, type ColorId } from '../../data/colores';
 import site from '../../data/site.json';
 import { medidas, precio } from '../../lib/formato';
-import { enlaceWhatsapp, mensajePieza } from '../../lib/whatsapp';
 
 export async function getStaticPaths() {
   const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
@@ -33,6 +32,20 @@ const linea = {
   precio: d.precio,
   detalle: `${d.material} · ${medidas(d.ancho, d.alto)}`,
   url: `/bolsos/${bolso.id}`,
+};
+
+/**
+ * La pieza vendida no se puede pedir, pero sí una parecida. Va al mismo pedido que todo
+ * lo demás, con id propio para que no choque con la pieza original, y con el precio
+ * marcado como orientativo: es un encargo nuevo, tejido de cero, y no sale idéntico.
+ */
+const lineaSimilar = {
+  id: `${bolso.id}-similar`,
+  nombre: `Uno parecido a ${d.nombre}`,
+  precio: d.precio,
+  detalle: `${d.material} · ${medidas(d.ancho, d.alto)}`,
+  url: `/bolsos/${bolso.id}`,
+  orientativo: true,
 };
 
 const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho, d.alto)}. Bolso de ganchillo hecho a mano, pieza única.`;
@@ -119,15 +132,18 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho
             {
               vendido ? (
                 <>
-                  <a
+                  <button
+                    type="button"
                     class="boton w-full sm:w-auto"
-                    href={enlaceWhatsapp(mensajePieza(d.nombre, d.precio, true))}
+                    data-anadir={JSON.stringify(lineaSimilar)}
+                    data-etiqueta="Encargar uno similar"
                   >
-                    Encargar uno parecido
-                  </a>
+                    Encargar uno similar
+                  </button>
                   <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">
                     Esta ya tiene dueña. Se queda aquí porque es parte del trabajo, y porque
-                    se puede tejer otra parecida: nunca sale idéntica.
+                    se puede tejer otra parecida: nunca sale idéntica, y por eso el precio
+                    es orientativo hasta que lo habléis.
                   </p>
                 </>
               ) : (
