@@ -2,6 +2,9 @@
 import '@fontsource/gloock/400.css';
 import '@fontsource-variable/karla';
 import '../styles/global.css';
+import Carrito from '../components/Carrito.astro';
+import Nav from '../components/Nav.astro';
+import Pie from '../components/Pie.astro';
 import site from '../data/site.json';
 
 interface Props {
@@ -38,9 +41,21 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
     {imagenAbsoluta && <meta name="twitter:image" content={imagenAbsoluta} />}
 
     <meta name="theme-color" content="#e6e8e5" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>
-    <slot />
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:bg-deep focus:px-4 focus:py-2 focus:text-paper"
+    >
+      Saltar al contenido
+    </a>
+    <Nav />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Pie />
+    <Carrito />
   </body>
 </html>

@@ -1,5 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'zod';
 import { COLOR_IDS } from './data/colores';
 
 const estado = z.enum(['disponible', 'vendido', 'encargo']).default('disponible');

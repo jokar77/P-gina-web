@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import FichaCard from './FichaCard.astro';
+
+const conjuntos = (await getCollection('ninos')).sort((a, b) => a.data.orden - b.data.orden);
+---
+
+<section id="nino" class="scroll-mt-20 bg-panel px-5 py-section sm:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Lino para los pequeños</h2>
+      <p class="max-w-[52ch] text-ink-soft">
+        Camisa y pantalón cosidos a mano, de la talla 1 a la 6. Se hacen por encargo y a
+        medida, así que el plazo depende de la cola que haya.
+      </p>
+    </div>
+
+    <div class="mt-10 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2">
+      {
+        conjuntos.map((c) => (
+          <FichaCard
+            href={`/ninos/${c.id}`}
+            nombre={c.data.nombre}
+            foto={c.data.foto}
+            alt={`${c.data.nombre}: ${c.data.material.toLowerCase()}.`}
+            estado="encargo"
+            precioNum={c.data.precioDesde}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

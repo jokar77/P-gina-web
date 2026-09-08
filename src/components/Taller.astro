@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import detalle from '../assets/piezas/cacao/04.jpg';
+import site from '../data/site.json';
+import { precio } from '../lib/formato';
+
+const { envios } = site;
+const parrafos = site.taller.texto.split('\n\n');
+---
+
+<section id="taller" class="scroll-mt-20 px-5 py-section sm:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="grid items-start gap-x-12 gap-y-10 lg:grid-cols-2">
+      <div class="max-w-[62ch]">
+        <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{site.taller.titulo}</h2>
+        {parrafos.map((p) => <p class="mt-5 text-lg">{p}</p>)}
+      </div>
+
+      <Image
+        src={detalle}
+        alt="Detalle del punto de ganchillo: lana marrón con un ribete de lana cruda más gruesa."
+        widths={[480, 768, 1100]}
+        sizes="(min-width: 1024px) 40rem, 100vw"
+        class="w-full"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="filete mt-16 grid gap-x-12 gap-y-9 pt-9 sm:grid-cols-2 lg:grid-cols-3">
+      <div>
+        <h3 class="font-sans text-[15px] tracking-normal">Envíos</h3>
+        <p class="mt-2 text-ink-soft">
+          {envios.zona}. {precio(envios.puntoRecogida)} a punto de recogida y {
+            precio(envios.domicilio)
+          } a domicilio, siempre con seguimiento. Gratis a partir de {precio(envios.gratisDesde)}.
+          Sale del taller en {envios.plazoDias}. Canarias, Ceuta y Melilla se quedan fuera de
+          momento por el papeleo de aduana.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="font-sans text-[15px] tracking-normal">Pago</h3>
+        <p class="mt-2 text-ink-soft">
+          Por Bizum o transferencia, acordado por WhatsApp. En la web no se paga: sirve para
+          reunir el pedido y mandárselo escrito.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="font-sans text-[15px] tracking-normal">Devoluciones</h3>
+        <p class="mt-2 text-ink-soft">
+          Catorce días para desistir en las piezas de colección, en el mismo estado en que
+          llegaron. Las piezas por encargo están hechas a tu medida y a tu gusto, así que
+          quedan fuera de ese derecho.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

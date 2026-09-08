@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import { precio } from '../lib/formato';
+
+interface Props {
+  href: string;
+  nombre: string;
+  foto: ImageMetadata;
+  alt: string;
+  estado: 'disponible' | 'vendido' | 'encargo';
+  precioNum: number;
+  color?: string;
+  cargaDiferida?: boolean;
+}
+
+const { href, nombre, foto, alt, estado, precioNum, color, cargaDiferida = true } = Astro.props;
+
+const etiquetaPrecio =
+  estado === 'vendido'
+    ? 'Vendido'
+    : estado === 'encargo'
+      ? `Desde ${precio(precioNum)}`
+      : precio(precioNum);
+---
+
+<article data-pieza data-color={color} data-estado={estado}>
+  <a href={href} class="group block no-underline">
+    <div class="overflow-hidden bg-panel">
+      <Image
+        src={foto}
+        alt={alt}
+        widths={[320, 480, 768]}
+        sizes="(min-width: 1024px) 22rem, (min-width: 640px) 30vw, 45vw"
+        class="aspect-[3/4] w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+        loading={cargaDiferida ? 'lazy' : 'eager'}
+      />
+    </div>
+    <div class="mt-3 flex items-baseline justify-between gap-3">
+      <h3 class="font-display text-xl">{nombre}</h3>
+      <span class:list={['text-[15px]', estado === 'vendido' ? 'text-ink-soft' : '']}>
+        {etiquetaPrecio}
+      </span>
+    </div>
+  </a>
+</article>

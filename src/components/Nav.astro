@@ -1,0 +1,53 @@
+---
+import site from '../data/site.json';
+import { SECCIONES as enlaces } from '../data/navegacion';
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-transparent bg-paper/92 backdrop-blur-sm transition-colors duration-300"
+  data-nav
+>
+  <nav class="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 sm:px-8" aria-label="Principal">
+    <a href="/" class="font-display text-xl no-underline sm:text-2xl">{site.marca}</a>
+
+    <ul class="ml-auto hidden items-center gap-7 text-[15px] lg:flex">
+      {
+        enlaces.map((e) => (
+          <li>
+            <a
+              href={e.href}
+              class="text-ink-soft no-underline transition-colors duration-200 hover:text-ink"
+            >
+              {e.texto}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <button
+      type="button"
+      class="ml-auto flex items-center gap-2 text-[15px] lg:ml-0"
+      data-abrir-carrito
+      aria-haspopup="dialog"
+    >
+      <span>Pedido</span>
+      <span
+        class="grid h-6 min-w-6 place-items-center rounded-full bg-deep px-1.5 text-[13px] leading-none text-paper"
+        data-cuenta-carrito
+        aria-hidden="true"
+        hidden>0</span
+      >
+      <span class="sr-only" data-cuenta-texto>vacío</span>
+    </button>
+  </nav>
+</header>
+
+<script>
+  const nav = document.querySelector('[data-nav]');
+  if (nav) {
+    const marcar = () => nav.classList.toggle('border-line', window.scrollY > 8);
+    marcar();
+    window.addEventListener('scroll', marcar, { passive: true });
+  }
+</script>

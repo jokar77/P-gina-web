@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage, Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import site from '../../data/site.json';
+import { precio } from '../../lib/formato';
+
+export async function getStaticPaths() {
+  const conjuntos = (await getCollection('ninos')).sort((a, b) => a.data.orden - b.data.orden);
+  return conjuntos.map((conjunto) => ({ params: { slug: conjunto.id }, props: { conjunto } }));
+}
+
+const { conjunto } = Astro.props;
+const d = conjunto.data;
+const galeria = [d.foto, ...d.fotos];
+const tallas = [1, 2, 3, 4, 5, 6];
+
+const og = await getImage({ src: d.foto, width: 1200, format: 'jpeg' });
+const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. Tallas de ${d.tallas}. Cosido a mano por encargo, desde ${precio(d.precioDesde)}.`;
+---
+
+<Layout titulo={`${d.nombre} — ${site.marca}`} descripcion={descripcion} imagen={og.src}>
+  <article class="px-5 py-12 sm:px-8">
+    <div class="mx-auto max-w-7xl">
+      <a href="/#nino" class="text-[15px] text-ink-soft no-underline hover:text-ink">
+        ← Lino para los pequeños
+      </a>
+
+      <div class="mt-8 grid items-start gap-x-14 gap-y-10 lg:grid-cols-[1.15fr_1fr]">
+        <div class="grid gap-3">
+          {
+            galeria.map((foto, i) => (
+              <Image
+                src={foto}
+                alt={
+                  i === 0
+                    ? `${d.nombre}, camisa y pantalón.`
+                    : `${d.nombre}, otra vista del conjunto.`
+                }
+                widths={[480, 768, 1100]}
+                sizes="(min-width: 1024px) 44rem, 100vw"
+                class="w-full bg-panel"
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            ))
+          }
+        </div>
+
+        <div class="lg:sticky lg:top-24">
+          <h1 class="font-display text-[clamp(2.25rem,6vw,3.5rem)]">{d.nombre}</h1>
+          <p class="mt-3 font-display text-2xl">Desde {precio(d.precioDesde)}</p>
+
+          <dl class="filete mt-8 grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 pt-6 text-[15px]">
+            <dt class="text-ink-soft">Material</dt>
+            <dd>{d.material}</dd>
+            <dt class="text-ink-soft">Tallas</dt>
+            <dd>De {d.tallas}</dd>
+            <dt class="text-ink-soft">Plazo</dt>
+            <dd>Se cose por encargo, según la cola que haya</dd>
+          </dl>
+
+          <div class="mt-8">
+            <label class="block text-[15px]">
+              Talla
+              <select
+                class="mt-2 block w-full border border-line bg-paper px-4 py-3 sm:w-48"
+                data-talla
+              >
+                {tallas.map((t) => <option value={t}>{t} años</option>)}
+              </select>
+            </label>
+
+            <button
+              type="button"
+              class="boton mt-6 w-full sm:w-auto"
+              data-anadir-conjunto
+              data-slug={conjunto.id}
+              data-nombre={d.nombre}
+              data-precio={d.precioDesde}
+            >
+              Añadir al pedido
+            </button>
+
+            <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">
+              El precio es orientativo: depende de la talla y de la tela. Lo cerráis por
+              WhatsApp antes de que empiece a cortar. Al ser una prenda hecha a tu medida,
+              queda fuera del derecho de devolución.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<script>
+  import { anadir, contiene, quitar, suscribir } from '../../lib/carrito';
+
+  const boton = document.querySelector<HTMLButtonElement>('[data-anadir-conjunto]');
+  const talla = document.querySelector<HTMLSelectElement>('[data-talla]');
+
+  if (boton && talla) {
+    const linea = () => ({
+      id: `${boton.dataset.slug}-t${talla.value}`,
+      nombre: `${boton.dataset.nombre} (talla ${talla.value})`,
+      precio: Number(boton.dataset.precio),
+      detalle: 'Cosido a mano por encargo',
+      url: window.location.pathname,
+      orientativo: true,
+    });
+
+    const pintar = () => {
+      boton.textContent = contiene(linea().id) ? 'Quitar del pedido' : 'Añadir al pedido';
+    };
+
+    boton.addEventListener('click', () => {
+      const l = linea();
+      if (contiene(l.id)) {
+        quitar(l.id);
+      } else {
+        anadir(l);
+        document.querySelector<HTMLDialogElement>('[data-carrito]')?.showModal();
+      }
+    });
+
+    talla.addEventListener('change', pintar);
+    suscribir(pintar);
+  }
+</script>

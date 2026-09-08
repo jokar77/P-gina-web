@@ -1,0 +1,201 @@
+---
+/**
+ * Panel del pedido. Reúne las piezas y las entrega escritas por WhatsApp: no cobra.
+ * Vive en el layout, así que cualquier página puede añadir con un botón [data-anadir].
+ */
+---
+
+<dialog
+  data-carrito
+  class="oscuro m-0 ml-auto h-dvh max-h-none w-full max-w-[26rem] p-0"
+  aria-label="Tu pedido"
+>
+  <div class="flex h-full flex-col">
+    <div class="flex items-baseline gap-4 px-6 pt-7 pb-5">
+      <h2 class="font-display text-2xl">Tu pedido</h2>
+      <button type="button" class="ml-auto text-[15px] underline" data-cerrar-carrito>Cerrar</button>
+    </div>
+
+    <p class="px-6 pb-6 text-[15px] text-paper/70" data-carrito-vacio>
+      Todavía no has añadido nada. Cada pieza es única: cuando añadas una, aquí verás el
+      resumen que le llega a Sakina.
+    </p>
+
+    <ul class="flex-1 overflow-y-auto px-6" data-carrito-lista></ul>
+
+    <div class="border-t border-paper/20 px-6 py-6" data-carrito-pie hidden>
+      <div class="flex items-baseline justify-between gap-4">
+        <span class="text-[15px] text-paper/70">Total</span>
+        <span class="font-display text-2xl" data-carrito-total></span>
+      </div>
+      <p class="mt-1 text-[13px] text-paper/60" data-carrito-aviso hidden>
+        Orientativo: las piezas por encargo se cierran hablando.
+      </p>
+      <p class="mt-4 text-[14px] text-paper/70">
+        El envío se calcula al confirmar. No se paga nada aquí: Sakina te contesta y lo
+        acordáis por WhatsApp.
+      </p>
+      <a class="boton boton-claro mt-5 w-full" data-carrito-enviar href="#">Enviar por WhatsApp</a>
+      <button type="button" class="mt-3 w-full text-[14px] underline" data-carrito-vaciar>
+        Vaciar el pedido
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  dialog[data-carrito] {
+    border: 0;
+    transform: translateX(100%);
+    transition:
+      transform 340ms var(--ease-salida),
+      overlay 340ms allow-discrete,
+      display 340ms allow-discrete;
+  }
+  dialog[data-carrito][open] {
+    transform: translateX(0);
+  }
+  @starting-style {
+    dialog[data-carrito][open] {
+      transform: translateX(100%);
+    }
+  }
+</style>
+
+<script>
+  import { anadir, contiene, hayOrientativos, leer, quitar, suscribir, total, vaciar } from '../lib/carrito';
+  import type { Linea } from '../lib/carrito';
+  import { precio } from '../lib/formato';
+  import site from '../data/site.json';
+
+  const panel = document.querySelector<HTMLDialogElement>('[data-carrito]');
+  const lista = document.querySelector<HTMLUListElement>('[data-carrito-lista]');
+  const pie = document.querySelector<HTMLElement>('[data-carrito-pie]');
+  const vacio = document.querySelector<HTMLElement>('[data-carrito-vacio]');
+  const marcaTotal = document.querySelector<HTMLElement>('[data-carrito-total]');
+  const aviso = document.querySelector<HTMLElement>('[data-carrito-aviso]');
+  const enviar = document.querySelector<HTMLAnchorElement>('[data-carrito-enviar]');
+
+  function mensaje(lineas: Linea[]) {
+    const cuerpo = lineas
+      .map((l) => {
+        const cabeza = `· ${l.nombre} — ${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
+        return l.detalle ? `${cabeza}\n  ${l.detalle}` : cabeza;
+      })
+      .join('\n');
+    const cierre = `Total: ${precio(total())}${hayOrientativos() ? ' (orientativo)' : ''}`;
+    return `Hola Sakina, me gustaría encargar:\n\n${cuerpo}\n\n${cierre}`;
+  }
+
+  function pintar(lineas: Linea[]) {
+    // Contador de la barra de navegación.
+    const cuenta = document.querySelector<HTMLElement>('[data-cuenta-carrito]');
+    const cuentaTexto = document.querySelector<HTMLElement>('[data-cuenta-texto]');
+    if (cuenta) {
+      cuenta.textContent = String(lineas.length);
+      cuenta.hidden = lineas.length === 0;
+    }
+    if (cuentaTexto) {
+      cuentaTexto.textContent =
+        lineas.length === 0
+          ? 'vacío'
+          : lineas.length === 1
+            ? '1 pieza'
+            : `${lineas.length} piezas`;
+    }
+
+    // Botones de añadir repartidos por la página.
+    for (const boton of document.querySelectorAll<HTMLButtonElement>('[data-anadir]')) {
+      const linea = JSON.parse(boton.dataset.anadir!) as Linea;
+      const dentro = contiene(linea.id);
+      boton.textContent = dentro ? 'Quitar del pedido' : (boton.dataset.etiqueta ?? 'Añadir al pedido');
+      boton.dataset.dentro = String(dentro);
+    }
+
+    if (!lista || !pie || !vacio || !marcaTotal || !enviar) return;
+
+    lista.replaceChildren(
+      ...lineas.map((l) => {
+        const li = document.createElement('li');
+        li.className = 'flex gap-4 border-b border-paper/15 py-4 last:border-0';
+
+        const texto = document.createElement('div');
+        texto.className = 'flex-1';
+
+        const nombre = document.createElement('p');
+        nombre.className = 'font-display text-lg';
+        if (l.url) {
+          const a = document.createElement('a');
+          a.href = l.url;
+          a.textContent = l.nombre;
+          a.className = 'no-underline hover:underline';
+          nombre.append(a);
+        } else {
+          nombre.textContent = l.nombre;
+        }
+        texto.append(nombre);
+
+        if (l.detalle) {
+          const det = document.createElement('p');
+          det.className = 'mt-0.5 text-[14px] text-paper/65';
+          det.textContent = l.detalle;
+          texto.append(det);
+        }
+
+        const derecha = document.createElement('div');
+        derecha.className = 'flex flex-col items-end gap-2';
+
+        const p = document.createElement('span');
+        p.className = 'whitespace-nowrap';
+        p.textContent = precio(l.precio) + (l.orientativo ? ' *' : '');
+        derecha.append(p);
+
+        const fuera = document.createElement('button');
+        fuera.type = 'button';
+        fuera.className = 'text-[14px] text-paper/65 underline hover:text-paper';
+        fuera.textContent = 'Quitar';
+        fuera.setAttribute('aria-label', `Quitar ${l.nombre} del pedido`);
+        fuera.addEventListener('click', () => quitar(l.id));
+        derecha.append(fuera);
+
+        li.append(texto, derecha);
+        return li;
+      })
+    );
+
+    const hay = lineas.length > 0;
+    pie.hidden = !hay;
+    vacio.hidden = hay;
+    marcaTotal.textContent = precio(total());
+    if (aviso) aviso.hidden = !hayOrientativos();
+    enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
+  }
+
+  suscribir(pintar);
+
+  // Delegación: sirve para los botones que ya están y para los que se pinten después.
+  document.addEventListener('click', (e) => {
+    const boton = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-anadir]');
+    if (!boton) return;
+    const linea = JSON.parse(boton.dataset.anadir!) as Linea;
+    if (contiene(linea.id)) {
+      quitar(linea.id);
+    } else {
+      anadir(linea);
+      panel?.showModal();
+    }
+  });
+
+  for (const b of document.querySelectorAll('[data-abrir-carrito]')) {
+    b.addEventListener('click', () => panel?.showModal());
+  }
+  document.querySelector('[data-cerrar-carrito]')?.addEventListener('click', () => panel?.close());
+  document.querySelector('[data-carrito-vaciar]')?.addEventListener('click', () => vaciar());
+
+  // Clic en el fondo oscuro: el dialog ocupa media pantalla, el resto es backdrop.
+  panel?.addEventListener('click', (e) => {
+    if (e.target === panel) panel.close();
+  });
+
+  pintar(leer());
+</script>

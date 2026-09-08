@@ -6,6 +6,7 @@ export const COLORES = {
   teja: { nombre: 'Teja', muestra: '#D07850' },
   amarillo: { nombre: 'Amarillo', muestra: '#F5B301' },
   crudo: { nombre: 'Crudo', muestra: '#E4D8C4' },
+  dorado: { nombre: 'Dorado', muestra: '#B0A06B' },
   chocolate: { nombre: 'Chocolate', muestra: '#493428' },
   gris: { nombre: 'Gris', muestra: '#B6B2AE' },
   bicolor: {

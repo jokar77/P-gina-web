@@ -1,0 +1,176 @@
+---
+import { getCollection } from 'astro:content';
+import { COLORES, type ColorId } from '../data/colores';
+import FichaCard from './FichaCard.astro';
+
+const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
+
+// Solo se ofrecen como filtro los colores que existen de verdad en el catálogo.
+const usados = [...new Set(bolsos.map((b) => b.data.color))] as ColorId[];
+const filtros = (Object.keys(COLORES) as ColorId[]).filter((c) => usados.includes(c));
+const vendidos = bolsos.filter((b) => b.data.estado === 'vendido').length;
+---
+
+<section id="bolsos" class="scroll-mt-20 px-5 py-section sm:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">La colección</h2>
+      <p class="max-w-[52ch] text-ink-soft">
+        Entre ocho y doce horas de trabajo por pieza, así que hay pocas y ninguna se repite
+        igual. Las que ya tienen dueña se quedan aquí: {vendidos} de {bolsos.length}.
+      </p>
+    </div>
+
+    <div class="filete mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 pt-6">
+      <div class="flex flex-wrap items-center gap-2.5" role="group" aria-label="Filtrar por color">
+        <button
+          type="button"
+          class="muestra muestra-todo"
+          data-color="todo"
+          aria-pressed="true"
+          title="Todos los colores">Todos</button
+        >
+        {
+          filtros.map((c) => (
+            <button
+              type="button"
+              class="muestra"
+              data-color={c}
+              aria-pressed="false"
+              style={`--muestra:${COLORES[c].muestra}`}
+              title={COLORES[c].nombre}
+            >
+              <span class="sr-only">{COLORES[c].nombre}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <label class="ml-auto flex cursor-pointer items-center gap-2.5 text-[15px]">
+        <input type="checkbox" class="sr-only" data-solo-disponibles />
+        <span class="interruptor" aria-hidden="true"><span class="pomo"></span></span>
+        Solo disponibles
+      </label>
+    </div>
+
+    <div
+      class="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-7 lg:grid-cols-3 lg:gap-x-9"
+      data-rejilla
+    >
+      {
+        bolsos.map((b, i) => (
+          <FichaCard
+            href={`/bolsos/${b.id}`}
+            nombre={b.data.nombre}
+            foto={b.data.foto}
+            alt={`Bolso ${b.data.nombre}: ${b.data.material.toLowerCase()}.`}
+            estado={b.data.estado}
+            precioNum={b.data.precio}
+            color={b.data.color}
+            cargaDiferida={i > 2}
+          />
+        ))
+      }
+    </div>
+
+    <p class="mt-10 hidden text-ink-soft" data-sin-resultados>
+      No hay piezas de ese color disponibles ahora mismo. Prueba con otro, o
+      <a href="#disena">encarga una a tu gusto</a>.
+    </p>
+  </div>
+</section>
+
+<style>
+  .muestra {
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px;
+    background: var(--muestra);
+    box-shadow: inset 0 0 0 1px rgb(31 29 27 / 0.16);
+    transition:
+      transform 200ms var(--ease-salida),
+      box-shadow 200ms var(--ease-salida);
+  }
+  .muestra:hover {
+    transform: scale(1.1);
+  }
+  .muestra[aria-pressed='true'] {
+    box-shadow:
+      inset 0 0 0 1px rgb(31 29 27 / 0.16),
+      0 0 0 2px var(--color-paper),
+      0 0 0 3.5px var(--color-ink);
+  }
+  .muestra-todo {
+    width: auto;
+    padding: 0 14px;
+    font-size: 15px;
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+
+  .interruptor {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    border-radius: 9999px;
+    background-color: color-mix(in srgb, var(--color-line) 55%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent);
+    transition: background-color 220ms var(--ease-salida);
+  }
+  .pomo {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background-color: var(--color-paper);
+    box-shadow: 0 1px 3px rgb(31 29 27 / 0.28);
+    transition: transform 220ms var(--ease-salida);
+  }
+  input:checked + .interruptor {
+    background-color: var(--color-deep);
+  }
+  input:checked + .interruptor .pomo {
+    transform: translateX(18px);
+  }
+  input:focus-visible + .interruptor {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  const rejilla = document.querySelector<HTMLElement>('[data-rejilla]');
+  const muestras = [...document.querySelectorAll<HTMLButtonElement>('.muestra')];
+  const soloDisponibles = document.querySelector<HTMLInputElement>('[data-solo-disponibles]');
+  const sinResultados = document.querySelector<HTMLElement>('[data-sin-resultados]');
+
+  if (rejilla && soloDisponibles && sinResultados) {
+    let color = 'todo';
+
+    const filtrar = () => {
+      let visibles = 0;
+      for (const pieza of rejilla.querySelectorAll<HTMLElement>('[data-pieza]')) {
+        const pasaColor = color === 'todo' || pieza.dataset.color === color;
+        const pasaEstado = !soloDisponibles.checked || pieza.dataset.estado === 'disponible';
+        const visible = pasaColor && pasaEstado;
+        pieza.hidden = !visible;
+        if (visible) visibles++;
+      }
+      sinResultados.classList.toggle('hidden', visibles > 0);
+    };
+
+    for (const m of muestras) {
+      m.addEventListener('click', () => {
+        color = m.dataset.color!;
+        for (const otra of muestras) {
+          otra.setAttribute('aria-pressed', String(otra === m));
+        }
+        filtrar();
+      });
+    }
+
+    soloDisponibles.addEventListener('change', filtrar);
+  }
+</script>

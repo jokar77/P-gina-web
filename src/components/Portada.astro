@@ -1,0 +1,164 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import grupo from '../assets/piezas/_portada/grupo.jpg';
+import { ZONAS } from '../data/portada';
+import site from '../data/site.json';
+import { precio } from '../lib/formato';
+
+const bolsos = await getCollection('bolsos');
+const porSlug = new Map(bolsos.map((b) => [b.id, b]));
+
+const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter(
+  (e): e is { zona: (typeof ZONAS)[number]; pieza: (typeof bolsos)[number] } => !!e.pieza
+);
+---
+
+<section id="inicio" class="px-5 pt-10 pb-section sm:px-8">
+  <div class="mx-auto max-w-3xl text-center">
+    <h1 class="font-display text-[clamp(2.75rem,9vw,5.5rem)]">{site.marca}</h1>
+    <p class="mx-auto mt-5 max-w-[46ch] text-lg text-ink-soft">{site.frasePortada}</p>
+  </div>
+
+  <figure class="relative mx-auto mt-12 w-full max-w-[46rem]" data-mapa>
+    <Image
+      src={grupo}
+      alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
+      widths={[560, 760, 928]}
+      sizes="(min-width: 768px) 46rem, 100vw"
+      class="w-full"
+      loading="eager"
+      fetchpriority="high"
+    />
+
+    <div class="pointer-events-none absolute inset-0" data-foco aria-hidden="true"></div>
+
+    {
+      zonas.map(({ zona, pieza }, i) => (
+        <a
+          class="zona"
+          href={`/bolsos/${zona.slug}`}
+          style={`--x:${zona.x}%;--y:${zona.y}%;--w:${zona.w}%;--h:${zona.h}%;--fw:${zona.w * 0.62}%;--fh:${zona.h * 0.62}%;--i:${i}`}
+          data-zona
+          data-nombre={pieza.data.nombre}
+          data-precio={pieza.data.estado === 'vendido' ? 'Vendido' : precio(pieza.data.precio)}
+        >
+          <span class="marca" aria-hidden="true" />
+          <span class="sr-only">
+            {pieza.data.nombre},{' '}
+            {pieza.data.estado === 'vendido' ? 'vendido' : precio(pieza.data.precio)}
+          </span>
+        </a>
+      ))
+    }
+
+    <figcaption class="mt-5 text-center" data-pie>
+      <span class="text-[15px] text-ink-soft transition-opacity duration-200" data-pie-texto>
+        Toca cualquier pieza de la foto para verla de cerca.
+      </span>
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .zona {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    height: var(--h);
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+  }
+
+  .marca {
+    width: 13px;
+    height: 13px;
+    border-radius: 9999px;
+    background-color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+    box-shadow: 0 1px 6px rgb(31 29 27 / 0.35);
+    opacity: 0;
+    transform: scale(0.4);
+    animation: asentar 620ms var(--ease-salida) forwards;
+    animation-delay: calc(700ms + var(--i) * 70ms);
+    transition:
+      transform 260ms var(--ease-salida),
+      background-color 260ms var(--ease-salida);
+  }
+
+  @keyframes asentar {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .zona:hover .marca,
+  .zona:focus-visible .marca {
+    transform: scale(1.55);
+    background-color: var(--color-paper);
+  }
+
+  /* El velo aparta el resto de la foto sin llegar a borrarlo: sigue siendo una foto. */
+  [data-foco] {
+    background: radial-gradient(
+      ellipse var(--fw, 20%) var(--fh, 20%) at var(--fx, 50%) var(--fy, 50%),
+      transparent 0 62%,
+      color-mix(in srgb, var(--color-paper) 55%, transparent) 100%
+    );
+    opacity: 0;
+    transition: opacity 300ms var(--ease-salida);
+  }
+
+  [data-mapa][data-activa] [data-foco] {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marca {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const mapa = document.querySelector<HTMLElement>('[data-mapa]');
+  const foco = document.querySelector<HTMLElement>('[data-foco]');
+  const texto = document.querySelector<HTMLElement>('[data-pie-texto]');
+
+  if (mapa && foco && texto) {
+    // El pie de foto dice qué hacer hasta que señalas algo, y entonces dice qué es.
+    const instruccion = texto.textContent!.trim();
+
+    const entrar = (zona: HTMLElement) => {
+      const estilo = zona.style;
+      for (const prop of ['--fw', '--fh'] as const) {
+        foco.style.setProperty(prop, estilo.getPropertyValue(prop));
+      }
+      foco.style.setProperty('--fx', estilo.getPropertyValue('--x'));
+      foco.style.setProperty('--fy', estilo.getPropertyValue('--y'));
+      texto.textContent = `${zona.dataset.nombre} · ${zona.dataset.precio}`;
+      texto.classList.add('text-ink');
+      texto.classList.remove('text-ink-soft');
+      mapa.setAttribute('data-activa', '');
+    };
+
+    const salir = () => {
+      mapa.removeAttribute('data-activa');
+      texto.textContent = instruccion;
+      texto.classList.remove('text-ink');
+      texto.classList.add('text-ink-soft');
+    };
+
+    for (const zona of mapa.querySelectorAll<HTMLElement>('[data-zona]')) {
+      zona.addEventListener('pointerenter', () => entrar(zona));
+      zona.addEventListener('focus', () => entrar(zona));
+      zona.addEventListener('pointerleave', salir);
+      zona.addEventListener('blur', salir);
+    }
+  }
+</script>
