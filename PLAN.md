@@ -15,10 +15,12 @@ servidor ni base de datos.
 
 - 11 bolsos y 2 conjuntos de niño, **cada uno con su página propia** y etiquetas Open
   Graph, para que el enlace compartido por WhatsApp llegue con miniatura.
-- Portada interactiva: la foto de grupo es un mapa, cada bolso lleva a su página.
+- Portada interactiva: la foto de grupo es un mapa, cada bolso lleva a su página, y debajo
+  una tira a sangre con las once piezas que se desliza sola y se arrastra con el dedo.
 - Rejilla con filtros por color y conmutador de disponibles.
 - Configurador de encargo con fotos reales.
-- Carrito que reúne el pedido entre páginas y lo entrega escrito por WhatsApp. **No cobra.**
+- Carrito que reúne el pedido entre páginas, calcula el envío según recogida o domicilio, y
+  lo entrega escrito por WhatsApp con la dirección si se ha rellenado. **No cobra.**
 - Contenido en archivos del repositorio con esquema tipado, listo para un CMS de formularios.
 
 Verificado con navegador real: recorrido completo de portada → ficha → carrito →

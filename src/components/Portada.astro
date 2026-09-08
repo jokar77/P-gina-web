@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import grupo from '../assets/piezas/_portada/grupo.jpg';
 import Marca from './Marca.astro';
+import Tira from './Tira.astro';
 import { ZONAS } from '../data/portada';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
@@ -65,6 +66,10 @@ const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter
       </span>
     </figcaption>
   </figure>
+
+  <div class="-mx-5 mt-14 sm:-mx-8">
+    <Tira />
+  </div>
 </section>
 
 <style>

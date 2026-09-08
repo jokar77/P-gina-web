@@ -1,0 +1,145 @@
+---
+/**
+ * Tira de piezas que se desliza sola bajo la foto de grupo.
+ *
+ * Enseña las once, incluidas las dos que no caben en el plano de grupo, y va a sangre por
+ * los dos lados: que se salga de la pantalla es lo que dice que hay más.
+ *
+ * Se arrastra con el dedo. El deslizamiento se para al tocarla o al señalarla, para que
+ * nadie tenga que perseguir un enlace en movimiento, y no arranca si el sistema pide
+ * menos animación.
+ */
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { precio } from '../lib/formato';
+
+const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
+
+// La lista va dos veces: así el bucle se cierra sin salto visible.
+const vuelta = [...bolsos, ...bolsos];
+---
+
+<div class="tira" data-tira aria-label="Todas las piezas">
+  <ul class="pista" data-pista>
+    {
+      vuelta.map((b, i) => {
+        const copia = i >= bolsos.length;
+        return (
+          <li class="pieza" aria-hidden={copia ? 'true' : undefined}>
+            <a href={`/bolsos/${b.id}`} class="block no-underline" tabindex={copia ? -1 : undefined}>
+              <Image
+                src={b.data.foto}
+                alt={copia ? '' : `Bolso ${b.data.nombre}`}
+                widths={[220, 440]}
+                sizes="13rem"
+                class="aspect-[3/4] w-full bg-panel object-cover"
+                loading="lazy"
+              />
+              <div class="mt-2 flex items-baseline justify-between gap-3 text-[15px]">
+                <span class="font-display text-lg">{b.data.nombre}</span>
+                <span class:list={[b.data.estado === 'vendido' && 'text-ink-soft']}>
+                  {b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio)}
+                </span>
+              </div>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>
+
+<style>
+  .tira {
+    overflow-x: auto;
+    /* El desplazamiento suave global pelearía con el que movemos a mano. */
+    scroll-behavior: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .tira::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pista {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    padding-inline: 20px;
+  }
+
+  .pieza {
+    width: 13rem;
+    flex: none;
+  }
+  .pieza img {
+    transition: transform 500ms var(--ease-salida);
+  }
+  .pieza a:hover img {
+    transform: scale(1.03);
+  }
+</style>
+
+<script>
+  const tira = document.querySelector<HTMLElement>('[data-tira]');
+  const pista = document.querySelector<HTMLElement>('[data-pista]');
+  const quieto = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  if (tira && pista && !quieto.matches) {
+    const VELOCIDAD = 22; // píxeles por segundo: a paso de mirar, no de pasar
+    let pausado = false;
+    let reanudar: ReturnType<typeof setTimeout>;
+    let anterior = performance.now();
+
+    /**
+     * La posición se lleva aquí, en coma flotante, y no se lee de scrollLeft.
+     * El navegador redondea scrollLeft, así que sumarle 0,35 px por fotograma y volver a
+     * leerlo daba siempre el mismo entero: la tira se quedaba clavada.
+     */
+    let pos = tira.scrollLeft;
+
+    const paso = (ahora: number) => {
+      const dt = Math.min((ahora - anterior) / 1000, 0.1);
+      anterior = ahora;
+
+      if (!pausado) {
+        const mitad = pista.scrollWidth / 2;
+        pos += VELOCIDAD * dt;
+        if (pos >= mitad) pos -= mitad; // el bucle se cierra al llegar a la copia
+        tira.scrollLeft = pos;
+      }
+      requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+
+    const parar = () => {
+      clearTimeout(reanudar);
+      pausado = true;
+    };
+    const seguir = (espera = 0) => {
+      clearTimeout(reanudar);
+      reanudar = setTimeout(() => {
+        // Retoma desde donde la haya dejado la persona, no desde donde iba sola.
+        pos = tira.scrollLeft;
+        anterior = performance.now();
+        pausado = false;
+      }, espera);
+    };
+
+    // Señalar o enfocar la para: nadie debería perseguir un enlace en movimiento.
+    tira.addEventListener('pointerenter', parar);
+    tira.addEventListener('pointerleave', () => seguir());
+    tira.addEventListener('focusin', parar);
+    tira.addEventListener('focusout', () => seguir());
+
+    // Al arrastrarla con el dedo se para, y tarda en volver a arrancar.
+    tira.addEventListener('touchstart', parar, { passive: true });
+    tira.addEventListener('touchend', () => seguir(2500), { passive: true });
+
+    // Si la pestaña se va a segundo plano, el reloj se queda parado y daría un salto.
+    document.addEventListener('visibilitychange', () => {
+      anterior = performance.now();
+    });
+  }
+</script>
