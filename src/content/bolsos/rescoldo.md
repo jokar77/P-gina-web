@@ -1,9 +1,9 @@
 ---
-nombre: "Rescoldo"
-color: teja
-precio: 58
+nombre: Rescoldo
+precio: 25
 estado: disponible
-material: "Algodón con lentejuelas, monedero a juego"
+color: teja
+material: Algodón con lentejuelas, monedero a juego
 ancho: 30
 alto: 18
 orden: 5
