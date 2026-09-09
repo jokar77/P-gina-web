@@ -1,6 +1,6 @@
 ---
 nombre: Cacao
-precio: 60
+precio: 25
 estado: disponible
 color: chocolate
 material: Lana suave, ribete y asa en crudo
