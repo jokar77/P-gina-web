@@ -1,9 +1,9 @@
 ---
-nombre: "Amapola"
-color: rojo
-precio: 65
+nombre: Amapola
+precio: 25
 estado: disponible
-material: "Lana con brillo, flores cosidas a mano"
+color: rojo
+material: Lana con brillo, flores cosidas a mano
 ancho: 27
 alto: 24
 orden: 3
