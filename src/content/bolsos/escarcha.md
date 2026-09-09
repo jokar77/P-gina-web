@@ -1,9 +1,9 @@
 ---
-nombre: "Escarcha"
-color: gris
-precio: 68
+nombre: Escarcha
+precio: 30
 estado: disponible
-material: "Lana con lentejuelas, monedero a juego"
+color: gris
+material: Lana con lentejuelas, monedero a juego
 ancho: 28
 alto: 22
 orden: 1

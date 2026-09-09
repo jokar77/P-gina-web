@@ -1,9 +1,9 @@
 ---
-nombre: "Duna"
-color: crudo
-precio: 55
+nombre: Duna
+precio: 25
 estado: disponible
-material: "Trapillo grueso, sin asa"
+color: crudo
+material: Trapillo grueso, sin asa
 ancho: 32
 alto: 20
 orden: 9

@@ -1,9 +1,9 @@
 ---
-nombre: "Espiga"
-color: dorado
-precio: 58
+nombre: Espiga
+precio: 30
 estado: disponible
-material: "Hilo dorado, forro interior de tela"
+color: dorado
+material: Hilo dorado, forro interior de tela
 ancho: 26
 alto: 18
 orden: 8

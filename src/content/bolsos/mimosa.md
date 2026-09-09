@@ -1,9 +1,9 @@
 ---
-nombre: "Mimosa"
-color: amarillo
-precio: 62
+nombre: Mimosa
+precio: 25
 estado: disponible
-material: "Trapillo, punto abierto"
+color: amarillo
+material: Trapillo, punto abierto
 ancho: 30
 alto: 24
 orden: 7

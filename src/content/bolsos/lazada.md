@@ -1,9 +1,9 @@
 ---
-nombre: "Lazada"
-color: coral
-precio: 64
+nombre: Lazada
+precio: 25
 estado: disponible
-material: "Trapillo grueso, lazada lateral, asa de hombro"
+color: coral
+material: Trapillo grueso, lazada lateral, asa de hombro
 ancho: 28
 alto: 22
 orden: 6

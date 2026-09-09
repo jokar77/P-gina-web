@@ -1,9 +1,9 @@
 ---
-nombre: "Cacao"
+nombre: Cacao
+precio: 25
+estado: disponible
 color: chocolate
-precio: 60
-estado: vendido
-material: "Lana suave, ribete y asa en crudo"
+material: Lana suave, ribete y asa en crudo
 ancho: 30
 alto: 22
 orden: 11

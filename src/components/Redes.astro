@@ -6,7 +6,7 @@
  * Los iconos están dibujados aquí, con el mismo trazo y el mismo tamaño de caja, para
  * que se lean como una familia y no como cuatro logos pegados de sitios distintos.
  */
-import site from '../data/site.json';
+import { opcional } from '../lib/ajustes';
 import { enlaceWhatsapp } from '../lib/whatsapp';
 
 interface Props {
@@ -21,9 +21,9 @@ const redes = [
     href: enlaceWhatsapp('Hola Sakina, te escribo desde la web.'),
     activa: true,
   },
-  { nombre: 'Instagram', href: site.instagram, activa: !!site.instagram },
-  { nombre: 'TikTok', href: site.tiktok, activa: !!site.tiktok },
-  { nombre: 'YouTube', href: site.youtube, activa: !!site.youtube },
+  { nombre: 'Instagram', href: opcional('instagram'), activa: !!opcional('instagram') },
+  { nombre: 'TikTok', href: opcional('tiktok'), activa: !!opcional('tiktok') },
+  { nombre: 'YouTube', href: opcional('youtube'), activa: !!opcional('youtube') },
 ].filter((r) => r.activa);
 ---
 
