@@ -1,9 +1,9 @@
 ---
-nombre: "Vendimia"
-color: granate
-precio: 66
+nombre: Vendimia
+precio: 25
 estado: disponible
-material: "Trapillo jaspeado, flor lateral"
+color: granate
+material: Trapillo jaspeado, flor lateral
 ancho: 28
 alto: 23
 orden: 4
