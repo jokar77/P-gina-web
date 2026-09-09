@@ -1,6 +1,6 @@
 ---
 nombre: Dominó
-precio: 72
+precio: 25
 estado: disponible
 color: bicolor
 material: Trapillo jaspeado en crudo y negro
