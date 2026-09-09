@@ -16,7 +16,7 @@ import { precio } from '../lib/formato';
 const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
 ---
 
-<div class="tira" data-tira aria-label="Todas las piezas">
+<section class="tira" data-tira aria-label="Todas las piezas">
   <ul class="pista" data-pista>
     {
       bolsos.map((b) => (
@@ -24,7 +24,7 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
           <a href={`/bolsos/${b.id}`} class="block no-underline">
             <Image
               src={b.data.foto}
-              alt={`Bolso ${b.data.nombre}`}
+              alt=""
               widths={[220, 440]}
               sizes="13rem"
               class="aspect-[3/4] w-full bg-panel object-cover"
@@ -41,7 +41,7 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
       ))
     }
   </ul>
-</div>
+</section>
 
 <style>
   .tira {
@@ -59,6 +59,8 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
   .pista {
     display: flex;
     gap: 20px;
+    /* Aire para que el anillo de foco no lo recorte el overflow del contenedor. */
+    padding-block: 6px;
     width: max-content;
     padding-inline: 20px;
   }
@@ -94,11 +96,14 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
     let pos = tira.scrollLeft;
 
     /**
-     * Va y vuelve en lugar de dar la vuelta en bucle. Un bucle sin costura obliga a pintar
-     * la lista dos veces, y entonces cada bolso sale dos veces en la tira. Yendo y
-     * volviendo, cada pieza aparece una sola vez.
+     * Una sola pasada y se queda quieta.
+     *
+     * No es solo gusto: un movimiento automático que no para nunca incumple la WCAG
+     * 2.2.2, que exige poder detenerlo. Respetar `prefers-reduced-motion` no basta,
+     * porque casi nadie la lleva activada. Parándose sola se cumple sin añadir un botón
+     * de pausa que aquí sobraría, y a partir de ahí la tira sigue arrastrándose a mano.
      */
-    let sentido = 1;
+    let terminado = false;
 
     const parar = () => {
       clearTimeout(reanudar);
@@ -122,23 +127,16 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
       const tope = pista.scrollWidth - tira.clientWidth;
 
       // Si caben todas a la vez no hay nada que desplazar.
-      if (!pausado && tope > 1) {
-        pos += VELOCIDAD * dt * sentido;
-
+      if (!pausado && !terminado && tope > 1) {
+        pos += VELOCIDAD * dt;
         if (pos >= tope) {
           pos = tope;
-          sentido = -1;
-          parar();
-          seguir(1200); // un respiro en el extremo: parece intención, no rebote
-        } else if (pos <= 0) {
-          pos = 0;
-          sentido = 1;
-          parar();
-          seguir(1200);
+          terminado = true;
         }
         tira.scrollLeft = pos;
       }
-      requestAnimationFrame(paso);
+
+      if (!terminado) requestAnimationFrame(paso);
     };
     requestAnimationFrame(paso);
 

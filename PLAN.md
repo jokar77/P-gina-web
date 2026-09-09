@@ -159,7 +159,13 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
       a su Gmail (recibir es gratis; enviar desde esa dirección ya pide más).
 - [ ] **Stripe**, solo cuando §4 esté resuelto. Se enchufa sin rehacer nada. En torno al
       1,5 % + 0,25 € por operación con tarjetas europeas.
-- [ ] Repaso de accesibilidad con lector de pantalla y navegación solo con teclado.
+- [x] **Auditoría de accesibilidad hecha** y aplicado lo medible: contraste del pie
+      (4,16 → 5,25:1, verificado sobre píxeles), zonas de toque por encima de 24 px,
+      anillo de foco sin recortar en la tira, y la tira ya no se mueve sin parar
+      (WCAG 2.2.2). Pendientes tres decisiones de diseño, no fallos:
+      el bloque de dirección no se ve en pantallas de 320 px sin desplazar mucho;
+      el configurador deja añadir el mismo encargo dos veces sin avisar; y los filtros
+      de color no dicen cuántas piezas quedan.
 - [ ] El ASCII del logo (`src/assets/marca/ascii.jpg`) como comentario en el código fuente,
       si gusta la idea. Está sin usar.
 

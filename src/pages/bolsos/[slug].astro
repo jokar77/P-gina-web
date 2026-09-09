@@ -54,7 +54,7 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho
 <Layout titulo={`${d.nombre} — ${site.marca}`} descripcion={descripcion} imagen={og.src}>
   <article class="px-5 py-12 sm:px-8">
     <div class="mx-auto max-w-7xl">
-      <a href="/#bolsos" class="text-[15px] text-ink-soft no-underline hover:text-ink">
+      <a href="/#bolsos" class="-ml-1 inline-block px-1 py-2 text-[15px] text-ink-soft no-underline hover:text-ink">
         ← La colección
       </a>
 
@@ -142,8 +142,8 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho
                   </button>
                   <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">
                     Esta ya tiene dueña. Se queda aquí porque es parte del trabajo, y porque
-                    se puede tejer otra parecida: nunca sale idéntica, y por eso el precio
-                    es orientativo hasta que lo habléis.
+                    se puede tejer otra parecida: nunca sale idéntica. Partiría de{' '}
+                    {precio(d.precio)}, orientativo hasta que lo habléis.
                   </p>
                 </>
               ) : (
