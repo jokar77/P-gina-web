@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { COLORES, type ColorId } from '../data/colores';
 import FichaCard from './FichaCard.astro';
+import site from '../data/site.json';
 
 const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
 
@@ -9,16 +10,22 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
 const usados = [...new Set(bolsos.map((b) => b.data.color))] as ColorId[];
 const filtros = (Object.keys(COLORES) as ColorId[]).filter((c) => usados.includes(c));
 const vendidos = bolsos.filter((b) => b.data.estado === 'vendido').length;
+
+/**
+ * El texto lo escribe Sakina desde el formulario, pero el recuento tiene que salir solo:
+ * si lo escribiera a mano se quedaría viejo en cuanto vendiera una pieza.
+ */
+const seccion = site.secciones.bolsos;
+const intro = seccion.intro
+  .replaceAll('{vendidos}', String(vendidos))
+  .replaceAll('{total}', String(bolsos.length));
 ---
 
 <section id="bolsos" class="scroll-mt-20 px-5 py-section sm:px-8">
   <div class="mx-auto max-w-7xl">
     <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Bolsos</h2>
-      <p class="max-w-[52ch] text-ink-soft">
-        Entre ocho y doce horas de trabajo por pieza, así que hay pocas y ninguna se repite
-        igual. Las que ya tienen dueña se quedan aquí: {vendidos} de {bolsos.length}.
-      </p>
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{seccion.titulo}</h2>
+      <p class="max-w-[52ch] text-ink-soft">{intro}</p>
     </div>
 
     <div class="filete mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 pt-6">

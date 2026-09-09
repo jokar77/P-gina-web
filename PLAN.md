@@ -138,6 +138,16 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
 - [x] **Configuración del CMS escrita** en `.pages.yml`: formularios para las piezas, los
       conjuntos, los textos de la web y los precios del configurador. Validada contra el
       esquema real de `content.config.ts` — ningún campo falta ni sobra.
+- [x] **Los títulos y las entradillas de las tres secciones** (bolsos, niño, diseña tu
+      bolso) salen ya de `site.json` y no del componente, así que se editan desde el
+      formulario. El título de cada sección es además su nombre en el menú y en el pie:
+      un solo campo, tres sitios, sin que se queden discordando.
+      El recuento de vendidas se sigue calculando solo: en la entradilla se escriben
+      `{vendidos}` y `{total}` y se sustituyen al construir.
+- [ ] Quedan a propósito fuera del formulario los tres recuadros de «El taller» (envío,
+      pago, devoluciones): repiten lo que dicen las páginas legales, y si se editan por
+      separado acaban contradiciéndolas. Si hay que cambiarlos, se cambian junto con la
+      página legal correspondiente.
 - [ ] **Conectarlo**: cuenta de GitHub para Sakina, acceso al repositorio, y entrar en
       pagescms.org. Esa parte no se puede probar desde el entorno de trabajo, así que hay
       que comprobarla la primera vez con ella delante.

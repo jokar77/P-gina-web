@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import config from '../data/configurador.json';
 import { COLORES, type ColorId } from '../data/colores';
+import site from '../data/site.json';
 import tote from '../assets/piezas/mimosa/01.jpg';
 import hombro from '../assets/piezas/lazada/01.jpg';
 import sinAsa from '../assets/piezas/duna/01.jpg';
@@ -9,16 +10,14 @@ import sinAsa from '../assets/piezas/duna/01.jpg';
 // Cada forma se enseña con una pieza real ya hecha, no con un dibujo.
 const fotos: Record<string, ImageMetadata> = { tote, hombro, 'sin-asa': sinAsa };
 const colores = Object.entries(COLORES) as [ColorId, (typeof COLORES)[ColorId]][];
+const seccion = site.secciones.disena;
 ---
 
 <section id="disena" class="oscuro scroll-mt-20 px-5 py-section sm:px-8">
   <div class="mx-auto max-w-7xl">
     <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Diseña tu bolso</h2>
-      <p class="max-w-[52ch] text-paper/70">
-        Elige la forma, el color y los detalles. El precio que sale es orientativo: se
-        cierra hablando, según el material que lleve y las horas que salgan.
-      </p>
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{seccion.titulo}</h2>
+      <p class="max-w-[52ch] text-paper/70">{seccion.intro}</p>
     </div>
 
     <form class="mt-12 grid gap-x-12 gap-y-10 lg:grid-cols-[1fr_20rem]" data-configurador>

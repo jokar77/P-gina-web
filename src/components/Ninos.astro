@@ -1,18 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
 import FichaCard from './FichaCard.astro';
+import site from '../data/site.json';
 
 const conjuntos = (await getCollection('ninos')).sort((a, b) => a.data.orden - b.data.orden);
+const seccion = site.secciones.nino;
 ---
 
 <section id="nino" class="scroll-mt-20 bg-panel px-5 py-section sm:px-8">
   <div class="mx-auto max-w-7xl">
     <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Lino para los pequeños</h2>
-      <p class="max-w-[52ch] text-ink-soft">
-        Camisa y pantalón cosidos a mano, de la talla 1 a la 6. Se hacen por encargo y a
-        medida, así que el plazo depende de la cola que haya.
-      </p>
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{seccion.titulo}</h2>
+      <p class="max-w-[52ch] text-ink-soft">{seccion.intro}</p>
     </div>
 
     <div class="mt-10 grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2">

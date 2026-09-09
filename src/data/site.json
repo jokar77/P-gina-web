@@ -6,6 +6,20 @@
   "youtube": "",
   "frasePortada": "Bolsos de ganchillo y lino cosido a mano. Piezas únicas, hechas de una en una.",
   "descripcion": "Bolsos de ganchillo hechos a mano en trapillo de algodón y lana, y conjuntos de lino cosidos a mano para niños. Piezas únicas.",
+  "secciones": {
+    "bolsos": {
+      "titulo": "Bolsos",
+      "intro": "Entre ocho y doce horas de trabajo por pieza, así que hay pocas y ninguna se repite igual. Las que ya tienen dueña se quedan aquí: {vendidos} de {total}."
+    },
+    "nino": {
+      "titulo": "Lino para los pequeños",
+      "intro": "Camisa y pantalón cosidos a mano, de la talla 1 a la 6. Se hacen por encargo y a medida, así que el plazo depende de la cola que haya."
+    },
+    "disena": {
+      "titulo": "Diseña tu bolso",
+      "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan."
+    }
+  },
   "taller": {
     "titulo": "El taller",
     "texto": "Cada bolso se teje entero de una vez, a mano y sin patrón cerrado: la forma se va decidiendo mientras crece. Entre ocho y doce horas por pieza, según el punto y el material. Por eso no hay dos iguales, y por eso hay pocos.\n\nEl trapillo es algodón; las lanas con lentejuelas se compran por partidas pequeñas, así que cuando se acaba un color, ese color se acaba. Los conjuntos de niño son lino lavado y algodón, cosidos por tallas.",

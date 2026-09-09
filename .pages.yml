@@ -152,6 +152,35 @@ content:
         label: Descripción para buscadores
         type: text
         description: Lo que se lee en Google y al compartir un enlace.
+      - name: secciones
+        label: Títulos y textos de las secciones
+        type: object
+        fields:
+          - name: bolsos
+            label: Sección de bolsos
+            type: object
+            fields:
+              - { name: titulo, label: Título, type: string }
+              - name: intro
+                label: Texto de al lado
+                type: text
+                description: >-
+                  Escribe {vendidos} y {total} donde quieras que salgan los números; se
+                  cuentan solos, así que nunca se quedan viejos.
+          - name: nino
+            label: Sección de niño
+            type: object
+            fields:
+              - { name: titulo, label: Título, type: string }
+              - { name: intro, label: Texto de al lado, type: text }
+          - name: disena
+            label: Sección de diseña tu bolso
+            type: object
+            fields:
+              - { name: titulo, label: Título, type: string }
+              - { name: intro, label: Texto de al lado, type: text }
+        description: El título de cada sección es también su nombre en el menú de arriba.
+
       - name: taller
         label: El taller
         type: object
