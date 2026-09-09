@@ -1,9 +1,9 @@
 ---
-nombre: "Marea"
-color: turquesa
-precio: 62
+nombre: Marea
+precio: 25
 estado: disponible
-material: "Trapillo de algodón, flecos largos"
+color: turquesa
+material: Trapillo de algodón, flecos largos
 ancho: 26
 alto: 20
 orden: 2
