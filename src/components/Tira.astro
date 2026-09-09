@@ -5,9 +5,12 @@
  * Enseña las once, incluidas las dos que no caben en el plano de grupo, y va a sangre por
  * los dos lados: que se salga de la pantalla es lo que dice que hay más.
  *
- * Se arrastra con el dedo. El deslizamiento se para al tocarla o al señalarla, para que
- * nadie tenga que perseguir un enlace en movimiento, y no arranca si el sistema pide
- * menos animación.
+ * Con el dedo se arrastra sola (desplazamiento nativo). Con ratón no había manera de
+ * moverla —la barra está oculta y la rueda mueve la página—, así que se arrastra
+ * agarrándola y además hay dos flechas, que es lo único que se ve a simple vista.
+ *
+ * El deslizamiento automático se para al tocarla o al señalarla, para que nadie tenga que
+ * perseguir un enlace en movimiento, y no arranca si el sistema pide menos animación.
  */
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
@@ -16,34 +19,52 @@ import { precio } from '../lib/formato';
 const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
 ---
 
-<section class="tira" data-tira aria-label="Todas las piezas">
-  <ul class="pista" data-pista>
-    {
-      bolsos.map((b) => (
-        <li class="pieza">
-          <a href={`/bolsos/${b.id}`} class="block no-underline">
-            <Image
-              src={b.data.foto}
-              alt=""
-              widths={[220, 440]}
-              sizes="13rem"
-              class="aspect-[3/4] w-full bg-panel object-cover"
-              loading="lazy"
-            />
-            <div class="mt-2 flex items-baseline justify-between gap-3 text-[15px]">
-              <span class="font-display text-lg">{b.data.nombre}</span>
-              <span class:list={[b.data.estado === 'vendido' && 'text-ink-soft']}>
-                {b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio)}
-              </span>
-            </div>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-</section>
+<div class="marco" data-marco>
+  <section class="tira" data-tira aria-label="Todas las piezas">
+    <ul class="pista" data-pista>
+      {
+        bolsos.map((b) => (
+          <li class="pieza">
+            <a href={`/bolsos/${b.id}`} class="block no-underline" draggable={false}>
+              <Image
+                src={b.data.foto}
+                alt=""
+                widths={[220, 440]}
+                sizes="13rem"
+                class="aspect-[3/4] w-full bg-panel object-cover"
+                loading="lazy"
+                draggable={false}
+              />
+              <div class="mt-2 flex items-baseline justify-between gap-3 text-[15px]">
+                <span class="font-display text-lg">{b.data.nombre}</span>
+                <span class:list={[b.data.estado === 'vendido' && 'text-ink-soft']}>
+                  {b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio)}
+                </span>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <button type="button" class="flecha izquierda" data-flecha="-1" aria-label="Ver las piezas anteriores">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 4 7 12l8 8"></path>
+    </svg>
+  </button>
+  <button type="button" class="flecha derecha" data-flecha="1" aria-label="Ver más piezas">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m9 4 8 8-8 8"></path>
+    </svg>
+  </button>
+</div>
 
 <style>
+  .marco {
+    position: relative;
+  }
+
   .tira {
     overflow-x: auto;
     /* El desplazamiento suave global pelearía con el que movemos a mano. */
@@ -71,19 +92,81 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
   }
   .pieza img {
     transition: transform 500ms var(--ease-salida);
+    -webkit-user-drag: none;
   }
   .pieza a:hover img {
     transform: scale(1.03);
   }
+
+  /* Mientras se arrastra, el cursor manda y no se selecciona texto sin querer. */
+  .marco[data-agarrando] .tira {
+    cursor: grabbing;
+  }
+  .marco[data-agarrando] .pista {
+    user-select: none;
+  }
+  .marco[data-agarrando] .pieza a:hover img {
+    transform: none;
+  }
+
+  .flecha {
+    position: absolute;
+    /* A la altura de la foto, no del bloque entero: el pie de la ficha cuenta y descentraría. */
+    top: calc(6px + 8.66rem);
+    transform: translateY(-50%);
+    display: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    color: var(--color-ink);
+    background-color: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    box-shadow:
+      inset 0 0 0 1px var(--color-line),
+      0 2px 10px rgb(31 29 27 / 0.14);
+    backdrop-filter: blur(6px);
+    transition:
+      opacity 220ms var(--ease-salida),
+      background-color 220ms var(--ease-salida);
+  }
+  .izquierda {
+    left: 12px;
+  }
+  .derecha {
+    right: 12px;
+  }
+  .flecha:hover {
+    background-color: var(--color-paper);
+  }
+  .flecha[disabled] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /*
+   * Solo con ratón o lápiz. En pantalla táctil la tira ya se arrastra con el dedo y las
+   * flechas taparían las piezas de los extremos.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    .marco[data-desbordada] .flecha {
+      display: grid;
+    }
+    .marco[data-desbordada] .tira {
+      cursor: grab;
+    }
+  }
 </style>
 
 <script>
+  const marco = document.querySelector<HTMLElement>('[data-marco]');
   const tira = document.querySelector<HTMLElement>('[data-tira]');
   const pista = document.querySelector<HTMLElement>('[data-pista]');
-  const quieto = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  if (tira && pista && !quieto.matches) {
+  if (marco && tira && pista) {
+    const quieto = window.matchMedia('(prefers-reduced-motion: reduce)');
     const VELOCIDAD = 22; // píxeles por segundo: a paso de mirar, no de pasar
+    const flechas = [...marco.querySelectorAll<HTMLButtonElement>('[data-flecha]')];
+
     let pausado = false;
     let reanudar: ReturnType<typeof setTimeout>;
     let anterior = performance.now();
@@ -101,9 +184,11 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
      * No es solo gusto: un movimiento automático que no para nunca incumple la WCAG
      * 2.2.2, que exige poder detenerlo. Respetar `prefers-reduced-motion` no basta,
      * porque casi nadie la lleva activada. Parándose sola se cumple sin añadir un botón
-     * de pausa que aquí sobraría, y a partir de ahí la tira sigue arrastrándose a mano.
+     * de pausa que aquí sobraría, y a partir de ahí la tira sigue moviéndose a mano.
      */
-    let terminado = false;
+    let terminado = quieto.matches;
+
+    const tope = () => pista.scrollWidth - tira.clientWidth;
 
     const parar = () => {
       clearTimeout(reanudar);
@@ -120,17 +205,26 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
       }, espera);
     };
 
+    /** Las flechas y el marco solo aparecen si de verdad hay algo escondido. */
+    const revisar = () => {
+      const max = tope();
+      marco.toggleAttribute('data-desbordada', max > 1);
+      const x = tira.scrollLeft;
+      flechas[0].disabled = x <= 1;
+      flechas[1].disabled = x >= max - 1;
+    };
+
     const paso = (ahora: number) => {
       const dt = Math.min((ahora - anterior) / 1000, 0.1);
       anterior = ahora;
 
-      const tope = pista.scrollWidth - tira.clientWidth;
+      const max = tope();
 
       // Si caben todas a la vez no hay nada que desplazar.
-      if (!pausado && !terminado && tope > 1) {
+      if (!pausado && !terminado && max > 1) {
         pos += VELOCIDAD * dt;
-        if (pos >= tope) {
-          pos = tope;
+        if (pos >= max) {
+          pos = max;
           terminado = true;
         }
         tira.scrollLeft = pos;
@@ -138,7 +232,7 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
 
       if (!terminado) requestAnimationFrame(paso);
     };
-    requestAnimationFrame(paso);
+    if (!terminado) requestAnimationFrame(paso);
 
     // Señalar o enfocar la para: nadie debería perseguir un enlace en movimiento.
     tira.addEventListener('pointerenter', parar);
@@ -149,6 +243,87 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
     // Al arrastrarla con el dedo se para, y tarda en volver a arrancar.
     tira.addEventListener('touchstart', parar, { passive: true });
     tira.addEventListener('touchend', () => seguir(2500), { passive: true });
+
+    tira.addEventListener('scroll', revisar, { passive: true });
+    window.addEventListener('resize', revisar);
+    revisar();
+
+    /**
+     * Arrastrar con el ratón.
+     *
+     * Con el dedo el navegador ya desplaza solo, y con panel táctil el gesto lateral
+     * también, pero con un ratón corriente no había ninguna forma de mover la tira: la
+     * barra está oculta y la rueda mueve la página. Por eso esto es solo para el ratón.
+     */
+    let agarre: { id: number; x: number; desde: number } | null = null;
+    let arrastrado = false;
+
+    tira.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0 || tope() <= 1) return;
+      agarre = { id: e.pointerId, x: e.clientX, desde: tira.scrollLeft };
+      arrastrado = false;
+      parar();
+      terminado = true;
+      marco.setAttribute('data-agarrando', '');
+    });
+
+    tira.addEventListener('pointermove', (e) => {
+      if (!agarre || e.pointerId !== agarre.id) return;
+      const dx = e.clientX - agarre.x;
+      // Hasta que no se mueve de verdad no se secuestra el clic del enlace.
+      if (!arrastrado && Math.abs(dx) > 4) {
+        arrastrado = true;
+        tira.setPointerCapture(agarre.id);
+      }
+      if (arrastrado) {
+        e.preventDefault();
+        tira.scrollLeft = agarre.desde - dx;
+      }
+    });
+
+    const soltar = () => {
+      if (!agarre) return;
+      if (tira.hasPointerCapture(agarre.id)) tira.releasePointerCapture(agarre.id);
+      agarre = null;
+      marco.removeAttribute('data-agarrando');
+    };
+    /*
+     * Sin esto el arrastre se muere a los cuatro píxeles: el navegador entiende que estás
+     * arrastrando el enlace fuera de la página, arranca su propio arrastre y manda un
+     * `pointercancel` que corta el nuestro.
+     */
+    tira.addEventListener('dragstart', (e) => {
+      if (agarre) e.preventDefault();
+    });
+
+    tira.addEventListener('pointerup', soltar);
+    tira.addEventListener('pointercancel', soltar);
+
+    // Soltar después de arrastrar no debe abrir la pieza que quedó bajo el cursor.
+    tira.addEventListener(
+      'click',
+      (e) => {
+        if (arrastrado) {
+          e.preventDefault();
+          e.stopPropagation();
+          arrastrado = false;
+        }
+      },
+      true
+    );
+
+    // Las flechas mueven algo menos de una pantalla, para que nada se pierda por el borde.
+    for (const flecha of flechas) {
+      flecha.addEventListener('click', () => {
+        parar();
+        terminado = true;
+        const salto = Math.max(tira.clientWidth * 0.8, 232);
+        tira.scrollBy({
+          left: salto * Number(flecha.dataset.flecha),
+          behavior: quieto.matches ? 'auto' : 'smooth',
+        });
+      });
+    }
 
     // Si la pestaña se va a segundo plano, el reloj se queda parado y daría un salto.
     document.addEventListener('visibilitychange', () => {
