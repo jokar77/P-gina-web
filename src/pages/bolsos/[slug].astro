@@ -59,10 +59,14 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho
       </a>
 
       <div class="mt-8 grid items-start gap-x-14 gap-y-10 lg:grid-cols-[1.15fr_1fr]">
-        <div>
+        {/* Las miniaturas van a la izquierda de la foto grande, en columna. En pantalla
+            estrecha no caben al lado sin comerse la foto, así que ahí bajan debajo. La
+            foto grande va primera en el código —es lo primero que importa— y sube al
+            segundo sitio solo cuando hay ancho para ponerlas en fila. */}
+        <div class="flex flex-col gap-3 sm:flex-row">
           {/* Todas las fotos se apilan: las que no se ven están a opacidad 0, no ocultas,
               para que el navegador las cargue y el cambio de foto sea instantáneo. */}
-          <div class="relative aspect-[3/4] bg-panel" data-galeria>
+          <div class="relative aspect-[3/4] flex-1 bg-panel" data-galeria>
             {
               galeria.map((foto, i) => (
                 <Image
@@ -88,7 +92,11 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho
 
           {
             galeria.length > 1 && (
-              <div class="mt-3 flex flex-wrap gap-3" role="group" aria-label="Fotos de la pieza">
+              <div
+                class="flex flex-wrap gap-3 sm:order-first sm:w-[4.5rem] sm:shrink-0 sm:flex-col sm:flex-nowrap"
+                role="group"
+                aria-label="Fotos de la pieza"
+              >
                 {galeria.map((foto, i) => (
                   <button type="button" class="miniatura" data-mini={i} aria-current={i === 0}>
                     <Image
