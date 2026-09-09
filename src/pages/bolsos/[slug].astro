@@ -48,6 +48,15 @@ const lineaSimilar = {
   orientativo: true,
 };
 
+/**
+ * El texto de debajo del botón lo escribe Sakina desde el formulario. El del vendido
+ * lleva el precio dentro, así que en vez de escribirlo a mano pone {precio} y se
+ * sustituye aquí: si algún día cambia el precio de la pieza, el texto cambia con él.
+ */
+const textoBoton = vendido
+  ? site.fichas.vendido.replaceAll('{precio}', precio(d.precio))
+  : site.fichas.disponible;
+
 const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho, d.alto)}. Bolso de ganchillo hecho a mano, pieza única.`;
 ---
 
@@ -148,21 +157,14 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho
                   >
                     Encargar uno similar
                   </button>
-                  <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">
-                    Esta ya tiene dueña. Se queda aquí porque es parte del trabajo, y porque
-                    se puede tejer otra parecida: nunca sale idéntica. Partiría de{' '}
-                    {precio(d.precio)}, orientativo hasta que lo habléis.
-                  </p>
+                  <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">{textoBoton}</p>
                 </>
               ) : (
                 <>
                   <button type="button" class="boton w-full sm:w-auto" data-anadir={JSON.stringify(linea)}>
                     Añadir al pedido
                   </button>
-                  <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">
-                    Es una pieza única y no se cobra nada aquí: reúnes lo que te guste y se lo
-                    mandas escrito por WhatsApp. Sakina te confirma que sigue disponible.
-                  </p>
+                  <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">{textoBoton}</p>
                 </>
               )
             }

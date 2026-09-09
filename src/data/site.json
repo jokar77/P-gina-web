@@ -21,6 +21,12 @@
       "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan."
     }
   },
+  "fichas": {
+    "disponible": "Es una pieza única y no se cobra nada aquí: reúnes lo que te guste y se lo mandas escrito por WhatsApp. Sakina te confirma que sigue disponible.",
+    "vendido": "Esta ya tiene dueña. Se queda aquí porque es parte del trabajo, y porque se puede tejer otra parecida: nunca sale idéntica. Partiría de {precio}, orientativo hasta que lo habléis.",
+    "nino": "El precio es orientativo: depende de la talla y de la tela. Lo cerráis por WhatsApp antes de que empiece a cortar. Al ser una prenda hecha a tu medida, queda fuera del derecho de devolución.",
+    "aMedida": "No se paga nada aquí. Lo revisáis por WhatsApp antes de que empiece a tejer."
+  },
   "taller": {
     "titulo": "El taller",
     "texto": "Cada bolso se teje entero de una vez, a mano y sin patrón cerrado: la forma se va decidiendo mientras crece. Entre ocho y doce horas por pieza, según el punto y el material. Por eso no hay dos iguales, y por eso hay pocos.\n\nEl trapillo es algodón; las lanas con lentejuelas se compran por partidas pequeñas, así que cuando se acaba un color, ese color se acaba. Los conjuntos de niño son lino lavado y algodón, cosidos por tallas.",

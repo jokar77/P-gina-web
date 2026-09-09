@@ -188,6 +188,33 @@ content:
               - { name: intro, label: Texto de al lado, type: text }
         description: El título de cada sección es también su nombre en el menú de arriba.
 
+      - name: fichas
+        label: Textos de debajo del botón de pedir
+        type: object
+        description: >-
+          Lo que se lee bajo «Añadir al pedido». Cuidado con lo que dicen del pago y de
+          las devoluciones: tiene que seguir cuadrando con las condiciones de venta.
+        fields:
+          - name: disponible
+            label: En un bolso a la venta
+            type: text
+            options: { rows: 4 }
+          - name: vendido
+            label: En un bolso ya vendido
+            type: text
+            options: { rows: 4 }
+            description: >-
+              Escribe {precio} donde quieras que salga el precio de la pieza; se pone solo,
+              así que si algún día cambias el precio, el texto cambia con él.
+          - name: nino
+            label: En un conjunto de niño
+            type: text
+            options: { rows: 4 }
+          - name: aMedida
+            label: En «Diseña tu bolso»
+            type: text
+            options: { rows: 3 }
+
       - name: taller
         label: El taller
         type: object

@@ -144,6 +144,10 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
       un solo campo, tres sitios, sin que se queden discordando.
       El recuento de vendidas se sigue calculando solo: en la entradilla se escriben
       `{vendidos}` y `{total}` y se sustituyen al construir.
+- [x] **Los cuatro textos de debajo del botón de pedir** (bolso a la venta, bolso vendido,
+      conjunto de niño y «Diseña tu bolso») salen ya de `site.json`. El del vendido lleva
+      `{precio}` y se sustituye al construir, para que no se quede viejo si cambia el
+      precio de la pieza.
 - [ ] Quedan a propósito fuera del formulario los tres recuadros de «El taller» (envío,
       pago, devoluciones): repiten lo que dicen las páginas legales, y si se editan por
       separado acaban contradiciéndolas. Si hay que cambiarlos, se cambian junto con la
