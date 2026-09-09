@@ -17,59 +17,83 @@ const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter
 );
 ---
 
+{/*
+  En pantalla ancha el nombre y la foto van uno al lado del otro. Apilados y centrados
+  —que es lo que pide una pantalla estrecha— la portada ocupaba media ventana en un
+  ordenador, con el resto de la web el doble de ancha justo debajo: se leía como la
+  maqueta del móvil estirada. La foto es vertical, así que ensancharla no era la salida;
+  la salida es dejar de apilar.
+*/}
 <section id="inicio" class="px-5 pt-10 pb-section sm:px-8">
-  <div class="mx-auto max-w-3xl text-center">
-    <h1>
-      <Marca
-        class="mx-auto w-[min(26rem,74vw)]"
-        sizes="(min-width: 640px) 26rem, 74vw"
-        cargaDiferida={false}
-      />
-    </h1>
-    <p class="mx-auto mt-5 max-w-[46ch] text-lg text-ink-soft">{site.frasePortada}</p>
-  </div>
+  <div
+    class="mx-auto grid max-w-7xl items-center gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,1fr)_auto]"
+  >
+    <div class="text-center lg:text-left">
+      <h1>
+        <Marca
+          class="mx-auto w-[min(26rem,74vw)] lg:mx-0 lg:w-[min(32rem,100%)]"
+          sizes="(min-width: 1024px) 32rem, (min-width: 640px) 26rem, 74vw"
+          cargaDiferida={false}
+        />
+      </h1>
+      <p class="mx-auto mt-5 max-w-[46ch] text-lg text-ink-soft lg:mx-0">{site.frasePortada}</p>
+    </div>
 
-  <figure class="relative mx-auto mt-12 w-full max-w-[46rem]" data-mapa>
-    <Image
-      src={grupo}
-      alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
-      widths={[560, 760, 928]}
-      sizes="(min-width: 768px) 46rem, 100vw"
-      class="w-full"
-      loading="eager"
-      fetchpriority="high"
-    />
+    <figure class="mx-auto w-full max-w-[46rem] lg:mx-0 lg:w-auto lg:max-w-none">
+      {/*
+        Los marcadores se colocan en porcentajes de esta caja, así que la caja tiene que
+        ser exactamente la foto: si el pie de foto entrara aquí dentro, cada marcador se
+        desplazaría hacia arriba lo que midiera el pie.
 
-    <div class="pointer-events-none absolute inset-0" data-foco aria-hidden="true"></div>
-
-    {
-      zonas.map(({ zona, pieza }, i) => (
-        <a
-          class="zona"
-          href={`/bolsos/${zona.slug}`}
-          style={`--x:${zona.x}%;--y:${zona.y}%;--w:${zona.w}%;--h:${zona.h}%;--fw:${zona.w * 0.62}%;--fh:${zona.h * 0.62}%;--i:${i}`}
-          data-zona
-          data-nombre={pieza.data.nombre}
-          data-precio={pieza.data.estado === 'vendido' ? 'Vendido' : precio(pieza.data.precio)}
-        >
-          <span class="marca" aria-hidden="true" />
-          <span class="sr-only">
-            {pieza.data.nombre},{' '}
-            {pieza.data.estado === 'vendido' ? 'vendido' : precio(pieza.data.precio)}
-          </span>
-        </a>
-      ))
-    }
-
-    {/* Este pie hace dos cosas: si hay texto, lo dice; y en cuanto señalas una pieza de
-        la foto, lo cambia por su nombre y su precio. Aunque esté vacío tiene que seguir
-        aquí, porque es el único sitio donde se lee qué bolso estás señalando. */}
-    <figcaption class="pie mt-5 text-center" data-pie>
-      <span class="text-[15px] text-ink-soft transition-opacity duration-200" data-pie-texto
-        >{opcional('piePortada')}</span
+        En pantalla ancha la altura manda y el ancho sale de la proporción de la foto, no
+        al revés: así la foto no puede crecer hasta no caber en la pantalla.
+      */}
+      <div
+        class="relative mx-auto aspect-[928/1152] w-full lg:h-[min(74vh,44rem)] lg:w-auto"
+        data-mapa
       >
-    </figcaption>
-  </figure>
+        <Image
+          src={grupo}
+          alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
+          widths={[560, 760, 928]}
+          sizes="(min-width: 1024px) 36rem, (min-width: 768px) 46rem, 100vw"
+          class="h-full w-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+
+        <div class="pointer-events-none absolute inset-0" data-foco aria-hidden="true"></div>
+
+        {
+          zonas.map(({ zona, pieza }, i) => (
+            <a
+              class="zona"
+              href={`/bolsos/${zona.slug}`}
+              style={`--x:${zona.x}%;--y:${zona.y}%;--w:${zona.w}%;--h:${zona.h}%;--fw:${zona.w * 0.62}%;--fh:${zona.h * 0.62}%;--i:${i}`}
+              data-zona
+              data-nombre={pieza.data.nombre}
+              data-precio={pieza.data.estado === 'vendido' ? 'Vendido' : precio(pieza.data.precio)}
+            >
+              <span class="marca" aria-hidden="true" />
+              <span class="sr-only">
+                {pieza.data.nombre},{' '}
+                {pieza.data.estado === 'vendido' ? 'vendido' : precio(pieza.data.precio)}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      {/* Este pie hace dos cosas: si hay texto, lo dice; y en cuanto señalas una pieza de
+          la foto, lo cambia por su nombre y su precio. Aunque esté vacío tiene que seguir
+          aquí, porque es el único sitio donde se lee qué bolso estás señalando. */}
+      <figcaption class="pie mt-5 text-center" data-pie>
+        <span class="text-[15px] text-ink-soft transition-opacity duration-200" data-pie-texto
+          >{opcional('piePortada')}</span
+        >
+      </figcaption>
+    </figure>
+  </div>
 
   <div class="-mx-5 mt-14 sm:-mx-8">
     <Tira />
