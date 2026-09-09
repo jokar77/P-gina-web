@@ -148,6 +148,13 @@ content:
         label: Frase de la portada
         type: text
         description: La línea que va debajo del nombre, en la primera pantalla.
+      - name: piePortada
+        label: Texto bajo la foto de portada
+        type: string
+        description: >-
+          Déjalo en blanco y no sale nada. Aunque esté vacío, ahí es donde aparece el
+          nombre y el precio del bolso cuando pasas el ratón por la foto.
+
       - name: descripcion
         label: Descripción para buscadores
         type: text

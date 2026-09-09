@@ -60,10 +60,13 @@ const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter
       ))
     }
 
-    <figcaption class="mt-5 text-center" data-pie>
-      <span class="text-[15px] text-ink-soft transition-opacity duration-200" data-pie-texto>
-        Cada pieza de la foto lleva a su página.
-      </span>
+    {/* Este pie hace dos cosas: si hay texto, lo dice; y en cuanto señalas una pieza de
+        la foto, lo cambia por su nombre y su precio. Aunque esté vacío tiene que seguir
+        aquí, porque es el único sitio donde se lee qué bolso estás señalando. */}
+    <figcaption class="pie mt-5 text-center" data-pie>
+      <span class="text-[15px] text-ink-soft transition-opacity duration-200" data-pie-texto
+        >{site.piePortada}</span
+      >
     </figcaption>
   </figure>
 
@@ -126,6 +129,17 @@ const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter
 
   [data-mapa][data-activa] [data-foco] {
     opacity: 1;
+  }
+
+  /*
+   * Se reserva el alto de una línea para que, al señalar un bolso, el nombre no empuje
+   * hacia abajo lo que hay debajo. Solo donde se puede señalar: en el móvil no hay
+   * cursor, el pie nunca se rellena, y ese hueco sería sitio perdido.
+   */
+  @media (hover: hover) {
+    .pie {
+      min-height: 1.6em;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
