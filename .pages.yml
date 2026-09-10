@@ -14,6 +14,12 @@ media:
   input: src/assets/piezas
   output: ../../assets/piezas
   categories: [image]
+  # Las fotos del móvil suelen llevar la extensión en mayúsculas (.JPG en vez de
+  # .jpg) y Pages CMS las compara tal cual, así que sin esto rechazaba fotos que
+  # sí eran jpg con el error "invalid extension ... for media". Con "safe" les
+  # pone la extensión en minúsculas (y quita espacios/acentos del nombre) antes
+  # de subirlas.
+  rename: safe
 
 content:
   - name: bolsos
@@ -51,10 +57,10 @@ content:
         required: true
         options:
           values:
-            - turquesa
+            - azul
             - rojo
             - granate
-            - coral
+            - rosa
             - teja
             - amarillo
             - crudo
@@ -62,7 +68,12 @@ content:
             - chocolate
             - gris
             - bicolor
-        description: Es el que agrupa la pieza en los filtros de la colección.
+        description: >-
+          Es el que agrupa la pieza en los filtros de la colección. Son familias
+          amplias a propósito: si el tono no es exactamente igual pero es de la
+          misma familia (por ejemplo, dos rosas que no son el mismo tono), se
+          elige igualmente esa opción. No hace falta que exista un color para
+          cada matiz.
       - name: material
         label: Material
         type: string

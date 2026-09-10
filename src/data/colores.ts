@@ -1,8 +1,8 @@
 export const COLORES = {
-  turquesa: { nombre: 'Turquesa', muestra: '#2FB0A2' },
+  azul: { nombre: 'Azul', muestra: '#2FB0A2' },
   rojo: { nombre: 'Rojo', muestra: '#BE1F26' },
   granate: { nombre: 'Granate', muestra: '#7A2231' },
-  coral: { nombre: 'Coral', muestra: '#F28A76' },
+  rosa: { nombre: 'Rosa', muestra: '#F28A76' },
   teja: { nombre: 'Teja', muestra: '#D07850' },
   amarillo: { nombre: 'Amarillo', muestra: '#F5B301' },
   crudo: { nombre: 'Crudo', muestra: '#E4D8C4' },
