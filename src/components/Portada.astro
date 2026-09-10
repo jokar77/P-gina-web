@@ -40,7 +40,7 @@ const pct = (x: number) => `${((x / huecos) * 100).toFixed(3)}%`;
 const finDelNombre = pct(1.9);
 ---
 
-<section id="inicio" class="escena" style={`--fin-nombre:${finDelNombre}`}>
+<section id="inicio" class="escena" data-escena style={`--fin-nombre:${finDelNombre}`}>
   <div class="fija">
     <div class="cabecera">
       <h1>
@@ -89,9 +89,24 @@ const finDelNombre = pct(1.9);
    * mano. Es también lo que ve un navegador que no la soporta todavía. No se rompe
    * nada; simplemente no se transforma.
    */
+  /*
+   * El fondo es la manta sobre la que están hechas las fotos, con su grano, para que la
+   * pieza no parezca recortada y pegada sobre otra cosa: el bolso y lo que hay detrás son
+   * el mismo material.
+   *
+   * Y se acaba: el degradado del último tercio lo lleva al papel del resto de la web, así
+   * que al pasar el desfile el fondo ya ha cambiado de color y no hay ningún corte. Es un
+   * degradado, no una animación: no cuesta nada y no puede desincronizarse.
+   *
+   * El grano va debajo del degradado a propósito, para que se desvanezca con el color.
+   */
   .escena {
     position: relative;
     padding: 2.5rem 1.25rem 0;
+    background-color: var(--color-manta);
+    background-image:
+      linear-gradient(to bottom, transparent 0 66%, var(--color-paper) 97%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.13'/%3E%3C/svg%3E");
   }
   .cabecera {
     display: grid;
@@ -104,7 +119,7 @@ const finDelNombre = pct(1.9);
   }
   .frase {
     max-width: 44ch;
-    color: var(--color-ink-soft);
+    color: var(--color-ink-manta);
     font-size: 1.0625rem;
   }
   .pases {
@@ -145,7 +160,7 @@ const finDelNombre = pct(1.9);
     font-size: 13px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-ink-soft);
+    color: var(--color-ink-manta);
   }
   .regla {
     display: none;
@@ -235,7 +250,7 @@ const finDelNombre = pct(1.9);
       position: absolute;
       inset: auto 1.25rem 2.25rem;
       height: 1px;
-      background-color: color-mix(in srgb, var(--color-line) 55%, transparent);
+      background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
     }
     .regla span {
       display: block;
@@ -304,16 +319,24 @@ const finDelNombre = pct(1.9);
     }
   }
 
+  /*
+   * La ventana del rótulo (34%-66%) va emparejada con la de pulsación (30%-70%): se lee
+   * el nombre exactamente mientras esa pieza es la que responde al clic. Los dos
+   * desvanecidos caben enteros dentro del medio tramo que separa una pieza de la
+   * siguiente, así que en el cruce no queda ni un rastro del nombre anterior: con la
+   * ventana un poco más ancha se cruzaban dos fantasmas al 20%, que no es un nombre
+   * sino una mancha.
+   */
   @keyframes rotular {
     0%,
-    30% {
+    26% {
       opacity: 0;
     }
-    42%,
-    58% {
+    34%,
+    66% {
       opacity: 1;
     }
-    70%,
+    74%,
     100% {
       opacity: 0;
     }

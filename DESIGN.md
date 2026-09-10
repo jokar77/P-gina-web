@@ -91,4 +91,23 @@ El recorrido dura lo mismo con once piezas que con treinta. Crecer no puede sign
 hacer más scroll.
 
 La foto de grupo no se tira: vive en «El taller», donde es el retrato de una tanda de
-trabajo y no un catálogo, y donde quedarse desactualizada da igual.
+trabajo y no un catálogo, y donde quedarse desactualizada da igual. Va pequeña —26rem—
+porque el original solo mide 928px de ancho: ampliada saca a la luz cada grano.
+
+### El fondo
+
+La portada no va sobre papel sino sobre **manta** (`--color-manta`, #d5d2cb), con grano,
+para que la pieza y lo que hay detrás parezcan el mismo material. Y se acaba: el último
+tercio de la escena degrada al papel del resto de la web, así que al pasar el desfile el
+fondo ya ha cambiado y no hay ningún corte. La barra de navegación se quita su franja de
+papel mientras la manta está a la vista.
+
+El tono no es el de las fotos, es más claro que todas ellas, y esto es a propósito: medido
+sobre los píxeles pintados, el fondo de las fotos va de #645f53 a #cdc6ba —no están hechas
+con la misma luz—, así que ningún color se funde con las once. Por encima de la más clara,
+todas se apoyan igual, como láminas. Buscando el punto medio, las dos más claras se
+recortaban como tarjetas pegadas encima.
+
+Sobre la manta la tinta suave se queda en 4,3:1 y no vale; el texto secundario de la
+portada usa `--color-ink-manta` (#474440), que da 6,4:1 sobre la manta y 7,9:1 sobre el
+papel, así que aguanta el tramo en el que el fondo cambia de una a otro.

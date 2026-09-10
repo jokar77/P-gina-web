@@ -8,6 +8,23 @@
   --color-ink-soft: #5f5e58;
   --color-line: #a9afa9;
 
+  /*
+   * El fondo de la portada: la manta sobre la que están hechas las fotos, aclarada.
+   *
+   * Medido sobre los píxeles que se pintan de verdad, el fondo de las fotos va de
+   * #645f53 en una a #cdc6ba en otra: no están hechas con la misma luz, así que ningún
+   * color se funde con las once a la vez. Este queda por encima de la más clara, y así
+   * todas se apoyan igual sobre él, como láminas. Buscando el punto medio, las dos más
+   * claras se recortaban como tarjetas pegadas encima.
+   *
+   * 11,1:1 con la tinta. El día que las fotos tengan una luz común, esto puede acercarse.
+   */
+  --color-manta: #d5d2cb;
+  /* La tinta suave se queda en 4,3:1 sobre la manta, por debajo del mínimo. Esta da
+     6,4:1 sobre ella y 7,9:1 sobre el papel: sirve para el tramo en el que el fondo pasa
+     de una a otro sin que el texto cambie de color a mitad. */
+  --color-ink-manta: #474440;
+
   --font-display: 'Gloock', Georgia, 'Times New Roman', serif;
   --font-sans: 'Karla Variable', 'Karla', system-ui, sans-serif;
 
