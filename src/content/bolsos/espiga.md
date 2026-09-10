@@ -2,7 +2,7 @@
 nombre: Espiga
 precio: 30
 estado: disponible
-color: dorado
+color: gris
 material: Hilo dorado, forro interior de tela
 ancho: 26
 alto: 18

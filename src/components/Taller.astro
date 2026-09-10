@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import detalle from '../assets/piezas/cacao/04.jpg';
+import grupo from '../assets/piezas/_portada/grupo.jpg';
 import firma from '../assets/marca/firma.png';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
@@ -35,6 +36,30 @@ const parrafos = site.taller.texto.split('\n\n');
         loading="lazy"
       />
     </div>
+
+    <figure class="mt-16 max-w-[26rem]">
+      {/*
+        La foto de grupo vivía en la portada, donde envejecía: cada pieza nueva la
+        dejaba incompleta. Aquí no es un catálogo sino un retrato de una tanda de
+        trabajo, y que no salgan las últimas deja de ser un problema.
+
+        Va pequeña porque el original mide 928px de ancho: a 62rem había que ampliarla
+        al doble en una pantalla buena, y ampliar una foto es lo que saca a la luz cada
+        grano y cada borde blando. A 26rem se enseña por debajo de su tamaño real y sale
+        limpia. Si algún día aparece el original a resolución completa, puede crecer.
+      */}
+      <Image
+        src={grupo}
+        alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
+        widths={[416, 832]}
+        sizes="26rem"
+        class="w-full"
+        loading="lazy"
+      />
+      <figcaption class="mt-4 text-[15px] text-ink-soft">
+        Una tanda de trabajo, antes de salir del taller.
+      </figcaption>
+    </figure>
 
     <div class="filete mt-16 grid gap-x-12 gap-y-9 pt-9 sm:grid-cols-2 lg:grid-cols-3">
       <div>

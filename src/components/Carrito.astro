@@ -4,9 +4,10 @@
  * Vive en el layout, así que cualquier página puede añadir con un botón [data-anadir].
  *
  * Va en dos pantallas, no una sola larga: primero el resumen de piezas, y solo si se
- * pulsa «Comprar» aparecen el envío, los datos y el botón de WhatsApp. Todo junto no
- * cabía bien en un móvil —piezas, envío, total y el aviso se peleaban por el sitio—, y
- * separarlo también deja claro que hay un paso más antes de mandar el mensaje.
+ * pulsa «Comprar» (o «Preguntar», si el pedido es solo preguntas) aparecen el envío,
+ * los datos y el botón de WhatsApp. Todo junto no cabía bien en un móvil —piezas,
+ * envío, total y el aviso se peleaban por el sitio—, y separarlo también deja claro
+ * que hay un paso más antes de mandar el mensaje.
  *
  * Los datos de envío se escriben aquí solo para redactar el mensaje. No se guardan en
  * ningún sitio —ni en el navegador ni en un servidor—: van directos al texto que se
@@ -50,64 +51,66 @@ import { precio } from '../lib/formato';
       </div>
 
       <form hidden data-paso-datos>
-        <fieldset>
-          <legend class="text-[15px] text-paper/70">Cómo lo recibes</legend>
-          <div class="mt-3 grid gap-2">
-            {
-              METODOS.map((m, i) => (
-                <label class="opcion-envio">
-                  <input
-                    type="radio"
-                    name="envio"
-                    value={m.id}
-                    checked={i === 0}
-                    class="sr-only"
-                    data-metodo
-                  />
-                  <span class="marca-radio" aria-hidden="true" />
-                  <span class="flex-1">{m.nombre}</span>
-                  <span class="text-paper/60">{precio(m.precio)}</span>
-                </label>
-              ))
-            }
-          </div>
-          <p class="mt-2 text-[14px] text-paper/55">
-            Gratis a partir de {precio(site.envios.gratisDesde)}. {site.envios.zona}.
-          </p>
-        </fieldset>
-
-        <fieldset class="filete-envio mt-7 pt-6">
-          <legend class="text-[15px] text-paper/70">Dónde te lo mandamos</legend>
-          <p class="mt-1 mb-4 text-[14px] text-paper/55" data-envio-nota></p>
-          <div class="grid gap-3">
-            <label class="campo">
-              <span>Nombre y apellidos</span>
-              <input type="text" name="nombre" autocomplete="name" data-dato />
-            </label>
-            <label class="campo">
-              <span>Dirección</span>
-              <input
-                type="text"
-                name="direccion"
-                autocomplete="street-address"
-                placeholder="Calle, número, piso"
-                data-dato
-              />
-            </label>
-            <div class="grid grid-cols-[7rem_1fr] gap-3">
-              <label class="campo">
-                <span>Código postal</span>
-                <input type="text" name="cp" inputmode="numeric" autocomplete="postal-code" data-dato />
-              </label>
-              <label class="campo">
-                <span>Población</span>
-                <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
-              </label>
+        <div data-carrito-envio hidden>
+          <fieldset>
+            <legend class="text-[15px] text-paper/70">Cómo lo recibes</legend>
+            <div class="mt-3 grid gap-2">
+              {
+                METODOS.map((m, i) => (
+                  <label class="opcion-envio">
+                    <input
+                      type="radio"
+                      name="envio"
+                      value={m.id}
+                      checked={i === 0}
+                      class="sr-only"
+                      data-metodo
+                    />
+                    <span class="marca-radio" aria-hidden="true" />
+                    <span class="flex-1">{m.nombre}</span>
+                    <span class="text-paper/60">{precio(m.precio)}</span>
+                  </label>
+                ))
+              }
             </div>
-          </div>
-        </fieldset>
+            <p class="mt-2 text-[14px] text-paper/55">
+              Gratis a partir de {precio(site.envios.gratisDesde)}. {site.envios.zona}.
+            </p>
+          </fieldset>
 
-        <dl class="filete-envio mt-7 grid grid-cols-[1fr_auto] gap-y-1 pt-6 text-[15px]">
+          <fieldset class="filete-envio mt-7 pt-6">
+            <legend class="text-[15px] text-paper/70">Dónde te lo mandamos</legend>
+            <p class="mt-1 mb-4 text-[14px] text-paper/55" data-envio-nota></p>
+            <div class="grid gap-3">
+              <label class="campo">
+                <span>Nombre y apellidos</span>
+                <input type="text" name="nombre" autocomplete="name" data-dato />
+              </label>
+              <label class="campo">
+                <span>Dirección</span>
+                <input
+                  type="text"
+                  name="direccion"
+                  autocomplete="street-address"
+                  placeholder="Calle, número, piso"
+                  data-dato
+                />
+              </label>
+              <div class="grid grid-cols-[7rem_1fr] gap-3">
+                <label class="campo">
+                  <span>Código postal</span>
+                  <input type="text" name="cp" inputmode="numeric" autocomplete="postal-code" data-dato />
+                </label>
+                <label class="campo">
+                  <span>Población</span>
+                  <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+                </label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <dl class="filete-envio mt-7 grid grid-cols-[1fr_auto] gap-y-1 pt-6 text-[15px]" data-carrito-cuentas>
           <dt class="text-paper/70">Piezas</dt>
           <dd class="text-right" data-carrito-subtotal-datos></dd>
           <dt class="text-paper/70">Envío</dt>
@@ -115,6 +118,11 @@ import { precio } from '../lib/formato';
           <dt class="mt-1 self-baseline">Total</dt>
           <dd class="mt-1 text-right font-display text-2xl" data-carrito-total></dd>
         </dl>
+
+        {/* Cuando en el pedido solo hay preguntas, no hay cuentas que echar todavía. */}
+        <p class="text-[15px] text-paper/70" data-carrito-solo-pregunta hidden>
+          Aquí solo hay preguntas: no hay precio ni envío que calcular hasta que lo habléis.
+        </p>
 
         <p class="mt-1 text-[13px] text-paper/60" data-carrito-aviso hidden>
           Orientativo: las piezas por encargo se cierran hablando.
@@ -129,10 +137,14 @@ import { precio } from '../lib/formato';
 
     <div class="border-t border-paper/20 px-6 py-5" data-carrito-pie hidden>
       <div data-pie-lista>
-        <dl class="grid grid-cols-[1fr_auto] gap-y-1 text-[15px]">
+        <dl class="grid grid-cols-[1fr_auto] gap-y-1 text-[15px]" data-carrito-cuentas>
           <dt class="text-paper/70">Piezas</dt>
           <dd class="text-right" data-carrito-subtotal></dd>
         </dl>
+
+        <p class="text-[15px] text-paper/70" data-carrito-solo-pregunta hidden>
+          Aquí solo hay preguntas: no hay precio que calcular hasta que lo habléis.
+        </p>
 
         <a class="boton boton-claro mt-4 w-full" data-ir-datos href="#">Comprar</a>
         <button type="button" class="boton mt-2 w-full border border-paper/30" data-seguir>
@@ -242,7 +254,17 @@ import { precio } from '../lib/formato';
 </style>
 
 <script>
-  import { anadir, contiene, hayOrientativos, leer, quitar, suscribir, total, vaciar } from '../lib/carrito';
+  import {
+    anadir,
+    contiene,
+    hayOrientativos,
+    leer,
+    quitar,
+    soloConsultas,
+    suscribir,
+    total,
+    vaciar,
+  } from '../lib/carrito';
   import type { Linea } from '../lib/carrito';
   import { costeEnvio, nombreMetodo, type Metodo } from '../lib/envio';
   import { precio } from '../lib/formato';
@@ -260,17 +282,23 @@ import { precio } from '../lib/formato';
   const pasoDatos = document.querySelector<HTMLFormElement>('[data-paso-datos]');
   const pieLista = document.querySelector<HTMLElement>('[data-pie-lista]');
   const pieDatos = document.querySelector<HTMLElement>('[data-pie-datos]');
+  const bloqueEnvio = document.querySelector<HTMLElement>('[data-carrito-envio]');
   const vacio = document.querySelector<HTMLElement>('[data-carrito-vacio]');
   const marcaSubtotal = document.querySelector<HTMLElement>('[data-carrito-subtotal]');
   const marcaSubtotalDatos = document.querySelector<HTMLElement>('[data-carrito-subtotal-datos]');
   const marcaEnvio = document.querySelector<HTMLElement>('[data-carrito-coste-envio]');
   const marcaTotal = document.querySelector<HTMLElement>('[data-carrito-total]');
+  const cuentas = [...document.querySelectorAll<HTMLElement>('[data-carrito-cuentas]')];
+  const soloPregunta = [...document.querySelectorAll<HTMLElement>('[data-carrito-solo-pregunta]')];
   const aviso = document.querySelector<HTMLElement>('[data-carrito-aviso]');
   const notaEnvio = document.querySelector<HTMLElement>('[data-envio-nota]');
   const irDatos = document.querySelector<HTMLAnchorElement>('[data-ir-datos]');
   const enviar = document.querySelector<HTMLAnchorElement>('[data-carrito-enviar]');
 
   let paso: Paso = 'lista';
+
+  const tituloPaso = (p: Paso) =>
+    p === 'lista' ? 'Tu pedido' : soloConsultas() ? 'Enviar tu pregunta' : 'Datos de envío';
 
   function mostrarPaso(p: Paso) {
     paso = p;
@@ -279,7 +307,7 @@ import { precio } from '../lib/formato';
     if (pieLista) pieLista.hidden = p !== 'lista';
     if (pieDatos) pieDatos.hidden = p !== 'datos';
     if (volver) volver.hidden = p !== 'datos';
-    if (titulo) titulo.textContent = p === 'datos' ? 'Datos de envío' : 'Tu pedido';
+    if (titulo) titulo.textContent = tituloPaso(p);
     scroll?.scrollTo(0, 0);
   }
 
@@ -290,30 +318,42 @@ import { precio } from '../lib/formato';
   const dato = (nombre: string) =>
     document.querySelector<HTMLInputElement>(`[data-dato][name="${nombre}"]`)?.value.trim() ?? '';
 
-  /** Las piezas de catálogo se compran tal cual; las de encargo son una consulta que se
-   *  cierra hablando. Solo a las primeras les hacen falta los datos de envío ya. */
-  const requiereDatos = (lineas: Linea[]) => lineas.some((l) => !l.orientativo);
+  /** Las piezas de catálogo se compran tal cual; las de encargo o del archivo son una
+   *  consulta que se cierra hablando. Solo a las primeras les hacen falta ya los datos
+   *  de envío. */
+  const requiereDatos = (lineas: Linea[]) => lineas.some((l) => !l.orientativo && !l.consultar);
 
   function mensaje(lineas: Linea[]) {
     const piezas = total();
     const metodo = metodoElegido();
     const envioCoste = costeEnvio(piezas, metodo);
+    const preguntando = soloConsultas();
 
     const cuerpo = lineas
       .map((l) => {
-        const cabeza = `· ${l.nombre} — ${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
+        const valor = l.consultar
+          ? 'a consultar'
+          : `${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
+        const cabeza = `· ${l.nombre} — ${valor}`;
         return l.detalle ? `${cabeza}\n  ${l.detalle}` : cabeza;
       })
       .join('\n');
 
-    const partes = [
-      'Hola Sakina, me gustaría encargar:',
-      '',
-      cuerpo,
-      '',
-      `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
-      `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
-    ];
+    /*
+     * Si en el pedido solo hay preguntas no hay nada que sumar ni que enviar todavía:
+     * un «Total: 0 €» y una tarifa de envío en un mensaje que solo pregunta por un
+     * vestido se leen como un error de la web.
+     */
+    const partes = preguntando
+      ? ['Hola Sakina, quería preguntarte por:', '', cuerpo]
+      : [
+          'Hola Sakina, me gustaría encargar:',
+          '',
+          cuerpo,
+          '',
+          `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
+          `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
+        ];
 
     // Los datos de envío solo se añaden si se han escrito.
     const direccion = [
@@ -346,7 +386,7 @@ import { precio } from '../lib/formato';
       boton.dataset.dentro = String(dentro);
     }
 
-    if (!lista || !pie || !vacio || !marcaTotal || !enviar || !pasoDatos) return;
+    if (!lista || !pie || !vacio || !marcaTotal || !enviar || !pasoDatos || !bloqueEnvio) return;
 
     lista.replaceChildren(
       ...lineas.map((l) => {
@@ -373,7 +413,9 @@ import { precio } from '../lib/formato';
 
         const p = document.createElement('span');
         p.className = 'whitespace-nowrap';
-        p.textContent = precio(l.precio) + (l.orientativo ? ' *' : '');
+        p.textContent = l.consultar
+          ? 'A consultar'
+          : precio(l.precio) + (l.orientativo ? ' *' : '');
         derecha.append(p);
 
         const fuera = document.createElement('button');
@@ -390,7 +432,12 @@ import { precio } from '../lib/formato';
     );
 
     const hay = lineas.length > 0;
+    const preguntando = soloConsultas();
     pie.hidden = !hay;
+    // Con solo preguntas no hay ni cuentas ni dirección que pedir: no hay envío todavía.
+    bloqueEnvio.hidden = !hay || preguntando;
+    for (const el of cuentas) el.hidden = preguntando;
+    for (const el of soloPregunta) el.hidden = !preguntando;
     vacio.hidden = hay;
     // Sin piezas no hay nada que comprar ni que consultar: de vuelta al resumen.
     if (!hay && paso === 'datos') mostrarPaso('lista');
@@ -412,7 +459,9 @@ import { precio } from '../lib/formato';
     if (marcaSubtotalDatos) marcaSubtotalDatos.textContent = precio(piezas);
     if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
     marcaTotal.textContent = precio(piezas + envioCoste);
-    if (aviso) aviso.hidden = !hayOrientativos();
+    if (aviso) aviso.hidden = !hayOrientativos() || preguntando;
+    if (irDatos) irDatos.textContent = preguntando ? 'Preguntar' : 'Comprar';
+    if (titulo && paso === 'datos') titulo.textContent = tituloPaso('datos');
 
     enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
   }

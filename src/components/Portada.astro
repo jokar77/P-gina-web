@@ -1,215 +1,476 @@
 ---
+/**
+ * La portada: un desfile guiado por el scroll.
+ *
+ * El nombre ocupa la pantalla entera, y al bajar se retira mientras las piezas pasan
+ * una a una, grandes y solas. Ni una cuadrícula ni un carrusel automático: se avanza
+ * al ritmo de quien mira, y nada se mueve si nadie lo mueve.
+ *
+ * Pasa por todo lo que se hace, en orden: primero los bolsos, luego el lino de niño y
+ * después los vestidos. Enseñando solo bolsos, lo demás no existía hasta que bajabas
+ * media web, y el desfile decía menos de lo que hay.
+ *
+ * Se construye sola desde las colecciones. Antes la portada era una foto de grupo con
+ * nueve coordenadas medidas a mano: añadir una pieza obligaba a rehacer la foto y a
+ * volver a medirlas, así que envejecía sola. Aquí la pieza nueva entra sin tocar nada,
+ * sea del tipo que sea.
+ *
+ * El recorrido se estira con lo que haya para que a cada pieza le toque el mismo rato
+ * —si no, con dieciséis nadie llegaría a leer un nombre— pero tiene tope: crecer no
+ * puede significar hacer scroll eterno.
+ *
+ * Todo el movimiento es CSS atado al scroll: cero JavaScript, y corre fuera del hilo
+ * principal, así que no se entrecorta mientras la página carga las fotos.
+ */
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import grupo from '../assets/piezas/_portada/grupo.jpg';
 import Marca from './Marca.astro';
-import Tira from './Tira.astro';
-import { ZONAS } from '../data/portada';
 import site from '../data/site.json';
-import { opcional } from '../lib/ajustes';
 import { precio } from '../lib/formato';
 
-const bolsos = await getCollection('bolsos');
-const porSlug = new Map(bolsos.map((b) => [b.id, b]));
+const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
+  [...l].sort((a, b) => a.data.orden - b.data.orden);
 
-const zonas = ZONAS.map((z) => ({ zona: z, pieza: porSlug.get(z.slug) })).filter(
-  (e): e is { zona: (typeof ZONAS)[number]; pieza: (typeof bolsos)[number] } => !!e.pieza
-);
+const bolsos = porOrden(await getCollection('bolsos'));
+const ninos = porOrden(await getCollection('ninos'));
+const archivo = porOrden(await getCollection('archivo'));
+
+interface Pase {
+  url: string;
+  foto: ImageMetadata;
+  alt: string;
+  familia: string;
+  nombre: string;
+  /** La línea de debajo: el precio, o de qué es la pieza cuando no está a la venta. */
+  dato: string;
+}
+
+/**
+ * El desfile: todo lo que se hace, en el orden en que se cuenta.
+ *
+ * Cada familia trae su propia manera de decir el precio —los bolsos uno cerrado, el
+ * lino uno de partida, los vestidos ninguno porque no se venden—, así que cada una se
+ * traduce aquí a la misma forma en vez de repartir condicionales por la plantilla.
+ */
+const pases: Pase[] = [
+  ...bolsos.map((b) => ({
+    url: `/bolsos/${b.id}`,
+    foto: b.data.foto,
+    alt: `Bolso ${b.data.nombre}.`,
+    familia: site.secciones.bolsos.titulo,
+    nombre: b.data.nombre,
+    dato: b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio),
+  })),
+  ...ninos.map((c) => ({
+    url: `/ninos/${c.id}`,
+    foto: c.data.foto,
+    alt: `Conjunto ${c.data.nombre}.`,
+    familia: site.secciones.nino.titulo,
+    nombre: c.data.nombre,
+    dato: `Desde ${precio(c.data.precioDesde)}`,
+  })),
+  ...archivo.map((a) => ({
+    url: `/archivo/${a.id}`,
+    foto: a.data.foto,
+    alt: `${a.data.nombre}, ${a.data.tipo.toLowerCase()}.`,
+    familia: site.secciones.archivo.titulo,
+    nombre: a.data.nombre,
+    dato: a.data.tipo,
+  })),
+];
+
+/**
+ * El reparto del recorrido.
+ *
+ * Cada pieza ocupa dos huecos y empieza un hueco después que la anterior, así que la
+ * que se va y la que llega se solapan exactamente un hueco: nunca hay un instante con
+ * la escena vacía. El primer hueco se lo queda el nombre.
+ *
+ * El tramo de la última se sale del final a propósito: su desvanecido no llega a
+ * completarse, así que sigue entera cuando la tarima se despega y se va con la página.
+ * Terminándolo dentro quedaba un trozo de escena clavada y vacía.
+ */
+const huecos = pases.length + 1;
+const pct = (x: number) => `${((x / huecos) * 100).toFixed(3)}%`;
+const finDelNombre = pct(1.9);
 ---
 
-{/*
-  En pantalla ancha el nombre y la foto van uno al lado del otro. Apilados y centrados
-  —que es lo que pide una pantalla estrecha— la portada ocupaba media ventana en un
-  ordenador, con el resto de la web el doble de ancha justo debajo: se leía como la
-  maqueta del móvil estirada. La foto es vertical, así que ensancharla no era la salida;
-  la salida es dejar de apilar.
-*/}
-<section id="inicio" class="px-5 pt-10 pb-section sm:px-8">
-  <div
-    class="mx-auto grid max-w-7xl items-center gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,1fr)_auto]"
-  >
-    <div class="text-center lg:text-left">
+<section
+  id="inicio"
+  class="escena"
+  data-escena
+  style={`--fin-nombre:${finDelNombre};--piezas:${pases.length}`}
+>
+  <div class="fija">
+    <div class="cabecera">
       <h1>
         <Marca
-          class="mx-auto w-[min(26rem,74vw)] lg:mx-0 lg:w-[min(32rem,100%)]"
-          sizes="(min-width: 1024px) 32rem, (min-width: 640px) 26rem, 74vw"
+          class="marca"
+          sizes="(min-width: 1024px) 54rem, 86vw"
           cargaDiferida={false}
         />
       </h1>
-      <p class="mx-auto mt-5 max-w-[46ch] text-lg text-ink-soft lg:mx-0">{site.frasePortada}</p>
+      <p class="frase">{site.frasePortada}</p>
     </div>
 
-    <figure class="mx-auto w-full max-w-[46rem] lg:mx-0 lg:w-auto lg:max-w-none">
-      {/*
-        Los marcadores se colocan en porcentajes de esta caja, así que la caja tiene que
-        ser exactamente la foto: si el pie de foto entrara aquí dentro, cada marcador se
-        desplazaría hacia arriba lo que midiera el pie.
-
-        En pantalla ancha la altura manda y el ancho sale de la proporción de la foto, no
-        al revés: así la foto no puede crecer hasta no caber en la pantalla.
-      */}
-      <div
-        class="relative mx-auto aspect-[928/1152] w-full lg:h-[min(74vh,44rem)] lg:w-auto"
-        data-mapa
-      >
-        <Image
-          src={grupo}
-          alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
-          widths={[560, 760, 928]}
-          sizes="(min-width: 1024px) 36rem, (min-width: 768px) 46rem, 100vw"
-          class="h-full w-full object-cover"
-          loading="eager"
-          fetchpriority="high"
-        />
-
-        <div class="pointer-events-none absolute inset-0" data-foco aria-hidden="true"></div>
-
-        {
-          zonas.map(({ zona, pieza }, i) => (
-            <a
-              class="zona"
-              href={`/bolsos/${zona.slug}`}
-              style={`--x:${zona.x}%;--y:${zona.y}%;--w:${zona.w}%;--h:${zona.h}%;--fw:${zona.w * 0.62}%;--fh:${zona.h * 0.62}%;--i:${i}`}
-              data-zona
-              data-nombre={pieza.data.nombre}
-              data-precio={pieza.data.estado === 'vendido' ? 'Vendido' : precio(pieza.data.precio)}
-            >
-              <span class="marca" aria-hidden="true" />
-              <span class="sr-only">
-                {pieza.data.nombre},{' '}
-                {pieza.data.estado === 'vendido' ? 'vendido' : precio(pieza.data.precio)}
+    <ul class="pases">
+      {
+        pases.map((p, i) => (
+          <li class="pase" style={`--ini:${pct(i + 1)};--fin:${pct(i + 3)}`}>
+            <a href={p.url}>
+              <Image
+                src={p.foto}
+                alt={p.alt}
+                widths={[420, 720, 1000]}
+                sizes="(min-width: 768px) 26rem, 74vw"
+                class="foto"
+                loading={i < 2 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
+              />
+              <span class="rotulo">
+                {/* De qué familia es: es lo que hace legible que el desfile cambia de
+                    bolsos a lino y de lino a vestidos, en vez de parecer una lista. */}
+                <span class="familia">{p.familia}</span>
+                <span class="nombre">{p.nombre}</span>
+                <span class="dato">{p.dato}</span>
               </span>
             </a>
-          ))
-        }
-      </div>
+          </li>
+        ))
+      }
+    </ul>
 
-      {/* Este pie hace dos cosas: si hay texto, lo dice; y en cuanto señalas una pieza de
-          la foto, lo cambia por su nombre y su precio. Aunque esté vacío tiene que seguir
-          aquí, porque es el único sitio donde se lee qué bolso estás señalando. */}
-      <figcaption class="pie mt-5 text-center" data-pie>
-        <span class="text-[15px] text-ink-soft transition-opacity duration-200" data-pie-texto
-          >{opcional('piePortada')}</span
-        >
-      </figcaption>
-    </figure>
-  </div>
-
-  <div class="-mx-5 mt-14 sm:-mx-8">
-    <Tira />
+    <div class="regla" aria-hidden="true"><span></span></div>
   </div>
 </section>
 
 <style>
-  .zona {
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    width: var(--w);
-    height: var(--h);
-    transform: translate(-50%, -50%);
+  /*
+   * Lo que se ve sin animación guiada por scroll: una fila de piezas que se recorre a
+   * mano. Es también lo que ve un navegador que no la soporta todavía. No se rompe
+   * nada; simplemente no se transforma.
+   */
+  /*
+   * El fondo es la manta sobre la que están hechas las fotos, con su grano, para que la
+   * pieza no parezca recortada y pegada sobre otra cosa: el bolso y lo que hay detrás son
+   * el mismo material.
+   *
+   * Y se acaba: el degradado del último tercio lo lleva al papel del resto de la web, así
+   * que al pasar el desfile el fondo ya ha cambiado de color y no hay ningún corte. Es un
+   * degradado, no una animación: no cuesta nada y no puede desincronizarse.
+   *
+   * El grano va debajo del degradado a propósito, para que se desvanezca con el color.
+   */
+  .escena {
+    position: relative;
+    padding: 2.5rem 1.25rem 0;
+    background-color: var(--color-manta);
+    background-image:
+      linear-gradient(to bottom, transparent 0 66%, var(--color-paper) 97%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.13'/%3E%3C/svg%3E");
+  }
+  .cabecera {
     display: grid;
-    place-items: center;
-    border-radius: 9999px;
+    justify-items: center;
+    gap: 1.25rem;
+    text-align: center;
   }
-
   .marca {
-    width: 13px;
-    height: 13px;
-    border-radius: 9999px;
-    background-color: color-mix(in srgb, var(--color-paper) 82%, transparent);
-    box-shadow: 0 1px 6px rgb(31 29 27 / 0.35);
-    opacity: 0;
-    transform: scale(0.4);
-    animation: asentar 620ms var(--ease-salida) forwards;
-    animation-delay: calc(700ms + var(--i) * 70ms);
-    transition:
-      transform 260ms var(--ease-salida),
-      background-color 260ms var(--ease-salida);
+    width: min(54rem, 86vw);
+  }
+  .frase {
+    max-width: 44ch;
+    color: var(--color-ink-manta);
+    font-size: 1.0625rem;
+  }
+  .pases {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pase {
+    flex: none;
+  }
+  .pase a {
+    display: grid;
+    justify-items: center;
+    gap: 1.1rem;
+    text-decoration: none;
+  }
+  .foto {
+    width: auto;
+    height: min(56svh, 30rem);
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    background-color: var(--color-panel);
+  }
+  .rotulo {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+  }
+  .familia {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ink-manta);
+    opacity: 0.72;
+  }
+  .nombre {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+  .dato {
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-ink-manta);
+  }
+  .regla {
+    display: none;
   }
 
-  @keyframes asentar {
-    to {
-      opacity: 1;
-      transform: scale(1);
+  @supports (animation-timeline: view()) {
+    /*
+     * La escena mide más que la pantalla y la tarima se queda clavada dentro: ese
+     * desfase es el recorrido. `contain` es justo el tramo en el que la escena tapa la
+     * pantalla entera, o sea exactamente lo que dura el clavado.
+     */
+    .escena {
+      /*
+       * El recorrido crece con lo que haya —unos 22vh por pieza— para que a cada una
+       * le toque el mismo rato. Con dieciséis piezas repartidas en 320vh cada nombre
+       * duraba menos de un golpe de rueda. El tope de 560vh está para que añadir la
+       * pieza cuarenta no convierta la portada en un túnel.
+       */
+      height: min(calc(100vh + (var(--piezas) + 1) * 22vh), 560vh);
+      padding: 0;
+      view-timeline: --escena block;
     }
-  }
 
-  .zona:hover .marca,
-  .zona:focus-visible .marca {
-    transform: scale(1.55);
-    background-color: var(--color-paper);
-  }
+    .fija {
+      position: sticky;
+      top: 0;
+      display: grid;
+      place-items: center;
+      height: 100svh;
+      overflow: hidden;
+      padding: 0 1.25rem;
+    }
 
-  /* El velo aparta el resto de la foto sin llegar a borrarlo: sigue siendo una foto. */
-  [data-foco] {
-    background: radial-gradient(
-      ellipse var(--fw, 20%) var(--fh, 20%) at var(--fx, 50%) var(--fy, 50%),
-      transparent 0 62%,
-      color-mix(in srgb, var(--color-paper) 55%, transparent) 100%
-    );
-    opacity: 0;
-    transition: opacity 300ms var(--ease-salida);
-  }
+    .cabecera,
+    .pases {
+      grid-area: 1 / 1;
+    }
 
-  [data-mapa][data-activa] [data-foco] {
-    opacity: 1;
+    .pases {
+      display: grid;
+      place-items: center;
+      overflow: visible;
+      margin: 0;
+    }
+    .pase {
+      grid-area: 1 / 1;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /*
+     * `animation-timeline` va en una regla aparte a propósito, y no puede volver a
+     * juntarse con la de al lado.
+     *
+     * Puesta junto al atajo `animation`, el minificador las fusiona en
+     * `animation: linear both pasar --escena`. Ese atajo no admite el carril de tiempo,
+     * así que el navegador tira la declaración entera y no anima nada: ni error, ni
+     * aviso, solo una portada quieta. Con selectores distintos no hay nada que fusionar.
+     */
+    .cabecera {
+      animation: retirar linear both;
+      animation-range: contain 0% contain var(--fin-nombre);
+    }
+    .fija > .cabecera {
+      animation-timeline: --escena;
+    }
+
+    .pase {
+      animation: pasar linear both;
+      animation-range: contain var(--ini) contain var(--fin);
+    }
+    .pases > .pase {
+      animation-timeline: --escena;
+    }
+
+    /*
+     * El rótulo entra y sale más deprisa que la foto, en la misma ventana en la que la
+     * pieza manda. Fundiéndose como la foto, los dos nombres se solapaban a mitad del
+     * relevo y quedaba un amasijo ilegible: dos fotos superpuestas se leen como una
+     * disolvencia, dos textos superpuestos se leen como un error.
+     */
+    .rotulo {
+      animation: rotular linear both;
+      animation-range: contain var(--ini) contain var(--fin);
+    }
+    .pase .rotulo {
+      animation-timeline: --escena;
+    }
+
+    .regla {
+      display: block;
+      position: absolute;
+      inset: auto 1.25rem 2.25rem;
+      height: 1px;
+      background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
+    }
+    .regla span {
+      display: block;
+      height: 100%;
+      background-color: var(--color-ink);
+      transform-origin: left;
+      transform: scaleX(0);
+      animation: avanzar linear both;
+      animation-range: contain 0% contain 100%;
+    }
+    .regla > span {
+      animation-timeline: --escena;
+    }
   }
 
   /*
-   * Se reserva el alto de una línea para que, al señalar un bolso, el nombre no empuje
-   * hacia abajo lo que hay debajo. Solo donde se puede señalar: en el móvil no hay
-   * cursor, el pie nunca se rellena, y ese hueco sería sitio perdido.
+   * Verse y poder pulsarse son dos cosas distintas, y por eso van en dos propiedades.
+   *
+   * `pointer-events` deja pulsar solo del 30% al 70% del tramo, o sea únicamente
+   * mientras la pieza es la que manda: durante el relevo hay dos en pantalla, y con las
+   * dos pulsables el clic se lo llevaba la que estaba desapareciendo —pulsabas una y se
+   * abría la otra—. No pinta nada, así que estrecharla no borra el fundido.
+   *
+   * `visibility` solo se apaga en los extremos, cuando la pieza ya no se ve en absoluto.
+   * Sirve para que el tabulador y los lectores de pantalla no recorran once enlaces
+   * invisibles. Atarla a la ventana de pulsación fue un error: apaga el pintado, así que
+   * a mitad del relevo se quedaban las dos ocultas y la escena aparecía vacía.
+   *
+   * Las dos cambian de golpe a mitad de camino entre sus dos fotogramas, que es como
+   * interpola el navegador lo que no tiene valores intermedios.
    */
-  @media (hover: hover) {
-    .pie {
-      min-height: 1.6em;
+  @keyframes pasar {
+    0% {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(1.2vh) scale(0.98);
+    }
+    1% {
+      visibility: visible;
+    }
+    29% {
+      pointer-events: none;
+    }
+    31% {
+      pointer-events: auto;
+    }
+    50% {
+      opacity: 1;
+      transform: none;
+    }
+    69% {
+      pointer-events: auto;
+    }
+    71% {
+      pointer-events: none;
+    }
+    99% {
+      visibility: visible;
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-1.2vh) scale(0.98);
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .marca {
+  /*
+   * La ventana del rótulo (34%-66%) va emparejada con la de pulsación (30%-70%): se lee
+   * el nombre exactamente mientras esa pieza es la que responde al clic. Los dos
+   * desvanecidos caben enteros dentro del medio tramo que separa una pieza de la
+   * siguiente, así que en el cruce no queda ni un rastro del nombre anterior: con la
+   * ventana un poco más ancha se cruzaban dos fantasmas al 20%, que no es un nombre
+   * sino una mancha.
+   */
+  @keyframes rotular {
+    0%,
+    26% {
+      opacity: 0;
+    }
+    34%,
+    66% {
       opacity: 1;
-      transform: none;
-      animation: none;
+    }
+    74%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes retirar {
+    to {
+      opacity: 0;
+      transform: translateY(-6vh) scale(0.62);
+    }
+  }
+
+  @keyframes avanzar {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /*
+   * Con menos animación pedida se conserva el relevo —es lo que explica que hay más
+   * piezas— y se quita el desplazamiento. Menos y más suave, no nada.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes pasar {
+      0% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      1% {
+        visibility: visible;
+      }
+      29% {
+        pointer-events: none;
+      }
+      31% {
+        pointer-events: auto;
+      }
+      50% {
+        opacity: 1;
+      }
+      69% {
+        pointer-events: auto;
+      }
+      71% {
+        pointer-events: none;
+      }
+      99% {
+        visibility: visible;
+      }
+      100% {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+    }
+    @keyframes retirar {
+      to {
+        opacity: 0;
+      }
     }
   }
 </style>
-
-<script>
-  const mapa = document.querySelector<HTMLElement>('[data-mapa]');
-  const foco = document.querySelector<HTMLElement>('[data-foco]');
-  const texto = document.querySelector<HTMLElement>('[data-pie-texto]');
-
-  if (mapa && foco && texto) {
-    // El pie de foto dice qué hacer hasta que señalas algo, y entonces dice qué es.
-    const instruccion = texto.textContent!.trim();
-
-    const entrar = (zona: HTMLElement) => {
-      const estilo = zona.style;
-      for (const prop of ['--fw', '--fh'] as const) {
-        foco.style.setProperty(prop, estilo.getPropertyValue(prop));
-      }
-      foco.style.setProperty('--fx', estilo.getPropertyValue('--x'));
-      foco.style.setProperty('--fy', estilo.getPropertyValue('--y'));
-      texto.textContent = `${zona.dataset.nombre} · ${zona.dataset.precio}`;
-      texto.classList.add('text-ink');
-      texto.classList.remove('text-ink-soft');
-      mapa.setAttribute('data-activa', '');
-    };
-
-    const salir = () => {
-      mapa.removeAttribute('data-activa');
-      texto.textContent = instruccion;
-      texto.classList.remove('text-ink');
-      texto.classList.add('text-ink-soft');
-    };
-
-    for (const zona of mapa.querySelectorAll<HTMLElement>('[data-zona]')) {
-      zona.addEventListener('pointerenter', () => entrar(zona));
-      zona.addEventListener('focus', () => entrar(zona));
-      zona.addEventListener('pointerleave', salir);
-      zona.addEventListener('blur', salir);
-    }
-  }
-</script>

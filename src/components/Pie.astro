@@ -1,10 +1,11 @@
 ---
-import { LEGALES, SECCIONES } from '../data/navegacion';
+import { LEGALES, secciones } from '../data/navegacion';
 import Marca from './Marca.astro';
 import Redes from './Redes.astro';
 import site from '../data/site.json';
 
 const ano = new Date().getFullYear();
+const SECCIONES = await secciones();
 ---
 
 <footer class="oscuro px-5 py-section sm:px-8">

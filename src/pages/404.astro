@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { SECCIONES } from '../data/navegacion';
+import { secciones } from '../data/navegacion';
+
+const SECCIONES = await secciones();
 ---
 
 <Layout
