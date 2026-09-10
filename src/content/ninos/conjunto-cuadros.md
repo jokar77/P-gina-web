@@ -8,4 +8,7 @@ orden: 2
 foto: ../../assets/piezas/conjunto-cuadros/01.jpg
 fotos:
   - ../../assets/piezas/conjunto-cuadros/02.jpg
+  - ../../assets/piezas/conjunto-cuadros/05.jpg
+  - ../../assets/piezas/conjunto-cuadros/03.jpg
+  - ../../assets/piezas/conjunto-cuadros/04.jpg
 ---
