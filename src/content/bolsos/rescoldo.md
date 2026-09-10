@@ -2,7 +2,7 @@
 nombre: Rescoldo
 precio: 25
 estado: disponible
-color: teja
+color: rosa
 material: Algodón con lentejuelas, monedero a juego
 ancho: 30
 alto: 18
