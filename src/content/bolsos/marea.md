@@ -2,7 +2,7 @@
 nombre: Marea
 precio: 25
 estado: disponible
-color: turquesa
+color: azul
 material: Trapillo de algodón, flecos largos
 ancho: 26
 alto: 20

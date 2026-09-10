@@ -2,7 +2,7 @@
 nombre: Lazada
 precio: 25
 estado: disponible
-color: coral
+color: rosa
 material: Trapillo grueso, lazada lateral, asa de hombro
 ancho: 28
 alto: 22

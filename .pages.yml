@@ -57,10 +57,10 @@ content:
         required: true
         options:
           values:
-            - turquesa
+            - azul
             - rojo
             - granate
-            - coral
+            - rosa
             - teja
             - amarillo
             - crudo
@@ -68,7 +68,12 @@ content:
             - chocolate
             - gris
             - bicolor
-        description: Es el que agrupa la pieza en los filtros de la colección.
+        description: >-
+          Es el que agrupa la pieza en los filtros de la colección. Son familias
+          amplias a propósito: si el tono no es exactamente igual pero es de la
+          misma familia (por ejemplo, dos rosas que no son el mismo tono), se
+          elige igualmente esa opción. No hace falta que exista un color para
+          cada matiz.
       - name: material
         label: Material
         type: string
