@@ -97,7 +97,7 @@ import { precio } from '../lib/formato';
     </div>
 
     <div class="border-t border-paper/20 px-6 py-5" data-carrito-pie hidden>
-      <dl class="grid grid-cols-[1fr_auto] gap-y-1 text-[15px]">
+      <dl class="grid grid-cols-[1fr_auto] gap-y-1 text-[15px]" data-carrito-cuentas>
         <dt class="text-paper/70">Piezas</dt>
         <dd class="text-right" data-carrito-subtotal></dd>
         <dt class="text-paper/70">Envío</dt>
@@ -105,6 +105,11 @@ import { precio } from '../lib/formato';
         <dt class="mt-1 self-baseline">Total</dt>
         <dd class="mt-1 text-right font-display text-2xl" data-carrito-total></dd>
       </dl>
+
+      {/* Cuando en el pedido solo hay preguntas, no hay cuentas que echar todavía. */}
+      <p class="text-[15px] text-paper/70" data-carrito-solo-pregunta hidden>
+        Aquí solo hay preguntas: no hay precio ni envío que calcular hasta que lo habléis.
+      </p>
 
       <p class="mt-1 text-[13px] text-paper/60" data-carrito-aviso hidden>
         Orientativo: las piezas por encargo se cierran hablando.
@@ -218,7 +223,17 @@ import { precio } from '../lib/formato';
 </style>
 
 <script>
-  import { anadir, contiene, hayOrientativos, leer, quitar, suscribir, total, vaciar } from '../lib/carrito';
+  import {
+    anadir,
+    contiene,
+    hayOrientativos,
+    leer,
+    quitar,
+    soloConsultas,
+    suscribir,
+    total,
+    vaciar,
+  } from '../lib/carrito';
   import type { Linea } from '../lib/carrito';
   import { costeEnvio, nombreMetodo, type Metodo } from '../lib/envio';
   import { precio } from '../lib/formato';
@@ -232,6 +247,8 @@ import { precio } from '../lib/formato';
   const marcaSubtotal = document.querySelector<HTMLElement>('[data-carrito-subtotal]');
   const marcaEnvio = document.querySelector<HTMLElement>('[data-carrito-coste-envio]');
   const marcaTotal = document.querySelector<HTMLElement>('[data-carrito-total]');
+  const cuentas = document.querySelector<HTMLElement>('[data-carrito-cuentas]');
+  const soloPregunta = document.querySelector<HTMLElement>('[data-carrito-solo-pregunta]');
   const aviso = document.querySelector<HTMLElement>('[data-carrito-aviso]');
   const enviar = document.querySelector<HTMLAnchorElement>('[data-carrito-enviar]');
 
@@ -246,22 +263,33 @@ import { precio } from '../lib/formato';
     const piezas = total();
     const metodo = metodoElegido();
     const envioCoste = costeEnvio(piezas, metodo);
+    const preguntando = soloConsultas();
 
     const cuerpo = lineas
       .map((l) => {
-        const cabeza = `· ${l.nombre} — ${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
+        const valor = l.consultar
+          ? 'a consultar'
+          : `${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
+        const cabeza = `· ${l.nombre} — ${valor}`;
         return l.detalle ? `${cabeza}\n  ${l.detalle}` : cabeza;
       })
       .join('\n');
 
-    const partes = [
-      'Hola Sakina, me gustaría encargar:',
-      '',
-      cuerpo,
-      '',
-      `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
-      `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
-    ];
+    /*
+     * Si en el pedido solo hay preguntas no hay nada que sumar ni que enviar todavía:
+     * un «Total: 0 €» y una tarifa de envío en un mensaje que solo pregunta por un
+     * vestido se leen como un error de la web.
+     */
+    const partes = preguntando
+      ? ['Hola Sakina, quería preguntarte por:', '', cuerpo]
+      : [
+          'Hola Sakina, me gustaría encargar:',
+          '',
+          cuerpo,
+          '',
+          `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
+          `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
+        ];
 
     // Los datos de envío solo se añaden si se han escrito.
     const direccion = [
@@ -321,7 +349,9 @@ import { precio } from '../lib/formato';
 
         const p = document.createElement('span');
         p.className = 'whitespace-nowrap';
-        p.textContent = precio(l.precio) + (l.orientativo ? ' *' : '');
+        p.textContent = l.consultar
+          ? 'A consultar'
+          : precio(l.precio) + (l.orientativo ? ' *' : '');
         derecha.append(p);
 
         const fuera = document.createElement('button');
@@ -338,8 +368,12 @@ import { precio } from '../lib/formato';
     );
 
     const hay = lineas.length > 0;
+    const preguntando = soloConsultas();
     pie.hidden = !hay;
-    bloqueEnvio.hidden = !hay;
+    // Con solo preguntas no hay ni cuentas ni dirección que pedir: no hay envío todavía.
+    bloqueEnvio.hidden = !hay || preguntando;
+    if (cuentas) cuentas.hidden = preguntando;
+    if (soloPregunta) soloPregunta.hidden = !preguntando;
     vacio.hidden = hay;
 
     const piezas = total();
@@ -347,7 +381,7 @@ import { precio } from '../lib/formato';
     if (marcaSubtotal) marcaSubtotal.textContent = precio(piezas);
     if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
     marcaTotal.textContent = precio(piezas + envioCoste);
-    if (aviso) aviso.hidden = !hayOrientativos();
+    if (aviso) aviso.hidden = !hayOrientativos() || preguntando;
 
     enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
   }

@@ -148,6 +148,11 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
       conjunto de niño y «Diseña tu bolso») salen ya de `site.json`. El del vendido lleva
       `{precio}` y se sustituye al construir, para que no se quede viejo si cambia el
       precio de la pieza.
+- [x] **«Otros trabajos»**: obra hecha que no está a la venta —vestidos de flamenca y lo
+      que vaya saliendo— con su propio apartado en el CMS. Sin precio; se pregunta, y la
+      pregunta entra en el mismo pedido de WhatsApp. Se agrupa sola por el campo «Tipo»,
+      y mientras no haya ninguna pieza la sección no existe: ni en la portada, ni en el
+      menú, ni como página. Falta que Sakina suba las fotos.
 - [ ] Quedan a propósito fuera del formulario los tres recuadros de «El taller» (envío,
       pago, devoluciones): repiten lo que dicen las páginas legales, y si se editan por
       separado acaban contradiciéndolas. Si hay que cambiarlos, se cambian junto con la

@@ -1,6 +1,8 @@
 ---
-import { SECCIONES as enlaces } from '../data/navegacion';
+import { secciones } from '../data/navegacion';
 import Simbolo from './Simbolo.astro';
+
+const enlaces = await secciones();
 ---
 
 <header

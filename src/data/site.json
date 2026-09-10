@@ -19,13 +19,18 @@
     "disena": {
       "titulo": "Diseña tu bolso",
       "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan."
+    },
+    "archivo": {
+      "titulo": "Otros trabajos",
+      "intro": "Piezas que ya se hicieron y no están a la venta. Se quedan aquí porque cuentan de lo que sale del taller cuando el encargo no es un bolso. Si te gusta alguna, se puede hablar."
     }
   },
   "fichas": {
     "disponible": "Es una pieza única y no se cobra nada aquí: reúnes lo que te guste y se lo mandas escrito por WhatsApp. Sakina te confirma que sigue disponible.",
     "vendido": "Esta ya tiene dueña. Se queda aquí porque es parte del trabajo, y porque se puede tejer otra parecida: nunca sale idéntica. Partiría de {precio}, orientativo hasta que lo habléis.",
     "nino": "El precio es orientativo: depende de la talla y de la tela. Lo cerráis por WhatsApp antes de que empiece a cortar. Al ser una prenda hecha a tu medida, queda fuera del derecho de devolución.",
-    "aMedida": "No se paga nada aquí. Lo revisáis por WhatsApp antes de que empiece a tejer."
+    "aMedida": "No se paga nada aquí. Lo revisáis por WhatsApp antes de que empiece a tejer.",
+    "archivo": "Esta pieza no está a la venta: ya se hizo para alguien. Se puede hacer algo parecido, pero nunca sale igual. Pregunta y Sakina te dice si se puede y cuánto llevaría."
   },
   "taller": {
     "titulo": "El taller",

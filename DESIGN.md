@@ -111,3 +111,22 @@ recortaban como tarjetas pegadas encima.
 Sobre la manta la tinta suave se queda en 4,3:1 y no vale; el texto secundario de la
 portada usa `--color-ink-manta` (#474440), que da 6,4:1 sobre la manta y 7,9:1 sobre el
 papel, así que aguanta el tramo en el que el fondo cambia de una a otro.
+
+
+## Otros trabajos
+
+Obra hecha que no está a la venta. No es otra categoría de producto: es la prueba de lo
+que sabe hacer cuando el encargo no es un bolso.
+
+Van agrupadas por tipo, con encabezado: un vestido de flamenca no se parece en nada a un
+bolso de trapillo, y meterlos en la misma rejilla los convertiría a los dos en catálogo.
+La disparidad se enseña en vez de disimularse, porque la disparidad es justo lo que dice
+«esto también lo hago».
+
+Sin precio y sin botón de comprar. Se puede preguntar, y preguntar entra en el mismo
+pedido que todo lo demás —no se inventa un segundo camino—, como línea «a consultar» que
+no suma al total. Si en el pedido solo hay preguntas no se enseña ni total ni envío: no
+hay nada que sumar todavía.
+
+Vacía, la sección no existe. Una sección vacía en una web publicada es peor que no
+tenerla, y un enlace del menú que lleva a ella es una promesa incumplida.

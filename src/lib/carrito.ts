@@ -23,6 +23,12 @@ export interface Linea {
   url?: string;
   /** Las piezas por encargo llevan precio orientativo, no cerrado. */
   orientativo?: boolean;
+  /**
+   * Una pregunta, no una compra: las piezas del archivo no están a la venta y no tienen
+   * precio. Suman 0 al total y se escriben como «a consultar», porque poner 0 € sería
+   * decir que son gratis.
+   */
+  consultar?: boolean;
 }
 
 let memoria: Linea[] = [];
@@ -69,6 +75,9 @@ export const total = () => memoria.reduce((suma, l) => suma + l.precio, 0);
 
 /** ¿Algún precio del pedido es orientativo? Entonces el total también lo es. */
 export const hayOrientativos = () => memoria.some((l) => l.orientativo);
+
+/** ¿Solo hay preguntas? Entonces no hay ni total ni envío que enseñar todavía. */
+export const soloConsultas = () => memoria.length > 0 && memoria.every((l) => l.consultar);
 
 export function anadir(linea: Linea) {
   if (contiene(linea.id)) return false;

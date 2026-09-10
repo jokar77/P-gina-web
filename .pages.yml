@@ -139,6 +139,55 @@ content:
       - { name: foto, label: Foto principal, type: image, required: true }
       - { name: fotos, label: Más fotos, type: image, list: true }
 
+  - name: archivo
+    label: Otros trabajos (no se venden)
+    type: collection
+    path: src/content/archivo
+    filename: '{fields.nombre}.md'
+    description: >-
+      Piezas ya hechas que se enseñan pero no están a la venta: vestidos de flamenca,
+      otros vestidos, lo que sea. No llevan precio. Quien las vea puede preguntar, y la
+      pregunta te llega por WhatsApp igual que un pedido. Mientras esto esté vacío, la
+      sección no aparece en la web.
+    view:
+      fields: [nombre, tipo, ano]
+      primary: nombre
+    fields:
+      - { name: nombre, label: Nombre de la pieza, type: string, required: true }
+      - name: tipo
+        label: Tipo
+        type: string
+        required: true
+        description: >-
+          Lo que agrupa la pieza con sus parecidas. Escribe siempre igual las del mismo
+          grupo —«Vestido de flamenca» en todos— y saldrán juntas bajo ese encabezado.
+      - name: material
+        label: Material
+        type: string
+        description: Opcional.
+      - name: nota
+        label: Nota
+        type: text
+        options: { rows: 4 }
+        description: Opcional. Para qué se hizo, qué tiene de especial, lo que quieras contar.
+      - name: ano
+        label: Año
+        type: number
+        options: { min: 1990, step: 1 }
+        description: Opcional. Sale junto al nombre.
+      - name: foto
+        label: Foto principal
+        type: image
+        required: true
+        description: Vertical, formato 3:4. Es la que se ve en la rejilla y al compartir.
+      - { name: fotos, label: Más fotos, type: image, list: true }
+      - name: orden
+        label: Orden
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+        description: El número más bajo sale primero dentro de su grupo.
+
   - name: ajustes
     label: Textos y datos de la web
     type: file
@@ -191,6 +240,12 @@ content:
             fields:
               - { name: titulo, label: Título, type: string }
               - { name: intro, label: Texto de al lado, type: text }
+          - name: archivo
+            label: Sección de otros trabajos
+            type: object
+            fields:
+              - { name: titulo, label: Título, type: string }
+              - { name: intro, label: Texto de al lado, type: text }
           - name: disena
             label: Sección de diseña tu bolso
             type: object
@@ -225,6 +280,10 @@ content:
             label: En «Diseña tu bolso»
             type: text
             options: { rows: 3 }
+          - name: archivo
+            label: En una pieza de «Otros trabajos»
+            type: text
+            options: { rows: 4 }
 
       - name: taller
         label: El taller
