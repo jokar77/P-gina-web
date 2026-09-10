@@ -83,12 +83,18 @@ Un desfile guiado por el scroll. El nombre ocupa la pantalla entera y se retira 
 y entonces las piezas pasan una a una, grandes y solas, cada una con su nombre y su precio.
 Nada se mueve por su cuenta: se avanza al ritmo de quien mira.
 
+Pasa por todo lo que se hace, en orden: bolsos, lino de niño y vestidos. Cada pieza lleva
+encima el nombre de su familia, que es lo que hace legible que el desfile cambia de una a
+otra en vez de parecer una lista larga. Enseñando solo bolsos, lo demás no existía hasta
+media web más abajo.
+
+El recorrido se estira con lo que haya, unos 22vh por pieza, para que a cada una le toque
+el mismo rato: con dieciséis repartidas en 320vh ningún nombre duraba lo que un golpe de
+rueda. Tiene tope en 560vh, para que la pieza cuarenta no convierta la portada en un túnel.
+
 Se construye sola desde la colección, y ese es el motivo de que exista. Antes era una foto
 de grupo con nueve zonas clicables medidas a mano: añadir una pieza obligaba a rehacer la
 foto y a volver a medirlas, así que la portada envejecía sola y dos bolsos ni salían.
-
-El recorrido dura lo mismo con once piezas que con treinta. Crecer no puede significar
-hacer más scroll.
 
 La foto de grupo no se tira: vive en «El taller», donde es el retrato de una tanda de
 trabajo y no un catálogo, y donde quedarse desactualizada da igual. Va pequeña —26rem—

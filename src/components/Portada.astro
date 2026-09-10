@@ -6,12 +6,18 @@
  * una a una, grandes y solas. Ni una cuadrícula ni un carrusel automático: se avanza
  * al ritmo de quien mira, y nada se mueve si nadie lo mueve.
  *
- * Se construye sola desde la colección. Antes la portada era una foto de grupo con
- * nueve coordenadas medidas a mano: añadir una pieza obligaba a rehacer la foto y a
- * volver a medirlas, así que envejecía sola. Aquí la pieza doce entra sin tocar nada.
+ * Pasa por todo lo que se hace, en orden: primero los bolsos, luego el lino de niño y
+ * después los vestidos. Enseñando solo bolsos, lo demás no existía hasta que bajabas
+ * media web, y el desfile decía menos de lo que hay.
  *
- * El recorrido dura lo mismo con once piezas que con treinta —la escena mide 320vh y
- * las piezas se reparten ese hueco—, para que crecer no signifique hacer scroll eterno.
+ * Se construye sola desde las colecciones. Antes la portada era una foto de grupo con
+ * nueve coordenadas medidas a mano: añadir una pieza obligaba a rehacer la foto y a
+ * volver a medirlas, así que envejecía sola. Aquí la pieza nueva entra sin tocar nada,
+ * sea del tipo que sea.
+ *
+ * El recorrido se estira con lo que haya para que a cada pieza le toque el mismo rato
+ * —si no, con dieciséis nadie llegaría a leer un nombre— pero tiene tope: crecer no
+ * puede significar hacer scroll eterno.
  *
  * Todo el movimiento es CSS atado al scroll: cero JavaScript, y corre fuera del hilo
  * principal, así que no se entrecorta mientras la página carga las fotos.
@@ -22,7 +28,56 @@ import Marca from './Marca.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
 
-const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
+const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
+  [...l].sort((a, b) => a.data.orden - b.data.orden);
+
+const bolsos = porOrden(await getCollection('bolsos'));
+const ninos = porOrden(await getCollection('ninos'));
+const archivo = porOrden(await getCollection('archivo'));
+
+interface Pase {
+  url: string;
+  foto: ImageMetadata;
+  alt: string;
+  familia: string;
+  nombre: string;
+  /** La línea de debajo: el precio, o de qué es la pieza cuando no está a la venta. */
+  dato: string;
+}
+
+/**
+ * El desfile: todo lo que se hace, en el orden en que se cuenta.
+ *
+ * Cada familia trae su propia manera de decir el precio —los bolsos uno cerrado, el
+ * lino uno de partida, los vestidos ninguno porque no se venden—, así que cada una se
+ * traduce aquí a la misma forma en vez de repartir condicionales por la plantilla.
+ */
+const pases: Pase[] = [
+  ...bolsos.map((b) => ({
+    url: `/bolsos/${b.id}`,
+    foto: b.data.foto,
+    alt: `Bolso ${b.data.nombre}.`,
+    familia: site.secciones.bolsos.titulo,
+    nombre: b.data.nombre,
+    dato: b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio),
+  })),
+  ...ninos.map((c) => ({
+    url: `/ninos/${c.id}`,
+    foto: c.data.foto,
+    alt: `Conjunto ${c.data.nombre}.`,
+    familia: site.secciones.nino.titulo,
+    nombre: c.data.nombre,
+    dato: `Desde ${precio(c.data.precioDesde)}`,
+  })),
+  ...archivo.map((a) => ({
+    url: `/archivo/${a.id}`,
+    foto: a.data.foto,
+    alt: `${a.data.nombre}, ${a.data.tipo.toLowerCase()}.`,
+    familia: site.secciones.archivo.titulo,
+    nombre: a.data.nombre,
+    dato: a.data.tipo,
+  })),
+];
 
 /**
  * El reparto del recorrido.
@@ -35,12 +90,17 @@ const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.d
  * completarse, así que sigue entera cuando la tarima se despega y se va con la página.
  * Terminándolo dentro quedaba un trozo de escena clavada y vacía.
  */
-const huecos = bolsos.length + 1;
+const huecos = pases.length + 1;
 const pct = (x: number) => `${((x / huecos) * 100).toFixed(3)}%`;
 const finDelNombre = pct(1.9);
 ---
 
-<section id="inicio" class="escena" data-escena style={`--fin-nombre:${finDelNombre}`}>
+<section
+  id="inicio"
+  class="escena"
+  data-escena
+  style={`--fin-nombre:${finDelNombre};--piezas:${pases.length}`}
+>
   <div class="fija">
     <div class="cabecera">
       <h1>
@@ -55,12 +115,12 @@ const finDelNombre = pct(1.9);
 
     <ul class="pases">
       {
-        bolsos.map((b, i) => (
+        pases.map((p, i) => (
           <li class="pase" style={`--ini:${pct(i + 1)};--fin:${pct(i + 3)}`}>
-            <a href={`/bolsos/${b.id}`}>
+            <a href={p.url}>
               <Image
-                src={b.data.foto}
-                alt={`Bolso ${b.data.nombre}.`}
+                src={p.foto}
+                alt={p.alt}
                 widths={[420, 720, 1000]}
                 sizes="(min-width: 768px) 26rem, 74vw"
                 class="foto"
@@ -68,10 +128,11 @@ const finDelNombre = pct(1.9);
                 fetchpriority={i === 0 ? 'high' : undefined}
               />
               <span class="rotulo">
-                <span class="nombre">{b.data.nombre}</span>
-                <span class="dato">
-                  {b.data.estado === 'vendido' ? 'Vendido' : precio(b.data.precio)}
-                </span>
+                {/* De qué familia es: es lo que hace legible que el desfile cambia de
+                    bolsos a lino y de lino a vestidos, en vez de parecer una lista. */}
+                <span class="familia">{p.familia}</span>
+                <span class="nombre">{p.nombre}</span>
+                <span class="dato">{p.dato}</span>
               </span>
             </a>
           </li>
@@ -151,6 +212,13 @@ const finDelNombre = pct(1.9);
     justify-items: center;
     gap: 0.35rem;
   }
+  .familia {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-ink-manta);
+    opacity: 0.72;
+  }
   .nombre {
     font-family: var(--font-display);
     font-size: 1.5rem;
@@ -173,7 +241,13 @@ const finDelNombre = pct(1.9);
      * pantalla entera, o sea exactamente lo que dura el clavado.
      */
     .escena {
-      height: 320vh;
+      /*
+       * El recorrido crece con lo que haya —unos 22vh por pieza— para que a cada una
+       * le toque el mismo rato. Con dieciséis piezas repartidas en 320vh cada nombre
+       * duraba menos de un golpe de rueda. El tope de 560vh está para que añadir la
+       * pieza cuarenta no convierta la portada en un túnel.
+       */
+      height: min(calc(100vh + (var(--piezas) + 1) * 22vh), 560vh);
       padding: 0;
       view-timeline: --escena block;
     }
