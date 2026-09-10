@@ -2,7 +2,7 @@
 nombre: Vendimia
 precio: 25
 estado: disponible
-color: granate
+color: rojo
 material: Trapillo jaspeado, flor lateral
 ancho: 28
 alto: 23
