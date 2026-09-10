@@ -77,11 +77,18 @@ papel. Formato vertical 3:4.
 
 La foto de grupo es el único objeto cálido de una página fría, y por eso abre la web.
 
-## Portada interactiva
+## Portada
 
-La foto de grupo es un mapa: cada bolso es un enlace a su página. Al señalar uno, la imagen
-se atenúa salvo un foco suave sobre esa pieza y aparece su nombre. No se recortan siluetas
-—no hay máscara que imite el contorno de un bolso—, el foco es luz, no recorte.
+Un desfile guiado por el scroll. El nombre ocupa la pantalla entera y se retira al bajar,
+y entonces las piezas pasan una a una, grandes y solas, cada una con su nombre y su precio.
+Nada se mueve por su cuenta: se avanza al ritmo de quien mira.
 
-En táctil los marcadores se ven siempre, porque nadie descubre que una foto es clicable si
-no se le dice.
+Se construye sola desde la colección, y ese es el motivo de que exista. Antes era una foto
+de grupo con nueve zonas clicables medidas a mano: añadir una pieza obligaba a rehacer la
+foto y a volver a medirlas, así que la portada envejecía sola y dos bolsos ni salían.
+
+El recorrido dura lo mismo con once piezas que con treinta. Crecer no puede significar
+hacer más scroll.
+
+La foto de grupo no se tira: vive en «El taller», donde es el retrato de una tanda de
+trabajo y no un catálogo, y donde quedarse desactualizada da igual.
