@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
-import { getImage, Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
+import Galeria from '../../components/Galeria.astro';
 import site from '../../data/site.json';
 import { precio } from '../../lib/formato';
 
@@ -27,24 +28,7 @@ const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. Tallas de ${d.tal
       </a>
 
       <div class="mt-8 grid items-start gap-x-14 gap-y-10 lg:grid-cols-[1.15fr_1fr]">
-        <div class="grid gap-3">
-          {
-            galeria.map((foto, i) => (
-              <Image
-                src={foto}
-                alt={
-                  i === 0
-                    ? `${d.nombre}, camisa y pantalón.`
-                    : `${d.nombre}, otra vista del conjunto.`
-                }
-                widths={[480, 768, 1100]}
-                sizes="(min-width: 1024px) 44rem, 100vw"
-                class="w-full bg-panel"
-                loading={i === 0 ? 'eager' : 'lazy'}
-              />
-            ))
-          }
-        </div>
+        <Galeria fotos={galeria} nombre={d.nombre} tipo="Conjunto" />
 
         <div class="lg:sticky lg:top-24">
           <h1 class="font-display text-[clamp(2.25rem,6vw,3.5rem)]">{d.nombre}</h1>

@@ -1,0 +1,104 @@
+---
+/**
+ * Galería de una ficha: foto grande y miniaturas en columna a su izquierda.
+ *
+ * La usan las dos fichas, la de bolsos y la de conjuntos. Estaba escrita solo en la de
+ * bolsos y la de niño apilaba las fotos una debajo de otra; copiarla habría dejado dos
+ * versiones que se separan a la primera corrección.
+ *
+ * En pantalla estrecha las miniaturas bajan debajo: una columna al lado se come un octavo
+ * del ancho, y en un móvil eso se lo quita a lo único que importa mirar.
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  fotos: ImageMetadata[];
+  /** Para el texto alternativo: «Bolso Marea, visto de frente». */
+  nombre: string;
+  /** Lo que es la pieza: «Bolso», «Conjunto». */
+  tipo: string;
+  /** Alto de la caja. Los bolsos van en 3:4; el lino, más alargado. */
+  proporcion?: string;
+}
+
+const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
+---
+
+<div class="flex flex-col gap-3 sm:flex-row">
+  {/* Todas las fotos se apilan: las que no se ven están a opacidad 0, no ocultas, para
+      que el navegador las cargue y el cambio de foto sea instantáneo. */}
+  <div class="relative flex-1 bg-panel" style={`aspect-ratio:${proporcion}`} data-galeria>
+    {
+      fotos.map((foto, i) => (
+        <Image
+          src={foto}
+          alt={i === 0 ? `${tipo} ${nombre}, visto de frente.` : `${tipo} ${nombre}, detalle ${i}.`}
+          widths={[480, 768, 1100]}
+          sizes="(min-width: 1024px) 44rem, 100vw"
+          class:list={[
+            'absolute inset-0 h-full w-full object-contain transition-opacity duration-300',
+            i > 0 && 'opacity-0',
+          ]}
+          data-foto={i}
+          aria-hidden={i > 0 ? 'true' : undefined}
+          loading={i === 0 ? 'eager' : 'lazy'}
+        />
+      ))
+    }
+  </div>
+
+  {
+    fotos.length > 1 && (
+      <div
+        class="flex flex-wrap gap-3 sm:order-first sm:w-[4.5rem] sm:shrink-0 sm:flex-col sm:flex-nowrap"
+        role="group"
+        aria-label="Fotos de la pieza"
+      >
+        {fotos.map((foto, i) => (
+          <button type="button" class="miniatura" data-mini={i} aria-current={i === 0}>
+            <Image
+              src={foto}
+              alt={`Ver foto ${i + 1} de ${fotos.length}`}
+              widths={[120, 240]}
+              sizes="4.5rem"
+              class="aspect-[3/4] w-[4.5rem] object-cover"
+              loading="lazy"
+            />
+          </button>
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .miniatura img {
+    outline: 1px solid var(--color-line);
+    outline-offset: -1px;
+    transition: outline-color 180ms var(--ease-salida);
+  }
+  .miniatura[aria-current='true'] img {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  const galeria = document.querySelector<HTMLElement>('[data-galeria]');
+  const minis = [...document.querySelectorAll<HTMLButtonElement>('[data-mini]')];
+
+  if (galeria && minis.length > 1) {
+    const fotos = [...galeria.querySelectorAll<HTMLElement>('[data-foto]')];
+    for (const mini of minis) {
+      mini.addEventListener('click', () => {
+        const i = mini.dataset.mini;
+        for (const foto of fotos) {
+          const activa = foto.dataset.foto === i;
+          foto.classList.toggle('opacity-0', !activa);
+          foto.toggleAttribute('aria-hidden', !activa);
+        }
+        for (const otra of minis) otra.setAttribute('aria-current', String(otra === mini));
+      });
+    }
+  }
+</script>
