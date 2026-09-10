@@ -14,6 +14,12 @@ media:
   input: src/assets/piezas
   output: ../../assets/piezas
   categories: [image]
+  # Las fotos del móvil suelen llevar la extensión en mayúsculas (.JPG en vez de
+  # .jpg) y Pages CMS las compara tal cual, así que sin esto rechazaba fotos que
+  # sí eran jpg con el error "invalid extension ... for media". Con "safe" les
+  # pone la extensión en minúsculas (y quita espacios/acentos del nombre) antes
+  # de subirlas.
+  rename: safe
 
 content:
   - name: bolsos
