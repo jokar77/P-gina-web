@@ -11,13 +11,14 @@ export async function getStaticPaths() {
     params: { slug: pieza.id },
     props: {
       pieza,
+      cuantas: piezas.length,
       anterior: piezas[(i - 1 + piezas.length) % piezas.length],
       siguiente: piezas[(i + 1) % piezas.length],
     },
   }));
 }
 
-const { pieza, anterior, siguiente } = Astro.props;
+const { pieza, anterior, siguiente, cuantas } = Astro.props;
 const d = pieza.data;
 const galeria = [d.foto, ...d.fotos];
 const og = await getImage({ src: d.foto, width: 1200, format: 'jpeg' });
@@ -89,17 +90,34 @@ const descripcion = `${d.nombre}: ${d.tipo.toLowerCase()}${d.material ? `, ${d.m
             <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">{site.fichas.archivo}</p>
           </div>
 
-          <nav
-            class="filete mt-10 flex justify-between gap-6 pt-6 text-[15px]"
-            aria-label="Otras piezas"
-          >
-            <a href={`/archivo/${anterior.id}`} class="text-ink-soft no-underline hover:text-ink">
-              ← {anterior.data.nombre}
-            </a>
-            <a href={`/archivo/${siguiente.id}`} class="text-ink-soft no-underline hover:text-ink">
-              {siguiente.data.nombre} →
-            </a>
-          </nav>
+          {/*
+            Con dos piezas, «anterior» y «siguiente» son la misma y el pie quedaba
+            «← Oliva ... Oliva →», que parece un error. Con dos se enseña un solo
+            enlace; con una, ninguno: no hay adonde ir.
+          */}
+          {
+            cuantas > 1 && (
+              <nav
+                class="filete mt-10 flex justify-between gap-6 pt-6 text-[15px]"
+                aria-label="Otras piezas"
+              >
+                {cuantas > 2 && (
+                  <a
+                    href={`/archivo/${anterior.id}`}
+                    class="text-ink-soft no-underline hover:text-ink"
+                  >
+                    ← {anterior.data.nombre}
+                  </a>
+                )}
+                <a
+                  href={`/archivo/${siguiente.id}`}
+                  class="ml-auto text-ink-soft no-underline hover:text-ink"
+                >
+                  {siguiente.data.nombre} →
+                </a>
+              </nav>
+            )
+          }
         </div>
       </div>
     </div>
