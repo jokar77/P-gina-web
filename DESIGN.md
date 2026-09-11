@@ -136,3 +136,22 @@ hay nada que sumar todavía.
 
 Vacía, la sección no existe. Una sección vacía en una web publicada es peor que no
 tenerla, y un enlace del menú que lleva a ella es una promesa incumplida.
+
+
+## El menú
+
+Tres rayitas arriba a la izquierda, en todos los tamaños, y un panel que entra desde ese
+mismo lado.
+
+Antes los enlaces iban en fila y solo aparecían a partir de 1024px: por debajo no había
+menú ninguno, y la única forma de llegar a una sección era bajar por toda la página. Con
+el menú dentro del panel, dejarlos además en fila sería decir dos veces lo mismo en la
+misma barra.
+
+El panel va en papel, no oscuro como el del pedido: son dos cosas distintas —uno es la
+casa, el otro una transacción— y distinguirlas de un vistazo ahorra una lectura.
+
+Es un `<dialog>` abierto con `showModal()`, así que el foco se queda dentro, Escape lo
+cierra y el resto de la página queda inerte sin escribir nada de eso. Se cierra además
+pulsando fuera, con la X, y al pulsar una sección: los enlaces son anclas de esta misma
+página y el panel taparía justo aquello a lo que acabas de saltar.
