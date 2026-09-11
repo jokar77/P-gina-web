@@ -1,23 +1,20 @@
 ---
 /**
- * La portada: un desfile guiado por el scroll.
+ * La portada.
  *
- * El nombre ocupa la pantalla entera, y al bajar se retira mientras las piezas pasan
- * una a una, grandes y solas. Ni una cuadrícula ni un carrusel automático: se avanza
- * al ritmo de quien mira, y nada se mueve si nadie lo mueve.
+ * En móvil (o sin soporte de animaciones atadas al scroll) es un desfile: el nombre
+ * ocupa la pantalla entera, y al bajar se retira mientras las piezas pasan una a una,
+ * grandes y solas. Pasa por todo lo que se hace, en orden: primero los bolsos, luego el
+ * lino de niño y después los vestidos.
  *
- * Pasa por todo lo que se hace, en orden: primero los bolsos, luego el lino de niño y
- * después los vestidos. Enseñando solo bolsos, lo demás no existía hasta que bajabas
- * media web, y el desfile decía menos de lo que hay.
+ * En pantalla ancha el desfile pieza a pieza se sentía largo — quince piezas es mucho
+ * scroll antes de llegar a ningún sitio—, así que ahí el nombre se abre en tres
+ * portones en vez de en un desfile: bolsos, niño y vestidos, cada uno con su propia
+ * foto, ocupando la pantalla entera. Quien quiera ver pieza a pieza baja un poco más y
+ * las encuentra en su propia sección, en la rejilla de siempre.
  *
- * Se construye sola desde las colecciones. Antes la portada era una foto de grupo con
- * nueve coordenadas medidas a mano: añadir una pieza obligaba a rehacer la foto y a
- * volver a medirlas, así que envejecía sola. Aquí la pieza nueva entra sin tocar nada,
- * sea del tipo que sea.
- *
- * El recorrido se estira con lo que haya para que a cada pieza le toque el mismo rato
- * —si no, con dieciséis nadie llegaría a leer un nombre— pero tiene tope: crecer no
- * puede significar hacer scroll eterno.
+ * Los portones se construyen solos desde las colecciones, igual que el desfile: si
+ * archivo está vacío, se quedan solo los dos primeros.
  *
  * Todo el movimiento es CSS atado al scroll: cero JavaScript, y corre fuera del hilo
  * principal, así que no se entrecorta mientras la página carga las fotos.
@@ -27,6 +24,7 @@ import { getCollection } from 'astro:content';
 import Marca from './Marca.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
+import grupo from '../assets/piezas/_portada/grupo.jpg';
 
 const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
   [...l].sort((a, b) => a.data.orden - b.data.orden);
@@ -79,6 +77,46 @@ const pases: Pase[] = [
   })),
 ];
 
+interface Porton {
+  href: string;
+  foto: ImageMetadata;
+  alt: string;
+  nombre: string;
+}
+
+/**
+ * Los tres portones de escritorio: uno por familia, con su propia foto de portada.
+ * Vestidos solo aparece si hay algo en el archivo, igual que en el menú.
+ */
+const portones: Porton[] = [
+  {
+    href: '/#bolsos',
+    foto: grupo,
+    alt: 'Varios bolsos de ganchillo, en distintos colores.',
+    nombre: site.secciones.bolsos.titulo,
+  },
+  ...(ninos.length > 0
+    ? [
+        {
+          href: '/#nino',
+          foto: ninos[0]!.data.foto,
+          alt: `Conjunto ${ninos[0]!.data.nombre}.`,
+          nombre: site.secciones.nino.titulo,
+        },
+      ]
+    : []),
+  ...(archivo.length > 0
+    ? [
+        {
+          href: '/#archivo',
+          foto: archivo[0]!.data.foto,
+          alt: `${archivo[0]!.data.nombre}, ${archivo[0]!.data.tipo.toLowerCase()}.`,
+          nombre: site.secciones.archivo.titulo,
+        },
+      ]
+    : []),
+];
+
 /**
  * El reparto del recorrido.
  *
@@ -99,7 +137,7 @@ const finDelNombre = pct(1.9);
   id="inicio"
   class="escena"
   data-escena
-  style={`--fin-nombre:${finDelNombre};--piezas:${pases.length}`}
+  style={`--fin-nombre:${finDelNombre};--piezas:${pases.length};--portones:${portones.length}`}
 >
   <div class="fija">
     <div class="cabecera">
@@ -134,6 +172,26 @@ const finDelNombre = pct(1.9);
                 <span class="nombre">{p.nombre}</span>
                 <span class="dato">{p.dato}</span>
               </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <ul class="portones">
+      {
+        portones.map((p) => (
+          <li class="porton">
+            <a href={p.href}>
+              <Image
+                src={p.foto}
+                alt={p.alt}
+                widths={[480, 800, 1200]}
+                sizes="34vw"
+                class="foto-porton"
+                loading="eager"
+              />
+              <span class="nombre-porton">{p.nombre}</span>
             </a>
           </li>
         ))
@@ -231,6 +289,11 @@ const finDelNombre = pct(1.9);
     color: var(--color-ink-manta);
   }
   .regla {
+    display: none;
+  }
+
+  /* Los portones son cosa de pantalla ancha: en móvil se queda el desfile de arriba. */
+  .portones {
     display: none;
   }
 
@@ -337,6 +400,110 @@ const finDelNombre = pct(1.9);
     }
     .regla > span {
       animation-timeline: --escena;
+    }
+  }
+
+  /*
+   * Pantalla ancha, sin animación guiada por scroll: el desfile se cambia por los tres
+   * portones, apilados debajo del nombre en el orden normal de la página. Es el mismo
+   * trato que el desfile de arriba —sin JavaScript no hay pinchado ni relevo, solo se
+   * enseña quieto—, pero aquí no hace falta imitar el recorrido entero: con que se vean
+   * los tres basta.
+   */
+  @media (min-width: 1024px) {
+    .pases {
+      display: none;
+    }
+    .portones {
+      display: grid;
+      grid-template-columns: repeat(var(--portones), 1fr);
+      height: 72svh;
+      margin: 3rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .porton {
+      position: relative;
+      overflow: hidden;
+    }
+    .porton a {
+      display: block;
+      position: relative;
+      height: 100%;
+      text-decoration: none;
+    }
+    .foto-porton {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .nombre-porton {
+      position: absolute;
+      inset: auto 0 2.5rem;
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+      color: var(--color-paper);
+      text-shadow: 0 2px 20px rgb(0 0 0 / 0.4);
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    /*
+     * La versión animada de los tres portones: el nombre se retira antes (no hace
+     * falta un desfile entero detrás) y los portones se abren desde el centro hacia
+     * los dos extremos —un `clip-path` que empieza cerrado por el medio y se abre a
+     * los lados—, hasta ocupar la pantalla entera. Quien quiera ver pieza a pieza baja
+     * un poco más y las encuentra en su rejilla, ya fuera de la tarima clavada.
+     */
+    @media (min-width: 1024px) {
+      .escena {
+        height: 210vh;
+        padding: 0;
+      }
+
+      .fija {
+        padding: 0;
+      }
+
+      .cabecera,
+      .portones {
+        grid-area: 1 / 1;
+      }
+
+      .cabecera {
+        animation-range: contain 0% contain 30%;
+      }
+
+      .portones {
+        width: 100vw;
+        height: 100svh;
+        margin: 0;
+        clip-path: inset(0 50% 0 50%);
+        animation: abrir-portones linear both;
+        animation-range: contain 18% contain 68%;
+      }
+      .fija > .portones {
+        animation-timeline: --escena;
+      }
+
+      .foto-porton {
+        transition: transform 600ms var(--ease-salida);
+      }
+      .porton a:hover .foto-porton {
+        transform: scale(1.04);
+      }
+    }
+  }
+
+  /*
+   * No lleva variante para «menos animación»: no hay desplazamiento que quitar, solo
+   * un `clip-path` que revela el contenido, y ese revelado es necesario para que los
+   * portones lleguen a verse. Sigue atado al scroll, así que nada se mueve solo.
+   */
+  @keyframes abrir-portones {
+    to {
+      clip-path: inset(0 0% 0 0%);
     }
   }
 
