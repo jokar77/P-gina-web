@@ -63,4 +63,25 @@ const archivo = defineCollection({
     }),
 });
 
-export const collections = { bolsos, ninos, archivo };
+/**
+ * Las tres fotos grandes de la portada de escritorio: una por sección, elegidas a mano
+ * en vez de sacadas de la pieza que toque en la colección. Así Sakina puede poner una
+ * foto de conjunto (o de grupo, como la de bolsos) sin que dependa de cuál sea la
+ * primera pieza por orden, ni se quede rota si esa pieza se borra.
+ *
+ * Solo hay una entrada: el archivo siempre es el mismo, "portada.md".
+ */
+const portada = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/portada' }),
+  schema: ({ image }) =>
+    z.object({
+      bolsos: image(),
+      bolsosAlt: z.string().optional(),
+      ninos: image(),
+      ninosAlt: z.string().optional(),
+      archivo: image(),
+      archivoAlt: z.string().optional(),
+    }),
+});
+
+export const collections = { bolsos, ninos, archivo, portada };

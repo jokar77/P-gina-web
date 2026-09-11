@@ -192,6 +192,44 @@ content:
         options: { min: 0, step: 1 }
         description: El número más bajo sale primero dentro de su grupo.
 
+  - name: portada
+    label: Fotos de la portada (ordenador)
+    type: file
+    path: src/content/portada/portada.md
+    description: >-
+      Las tres fotos grandes que se ven al abrir la web en un ordenador, una por
+      sección. Como el hueco es alto y estrecho, van mejor fotos verticales: una
+      apaisada se recorta muy ajustada y se ve peor. En el móvil no se usan; ahí
+      sigue saliendo el desfile de siempre, pieza a pieza.
+    fields:
+      - name: bolsos
+        label: Foto de bolsos
+        type: image
+        required: true
+      - name: bolsosAlt
+        label: Descripción de la foto de bolsos
+        type: string
+        description: Para quien no puede ver la foto (lectores de pantalla). Opcional.
+      - name: ninos
+        label: Foto de conjuntos de niño
+        type: image
+        required: true
+      - name: ninosAlt
+        label: Descripción de la foto de conjuntos
+        type: string
+        description: Opcional.
+      - name: archivo
+        label: Foto de otros trabajos
+        type: image
+        required: true
+        description: >-
+          Solo se ve si hay alguna pieza en «Otros trabajos»; si esa sección está
+          vacía, este portón desaparece igual que el enlace del menú.
+      - name: archivoAlt
+        label: Descripción de la foto de otros trabajos
+        type: string
+        description: Opcional.
+
   - name: ajustes
     label: Textos y datos de la web
     type: file
