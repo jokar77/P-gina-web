@@ -98,8 +98,10 @@ const intro = seccion.intro
       transform 200ms var(--ease-salida),
       box-shadow 200ms var(--ease-salida);
   }
-  .muestra:hover {
-    transform: scale(1.1);
+  @media (hover: hover) and (pointer: fine) {
+    .muestra:hover {
+      transform: scale(1.1);
+    }
   }
   .muestra[aria-pressed='true'] {
     box-shadow:

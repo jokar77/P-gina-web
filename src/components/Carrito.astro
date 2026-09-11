@@ -179,6 +179,46 @@ import { precio } from '../lib/formato';
       transform: translateX(100%);
     }
   }
+  /*
+   * Sin esto el fondo oscuro (heredado de la regla base en global.css) aparece de
+   * golpe mientras el panel todavía se está deslizando: la misma inconsistencia que
+   * ya se evitó en el panel del menú.
+   */
+  dialog[data-carrito]::backdrop {
+    opacity: 0;
+    transition:
+      opacity 340ms var(--ease-salida),
+      overlay 340ms allow-discrete,
+      display 340ms allow-discrete;
+  }
+  dialog[data-carrito][open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    dialog[data-carrito][open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /*
+   * `pintar()` rehace la lista entera con `replaceChildren` cada vez que cambia el
+   * pedido, así que sin esto una pieza añadida aparece de golpe, sin transición
+   * ninguna. Solo la entrada: quitar una pieza recompone la lista al vuelo, no hay
+   * un único nodo que sacar y animar, y perseguir eso complicaría un carrito que ya
+   * funciona bien para una ganancia que aquí se ve poco.
+   *
+   * `:global()`: el `<li>` lo crea el propio script con `createElement`, así que
+   * nunca lleva el atributo `data-astro-cid-*` con el que Astro recorta el alcance
+   * de este bloque —una regla normal, sin `:global`, no llegaría a tocarlo nunca.
+   */
+  :global(.linea-pedido) {
+    opacity: 1;
+    transition: opacity 220ms var(--ease-salida);
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
 
   .opcion-envio {
     display: flex;
@@ -391,7 +431,7 @@ import { precio } from '../lib/formato';
     lista.replaceChildren(
       ...lineas.map((l) => {
         const li = document.createElement('li');
-        li.className = 'flex gap-4 border-b border-paper/15 py-4 last:border-0';
+        li.className = 'linea-pedido flex gap-4 border-b border-paper/15 py-4 last:border-0';
 
         const texto = document.createElement('div');
         texto.className = 'flex-1';
