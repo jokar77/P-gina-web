@@ -6,6 +6,7 @@ material: Algodón de cuadros, camisa y pantalón
 estado: encargo
 orden: 2
 foto: ../../assets/piezas/conjunto-cuadros/01.jpg
+recorte: ../../assets/piezas/conjunto-cuadros/recorte.webp
 fotos:
   - ../../assets/piezas/conjunto-cuadros/02.jpg
   - ../../assets/piezas/conjunto-cuadros/05.jpg

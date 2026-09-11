@@ -8,6 +8,7 @@ ancho: 30
 alto: 18
 orden: 5
 foto: ../../assets/piezas/rescoldo/01.jpg
+recorte: ../../assets/piezas/rescoldo/recorte.webp
 fotos:
   - ../../assets/piezas/rescoldo/02.jpg
   - ../../assets/piezas/rescoldo/03.jpg

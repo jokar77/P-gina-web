@@ -153,6 +153,13 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
       pregunta entra en el mismo pedido de WhatsApp. Se agrupa sola por el campo «Tipo»,
       y mientras no haya ninguna pieza la sección no existe: ni en la portada, ni en el
       menú, ni como página. Falta que Sakina suba las fotos.
+- [x] **La web ya no es una sola página.** `/bolsos` (con el configurador dentro),
+      `/ninos`, `/archivo` y `/taller` son páginas propias; la portada solo presenta.
+      El configurador ya no sale a quien no ha entrado en los bolsos.
+- [ ] **Recortes de las piezas nuevas.** El montón de la portada usa piezas sin fondo, y
+      eso se hace fuera de la web con rembg. Una pieza sin recorte no se rompe: sale en su
+      página y se queda fuera del montón. Si Sakina quiere hacerlos ella, en un iPhone se
+      puede: mantener pulsado el bolso en la foto → «Copiar sujeto».
 - [ ] Quedan a propósito fuera del formulario los tres recuadros de «El taller» (envío,
       pago, devoluciones): repiten lo que dicen las páginas legales, y si se editan por
       separado acaban contradiciéndolas. Si hay que cambiarlos, se cambian junto con la

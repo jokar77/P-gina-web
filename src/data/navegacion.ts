@@ -6,18 +6,20 @@ import site from './site.json';
  * si cambia el título de una sección, el menú cambia con él y no se quedan discordando.
  *
  * «Otros trabajos» solo aparece cuando hay algo dentro. Un enlace del menú que lleva a
- * una sección vacía —o peor, a una sección que no existe— es una promesa incumplida.
+ * una sección vacía —o peor, a una que no existe— es una promesa incumplida.
+ *
+ * «Diseña tu bolso» ya no está en la barra: vive dentro de la página de los bolsos, que
+ * es donde tiene sentido. En la barra era una sexta entrada compitiendo con las demás.
  */
 export async function secciones() {
   const archivo = await getCollection('archivo');
   return [
-    { href: '/#bolsos', texto: site.secciones.bolsos.titulo },
-    { href: '/#nino', texto: site.secciones.nino.titulo },
+    { href: '/bolsos', texto: site.secciones.bolsos.titulo },
+    { href: '/ninos', texto: site.secciones.nino.titulo },
     ...(archivo.length > 0
-      ? [{ href: '/#archivo', texto: site.secciones.archivo.titulo }]
+      ? [{ href: '/archivo', texto: site.secciones.archivo.titulo }]
       : []),
-    { href: '/#disena', texto: site.secciones.disena.titulo },
-    { href: '/#taller', texto: site.taller.titulo },
+    { href: '/taller', texto: site.taller.titulo },
   ];
 }
 

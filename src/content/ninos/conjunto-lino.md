@@ -6,6 +6,7 @@ material: Lino lavado, camisa y pantalón
 estado: encargo
 orden: 1
 foto: ../../assets/piezas/conjunto-lino/01.jpg
+recorte: ../../assets/piezas/conjunto-lino/recorte.webp
 fotos:
   - ../../assets/piezas/conjunto-lino/02.jpg
 ---

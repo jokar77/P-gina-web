@@ -1,0 +1,12 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Archivo from '../../components/Archivo.astro';
+import site from '../../data/site.json';
+---
+
+<Layout
+  titulo={`${site.secciones.archivo.titulo} — ${site.marca}`}
+  descripcion="Vestidos de flamenca y otras piezas ya hechas. No están a la venta, pero se puede preguntar."
+>
+  <Archivo />
+</Layout>
