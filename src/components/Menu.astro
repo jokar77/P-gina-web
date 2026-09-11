@@ -210,8 +210,10 @@ const enlaces = await secciones();
     document.querySelector('[data-cerrar-menu]')?.addEventListener('click', () => panel.close());
 
     /*
-     * Los enlaces de sección son anclas de esta misma página: sin esto el panel se
-     * quedaría abierto tapando justo aquello a lo que acabas de saltar.
+     * Algunos enlaces son anclas de la misma página («taller», «diseña tu bolso» dentro
+     * de bolsos): sin esto el panel se quedaría abierto tapando justo aquello a lo que
+     * acabas de saltar. En los que llevan a otra página no estorba: el panel se cierra
+     * un instante antes de que el navegador cambie de sitio.
      */
     for (const a of panel.querySelectorAll('[data-cerrar-al-pulsar]')) {
       a.addEventListener('click', () => panel.close());
