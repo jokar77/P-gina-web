@@ -312,6 +312,17 @@ const finDelNombre = pct(1.9);
       display: none;
     }
 
+    /*
+     * El nombre se queda solo en la primera pantalla, como el primer golpe de vista de
+     * la web: quien entra tiene que ver quién es antes que lo que vende. Los portones
+     * vienen justo después, en el flujo normal de la página, así que aparecen al bajar
+     * y no compiten con el nombre por el mismo trozo de pantalla.
+     */
+    .cabecera {
+      min-height: 100svh;
+      align-content: center;
+    }
+
     .portones {
       display: grid;
       grid-template-columns: 1fr;
@@ -343,6 +354,56 @@ const finDelNombre = pct(1.9);
       font-size: clamp(1.6rem, 7vw, 2.1rem);
       color: var(--color-paper);
       text-shadow: 0 2px 20px rgb(0 0 0 / 0.4);
+    }
+  }
+
+  /*
+   * La animación de móvil, aparte de la de escritorio: aquí no hay nada clavado ni un
+   * `clip-path` abriéndose desde el centro —eso es cosa de la fila de tres, y en móvil
+   * van apilados, uno debajo de otro, así que ese gesto no tiene equivalente—. Cada
+   * portón se ata a su propia entrada en pantalla, sin tocar el `--escena` compartido
+   * de escritorio: sube y aparece según va entrando, y el siguiente hace lo mismo un
+   * poco más abajo, en su turno. No hace falta escalonarlos a mano con un retraso: el
+   * propio orden de la página ya los separa.
+   */
+  @supports (animation-timeline: view()) {
+    @media (max-width: 1023.98px) {
+      /*
+       * `animation-timeline` va en una regla aparte, con otro selector, a propósito:
+       * junto al atajo `animation` de la regla de al lado, el minificador las fusiona
+       * en una sola declaración que ese atajo no admite, y el navegador la tira entera
+       * sin avisar —no anima nada, ni error ni aviso—. Con selectores distintos no hay
+       * nada que fusionar. Ya pasó una vez con el desfile de escritorio, más abajo.
+       */
+      .porton {
+        animation: aparecer-porton linear both;
+        animation-range: entry;
+      }
+      .portones > .porton {
+        animation-timeline: view();
+      }
+    }
+  }
+
+  @keyframes aparecer-porton {
+    from {
+      opacity: 0;
+      transform: translateY(2.75rem) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes aparecer-porton {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
     }
   }
 
