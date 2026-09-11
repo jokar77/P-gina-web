@@ -17,13 +17,14 @@ import Simbolo from './Simbolo.astro';
   <Menu />
 
   {/*
-    El hueco de la izquierda (72px = 9px donde empieza el botón + 44px de ancho + 19px de
-    aire) es fijo en los dos lados: como el botón ya no está en el flujo, sin este padding
-    el logotipo empezaría donde antes empezaba el botón y quedarían el uno encima del
-    otro. El lado derecho sigue el mismo corte que el resto de la web.
+    El hueco de la izquierda (56px = 9px donde empieza el botón + 44px de ancho + 3px de
+    aire) es el mínimo que no llega a tocar el botón: como el botón ya no está en el
+    flujo, sin este padding el logotipo empezaría donde antes empezaba el botón y
+    quedarían el uno encima del otro. El lado derecho sigue el mismo corte que el resto
+    de la web.
   */}
   <nav
-    class="mx-auto flex max-w-7xl items-center gap-4 py-4 pr-5 pl-[4.5rem] sm:gap-6 sm:pr-8"
+    class="mx-auto flex max-w-7xl items-center gap-4 py-4 pr-5 pl-14 sm:gap-6 sm:pr-8"
     aria-label="Principal"
   >
     <a href="/" class="no-underline">
