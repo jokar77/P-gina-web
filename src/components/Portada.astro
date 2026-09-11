@@ -10,8 +10,9 @@
  * En pantalla ancha el desfile pieza a pieza se sentía largo — quince piezas es mucho
  * scroll antes de llegar a ningún sitio—, así que ahí el nombre se abre en tres
  * portones en vez de en un desfile: bolsos, niño y vestidos, cada uno con su propia
- * foto, ocupando la pantalla entera. Quien quiera ver pieza a pieza baja un poco más y
- * las encuentra en su propia sección, en la rejilla de siempre.
+ * foto, ocupando la pantalla entera. Cada portón lleva a su propia página —/bolsos,
+ * /ninos, /archivo—, con su rejilla de piezas; la portada en sí no baja más allá del
+ * taller.
  *
  * Cuáles aparecen se decide solo, igual que el desfile: si archivo está vacío, se
  * quedan solo los dos primeros. Pero la foto de cada uno la elige Sakina en Pages CMS
@@ -97,7 +98,7 @@ const portones: Porton[] = [
   ...(ninos.length > 0
     ? [
         {
-          href: '/#nino',
+          href: '/ninos',
           foto: fotosPortones.ninos,
           alt: fotosPortones.ninosAlt || 'Conjunto para niño.',
           nombre: site.secciones.nino.titulo,
@@ -105,7 +106,7 @@ const portones: Porton[] = [
       ]
     : []),
   {
-    href: '/#bolsos',
+    href: '/bolsos',
     foto: fotosPortones.bolsos,
     alt: fotosPortones.bolsosAlt || 'Bolsos de ganchillo.',
     nombre: site.secciones.bolsos.titulo,
@@ -113,7 +114,7 @@ const portones: Porton[] = [
   ...(archivo.length > 0
     ? [
         {
-          href: '/#archivo',
+          href: '/archivo',
           foto: fotosPortones.archivo,
           alt: fotosPortones.archivoAlt || 'Otros trabajos.',
           nombre: site.secciones.archivo.titulo,

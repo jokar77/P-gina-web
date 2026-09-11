@@ -1,0 +1,11 @@
+---
+import Coleccion from '../../components/Coleccion.astro';
+import Configurador from '../../components/Configurador.astro';
+import Layout from '../../layouts/Layout.astro';
+import site from '../../data/site.json';
+---
+
+<Layout titulo={`${site.secciones.bolsos.titulo} — ${site.marca}`}>
+  <Coleccion />
+  <Configurador />
+</Layout>

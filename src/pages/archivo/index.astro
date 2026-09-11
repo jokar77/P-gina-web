@@ -1,0 +1,9 @@
+---
+import Archivo from '../../components/Archivo.astro';
+import Layout from '../../layouts/Layout.astro';
+import site from '../../data/site.json';
+---
+
+<Layout titulo={`${site.secciones.archivo.titulo} — ${site.marca}`}>
+  <Archivo />
+</Layout>

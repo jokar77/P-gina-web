@@ -1,8 +1,4 @@
 ---
-import Coleccion from '../components/Coleccion.astro';
-import Archivo from '../components/Archivo.astro';
-import Configurador from '../components/Configurador.astro';
-import Ninos from '../components/Ninos.astro';
 import Portada from '../components/Portada.astro';
 import Taller from '../components/Taller.astro';
 import Layout from '../layouts/Layout.astro';
@@ -11,9 +7,5 @@ import site from '../data/site.json';
 
 <Layout titulo={`${site.marca} — bolsos de ganchillo hechos a mano`}>
   <Portada />
-  <Coleccion />
-  <Ninos />
-  <Archivo />
-  <Configurador />
   <Taller />
 </Layout>
