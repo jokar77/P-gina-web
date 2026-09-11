@@ -68,13 +68,24 @@ const enlaces = await secciones();
 
 <style>
   /* El botón: 44px de lado, que es el mínimo para que se pulse bien con el pulgar. */
+  /*
+   * Anclado al `header`, no metido en el flujo de la barra centrada. La barra vive en
+   * una columna de 1280px como el resto de la web, así que a partir de esa anchura
+   * queda un margen automático a los lados: colocar aquí el botón lo dejaba a ese mismo
+   * margen del borde, no en el borde de verdad. El `header` sí ocupa el ancho completo
+   * y ya es `position: sticky` —eso basta para que sea el punto de referencia—, así
+   * que el botón queda pegado a su borde en cualquier tamaño de pantalla.
+   */
   .rayitas {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
     display: grid;
     align-content: center;
     gap: 4px;
     width: 44px;
     height: 44px;
-    margin-left: -10px;
     padding: 0 9px;
   }
   .raya {

@@ -7,15 +7,25 @@ import Simbolo from './Simbolo.astro';
   class="sticky top-0 z-40 border-b border-transparent bg-paper/92 backdrop-blur-sm transition-colors duration-300 data-[sobre-manta]:border-transparent! data-[sobre-manta]:bg-transparent! data-[sobre-manta]:backdrop-blur-none"
   data-nav
 >
-  <nav class="mx-auto flex max-w-7xl items-center gap-4 px-5 py-4 sm:gap-6 sm:px-8" aria-label="Principal">
-    {/*
-      Las tres rayitas van las primeras, arriba a la izquierda, y son el menú en todos
-      los tamaños. Antes los enlaces estaban en fila y solo a partir de 1024px: por
-      debajo no había menú ninguno. Con el menú dentro del panel, dejarlos además en
-      fila sería decir dos veces lo mismo en la misma barra.
-    */}
-    <Menu />
+  {/*
+    Las rayitas van fuera de esta barra, no dentro. La barra va centrada en una columna
+    de 1280px igual que el resto de la web (`max-w-7xl mx-auto`), así que en una pantalla
+    más ancha que eso queda un margen automático a los lados —el motivo de que las
+    rayitas no llegaran al borde de verdad—. `header` sí ocupa el ancho completo, así que
+    el botón se ancla a él y queda pegado al borde en cualquier tamaño.
+  */}
+  <Menu />
 
+  {/*
+    El hueco de la izquierda (72px = 9px donde empieza el botón + 44px de ancho + 19px de
+    aire) es fijo en los dos lados: como el botón ya no está en el flujo, sin este padding
+    el logotipo empezaría donde antes empezaba el botón y quedarían el uno encima del
+    otro. El lado derecho sigue el mismo corte que el resto de la web.
+  */}
+  <nav
+    class="mx-auto flex max-w-7xl items-center gap-4 py-4 pr-5 pl-[4.5rem] sm:gap-6 sm:pr-8"
+    aria-label="Principal"
+  >
     <a href="/" class="no-underline">
       <Simbolo alt="Sakina Platero" class="w-9 sm:w-10" sizes="2.5rem" cargaDiferida={false} />
     </a>
