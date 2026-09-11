@@ -1,11 +1,7 @@
 {
   "marca": "Sakina Platero",
   "whatsapp": "34600000000",
-  "instagram": "",
-  "tiktok": "",
-  "youtube": "",
   "frasePortada": "Bolsos de ganchillo y lino cosido a mano. Piezas únicas, hechas de una en una. Cada pieza es única.",
-  "piePortada": "",
   "descripcion": "Bolsos de ganchillo hechos a mano en trapillo de algodón y lana, y conjuntos de lino cosidos a mano para niños. Piezas únicas.",
   "secciones": {
     "bolsos": {
@@ -13,16 +9,16 @@
       "intro": "Entre ocho y doce horas de trabajo por pieza, así que hay pocas y ninguna se repite igual. Las que ya tienen dueña se quedan aquí: {vendidos} de {total}."
     },
     "nino": {
-      "titulo": "Lino para los pequeños",
+      "titulo": "Conjuntos para los más pequeños",
       "intro": "Camisa y pantalón cosidos a mano, de la talla 1 a la 6. Se hacen por encargo y a medida, así que el plazo depende de la cola que haya."
-    },
-    "disena": {
-      "titulo": "Diseña tu bolso",
-      "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan."
     },
     "archivo": {
       "titulo": "Otros trabajos",
       "intro": "Piezas que ya se hicieron y no están a la venta. Se quedan aquí porque cuentan de lo que sale del taller cuando el encargo no es un bolso. Si te gusta alguna, se puede hablar."
+    },
+    "disena": {
+      "titulo": "Diseña tu bolso",
+      "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan."
     }
   },
   "fichas": {
