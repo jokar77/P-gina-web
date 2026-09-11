@@ -602,10 +602,36 @@ const finDelNombre = pct(1.9);
   }
 
   /*
+   * Reserva para cuando el navegador no soporta `animation-timeline: view()`: sin eso el
+   * desfile no tiene forma de animarse solo con CSS, y se quedaba quieto —la fila entera
+   * de golpe, sin que ninguna pieza «apareciera». El script de más abajo detecta ese caso
+   * y le pone a cada pieza este atributo; con él entra con el mismo gesto que la versión
+   * atada al scroll —opacidad y un pequeño avance— la primera vez que se asoma a la
+   * pantalla, tanto al bajar como al deslizar la fila hacia los lados, y se queda así.
+   */
+  .pase[data-revela] {
+    opacity: 0;
+    transform: translateY(1.2vh) scale(0.98);
+    transition:
+      opacity 500ms var(--ease-salida),
+      transform 500ms var(--ease-salida);
+  }
+  .pase[data-revela][data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /*
    * Con menos animación pedida se conserva el relevo —es lo que explica que hay más
    * piezas— y se quita el desplazamiento. Menos y más suave, no nada.
    */
   @media (prefers-reduced-motion: reduce) {
+    .pase[data-revela] {
+      transform: none;
+      transition: opacity 400ms ease;
+    }
+
+
     @keyframes pasar {
       0% {
         opacity: 0;
@@ -646,3 +672,36 @@ const finDelNombre = pct(1.9);
     }
   }
 </style>
+
+<script>
+  /**
+   * Reserva del desfile para cuando el navegador no soporta animaciones atadas al
+   * scroll: sin `animation-timeline`, ninguna pieza tiene forma de animarse solo con
+   * CSS, y quedaba fija —lo único que hacía falta arreglar en el móvil, que es donde
+   * vive el desfile—. Se entera cada una con IntersectionObserver, que cuenta el
+   * recorte de `.pases` (overflow-x: auto) como fuera de pantalla, así que también
+   * reacciona al deslizar la fila hacia los lados, no solo al bajar. Aparece una vez y
+   * se queda: no tiene sentido volver a jugar con ella cada vez que se repasa la fila.
+   */
+  if (!CSS.supports('(animation-timeline: view())')) {
+    const piezas = document.querySelectorAll<HTMLElement>('.pase');
+
+    if (piezas.length) {
+      const obs = new IntersectionObserver(
+        (entradas, o) => {
+          for (const entrada of entradas) {
+            if (!entrada.isIntersecting) continue;
+            (entrada.target as HTMLElement).dataset.visible = '';
+            o.unobserve(entrada.target);
+          }
+        },
+        { threshold: 0.2 }
+      );
+
+      for (const pieza of piezas) {
+        pieza.dataset.revela = '';
+        obs.observe(pieza);
+      }
+    }
+  }
+</script>
