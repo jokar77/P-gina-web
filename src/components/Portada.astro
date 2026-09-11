@@ -718,23 +718,26 @@ const finDelNombre = pct(1.9);
   }
 
   /*
-   * Reserva para cuando el navegador no soporta `animation-timeline: view()`: sin eso el
-   * desfile no tiene forma de animarse solo con CSS, y se quedaba quieto —la fila entera
-   * de golpe, sin que ninguna pieza «apareciera». El script de más abajo detecta ese caso
-   * y le pone a cada pieza este atributo; con él entra con el mismo gesto que la versión
-   * atada al scroll —opacidad y un pequeño avance— la primera vez que se asoma a la
-   * pantalla, tanto al bajar como al deslizar la fila hacia los lados, y se queda así.
+   * Reserva para cuando el navegador no soporta `animation-timeline: view()`: sin eso
+   * los tres portones de móvil no tienen forma de animarse solo con CSS, y se quedaban
+   * quietos —los tres a la vez según entra la página, sin que ninguno «apareciera» por
+   * su cuenta—. El script de más abajo detecta ese caso y le pone a cada uno este
+   * atributo; con él entra con el mismo gesto que la versión atada al scroll —opacidad
+   * y un pequeño avance, los mismos valores de `aparecer-porton`— la primera vez que se
+   * asoma a la pantalla, y se queda así.
    */
-  .pase[data-revela] {
-    opacity: 0;
-    transform: translateY(1.2vh) scale(0.98);
-    transition:
-      opacity 500ms var(--ease-salida),
-      transform 500ms var(--ease-salida);
-  }
-  .pase[data-revela][data-visible] {
-    opacity: 1;
-    transform: none;
+  @media (max-width: 1023.98px) {
+    .porton[data-revela] {
+      opacity: 0;
+      transform: translateY(2.75rem) scale(0.97);
+      transition:
+        opacity 450ms var(--ease-salida),
+        transform 450ms var(--ease-salida);
+    }
+    .porton[data-revela][data-visible] {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   /*
@@ -742,11 +745,10 @@ const finDelNombre = pct(1.9);
    * piezas— y se quita el desplazamiento. Menos y más suave, no nada.
    */
   @media (prefers-reduced-motion: reduce) {
-    .pase[data-revela] {
+    .porton[data-revela] {
       transform: none;
-      transition: opacity 400ms ease;
+      transition: opacity 350ms ease;
     }
-
 
     @keyframes pasar {
       0% {
@@ -791,18 +793,20 @@ const finDelNombre = pct(1.9);
 
 <script>
   /**
-   * Reserva del desfile para cuando el navegador no soporta animaciones atadas al
-   * scroll: sin `animation-timeline`, ninguna pieza tiene forma de animarse solo con
-   * CSS, y quedaba fija —lo único que hacía falta arreglar en el móvil, que es donde
-   * vive el desfile—. Se entera cada una con IntersectionObserver, que cuenta el
-   * recorte de `.pases` (overflow-x: auto) como fuera de pantalla, así que también
-   * reacciona al deslizar la fila hacia los lados, no solo al bajar. Aparece una vez y
-   * se queda: no tiene sentido volver a jugar con ella cada vez que se repasa la fila.
+   * Reserva de los tres portones de móvil para cuando el navegador no soporta
+   * animaciones atadas al scroll: sin `animation-timeline`, ninguno tiene forma de
+   * animarse solo con CSS, y quedaban fijos —los tres a la vez según entra la página,
+   * en vez de ir apareciendo uno a uno según se baja—. Se entera cada uno con
+   * IntersectionObserver y aparece una sola vez; no tiene sentido volver a jugar con él
+   * cada vez que se repasa la página. En escritorio no hace falta: ahí, sin soporte, los
+   * tres portones ya se enseñan quietos a propósito (ver el CSS de más arriba).
    */
-  if (!CSS.supports('(animation-timeline: view())')) {
-    const piezas = document.querySelectorAll<HTMLElement>('.pase');
+  const enMovil = window.matchMedia('(max-width: 1023.98px)').matches;
 
-    if (piezas.length) {
+  if (enMovil && !CSS.supports('(animation-timeline: view())')) {
+    const portones = document.querySelectorAll<HTMLElement>('.porton');
+
+    if (portones.length) {
       const obs = new IntersectionObserver(
         (entradas, o) => {
           for (const entrada of entradas) {
@@ -814,9 +818,9 @@ const finDelNombre = pct(1.9);
         { threshold: 0.2 }
       );
 
-      for (const pieza of piezas) {
-        pieza.dataset.revela = '';
-        obs.observe(pieza);
+      for (const porton of portones) {
+        porton.dataset.revela = '';
+        obs.observe(porton);
       }
     }
   }
