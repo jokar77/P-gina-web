@@ -1,0 +1,21 @@
+---
+/**
+ * La página de los bolsos: el catálogo entero, con sus filtros, y debajo el
+ * configurador.
+ *
+ * El configurador vive aquí y no en la portada porque solo tiene sentido cuando ya
+ * estás mirando bolsos: en la portada era una parada más en una página interminable.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Coleccion from '../../components/Coleccion.astro';
+import Configurador from '../../components/Configurador.astro';
+import site from '../../data/site.json';
+---
+
+<Layout
+  titulo={`${site.secciones.bolsos.titulo} — ${site.marca}`}
+  descripcion="Bolsos de ganchillo hechos a mano en trapillo de algodón y lana. Piezas únicas, cada una tejida de una vez."
+>
+  <Coleccion />
+  <Configurador />
+</Layout>

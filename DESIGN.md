@@ -77,47 +77,28 @@ papel. Formato vertical 3:4.
 
 La foto de grupo es el único objeto cálido de una página fría, y por eso abre la web.
 
-## Portada
+## La portada
 
-Un desfile guiado por el scroll. El nombre ocupa la pantalla entera y se retira al bajar,
-y entonces las piezas pasan una a una, grandes y solas, cada una con su nombre y su precio.
-Nada se mueve por su cuenta: se avanza al ritmo de quien mira.
+Quién es, y tres puertas. Nada más.
 
-Pasa por todo lo que se hace, en orden: bolsos, lino de niño y vestidos. Cada pieza lleva
-encima el nombre de su familia, que es lo que hace legible que el desfile cambia de una a
-otra en vez de parecer una lista larga. Enseñando solo bolsos, lo demás no existía hasta
-media web más abajo.
+La web era una sola página larguísima: aterrizabas ante el logotipo y para llegar a
+cualquier cosa había que bajar por todo lo demás, el configurador incluido. Ahora cada
+familia tiene su página —`/bolsos`, `/ninos`, `/archivo`, `/taller`— y la portada solo
+presenta.
 
-El recorrido se estira con lo que haya, unos 22vh por pieza, para que a cada una le toque
-el mismo rato: con dieciséis repartidas en 320vh ningún nombre duraba lo que un golpe de
-rueda. Tiene tope en 560vh, para que la pieza cuarenta no convierta la portada en un túnel.
+El nombre va pequeño, no a pantalla completa: quien entra tiene que ver la obra, no un
+logotipo. El nombre entero ya está en el pie y el símbolo en la barra.
 
-Se construye sola desde la colección, y ese es el motivo de que exista. Antes era una foto
-de grupo con nueve zonas clicables medidas a mano: añadir una pieza obligaba a rehacer la
-foto y a volver a medirlas, así que la portada envejecía sola y dos bolsos ni salían.
+Cada familia enseña sus piezas **recortadas y amontonadas**, no en cuadrícula. Una
+cuadrícula sería el catálogo otra vez, y el catálogo está una página más allá; amontonadas
+se leen como lo que son, un montón de cosas hechas a mano, y caben todas en una pantalla.
+El tamaño está calibrado para que los doce bolsos quepan en una fila: uno más grande y el
+último se cae solo a una segunda fila, que se lee como un error.
 
-La foto de grupo no se tira: vive en «El taller», donde es el retrato de una tanda de
-trabajo y no un catálogo, y donde quedarse desactualizada da igual. Va pequeña —26rem—
-porque el original solo mide 928px de ancho: ampliada saca a la luz cada grano.
-
-### El fondo
-
-La portada no va sobre papel sino sobre **manta** (`--color-manta`, #d5d2cb), con grano,
-para que la pieza y lo que hay detrás parezcan el mismo material. Y se acaba: el último
-tercio de la escena degrada al papel del resto de la web, así que al pasar el desfile el
-fondo ya ha cambiado y no hay ningún corte. La barra de navegación se quita su franja de
-papel mientras la manta está a la vista.
-
-El tono no es el de las fotos, es más claro que todas ellas, y esto es a propósito: medido
-sobre los píxeles pintados, el fondo de las fotos va de #645f53 a #cdc6ba —no están hechas
-con la misma luz—, así que ningún color se funde con las once. Por encima de la más clara,
-todas se apoyan igual, como láminas. Buscando el punto medio, las dos más claras se
-recortaban como tarjetas pegadas encima.
-
-Sobre la manta la tinta suave se queda en 4,3:1 y no vale; el texto secundario de la
-portada usa `--color-ink-manta` (#474440), que da 6,4:1 sobre la manta y 7,9:1 sobre el
-papel, así que aguanta el tramo en el que el fondo cambia de una a otro.
-
+Los recortes se hacen a mano (rembg, fuera de la web: el modelo pesa 179 MB y no cabe en
+la construcción). Por eso el campo `recorte` es **opcional**: una pieza recién subida sale
+en su página desde el primer momento y se une al montón cuando alguien le haga el recorte.
+Obligarlo sería poner una puerta entre Sakina y publicar.
 
 ## Otros trabajos
 

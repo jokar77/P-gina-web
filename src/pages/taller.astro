@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Taller from '../components/Taller.astro';
+import site from '../data/site.json';
+---
+
+<Layout
+  titulo={`${site.taller.titulo} — ${site.marca}`}
+  descripcion="Cómo se hace cada pieza, los materiales, los envíos y las devoluciones."
+>
+  <Taller />
+</Layout>

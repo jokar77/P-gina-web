@@ -1,19 +1,100 @@
 ---
-import Coleccion from '../components/Coleccion.astro';
-import Archivo from '../components/Archivo.astro';
-import Configurador from '../components/Configurador.astro';
-import Ninos from '../components/Ninos.astro';
-import Portada from '../components/Portada.astro';
-import Taller from '../components/Taller.astro';
+/**
+ * La portada: quién es, y tres puertas.
+ *
+ * Antes toda la web era una sola página larguísima: aterrizabas ante el logotipo y para
+ * llegar a cualquier cosa había que bajar por todo lo demás, el configurador incluido.
+ * Ahora la portada presenta —bolsos primero— y cada familia tiene su propia página.
+ * Lo que no es presentación no está aquí.
+ */
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import Marca from '../components/Marca.astro';
+import Puerta from '../components/Puerta.astro';
 import site from '../data/site.json';
+
+/**
+ * Solo entran las piezas que tienen recorte: una con su fondo de manta metida entre
+ * recortes se ve como un parche. Ordenadas por el mismo número que usa Sakina.
+ */
+type Suelta = { data: { nombre: string; orden: number; recorte?: ImageMetadata } };
+
+const paraElMonton = (lista: Suelta[]) =>
+  [...lista]
+    .sort((a, b) => a.data.orden - b.data.orden)
+    .flatMap((p) => (p.data.recorte ? [{ nombre: p.data.nombre, recorte: p.data.recorte }] : []));
+
+const bolsos = paraElMonton(await getCollection('bolsos'));
+const ninos = paraElMonton(await getCollection('ninos'));
+const archivo = paraElMonton(await getCollection('archivo'));
 ---
 
 <Layout titulo={`${site.marca} — bolsos de ganchillo hechos a mano`}>
-  <Portada />
-  <Coleccion />
-  <Ninos />
-  <Archivo />
-  <Configurador />
-  <Taller />
+  <section class="entrada">
+    <h1>
+      <Marca
+        class="mx-auto w-[min(21rem,62vw)]"
+        sizes="(min-width: 1024px) 21rem, 62vw"
+        cargaDiferida={false}
+      />
+    </h1>
+    <p class="frase">{site.frasePortada}</p>
+  </section>
+
+  {
+    bolsos.length > 0 && (
+      <Puerta
+        titulo={site.secciones.bolsos.titulo}
+        intro="Tejidos de una vez, a mano y sin patrón cerrado. Ninguno se repite igual."
+        href="/bolsos"
+        enlace="Ver todos los bolsos"
+        piezas={bolsos}
+        primero
+      />
+    )
+  }
+
+  {
+    ninos.length > 0 && (
+      <Puerta
+        titulo={site.secciones.nino.titulo}
+        intro="Camisa y pantalón cosidos a mano, de la talla 1 a la 6, por encargo y a medida."
+        href="/ninos"
+        enlace="Ver el lino"
+        piezas={ninos}
+      />
+    )
+  }
+
+  {
+    archivo.length > 0 && (
+      <Puerta
+        titulo={site.secciones.archivo.titulo}
+        intro="Vestidos de flamenca y otras piezas ya hechas. No están a la venta, pero se puede preguntar."
+        href="/archivo"
+        enlace="Ver otros trabajos"
+        piezas={archivo}
+      />
+    )
+  }
 </Layout>
+
+<style>
+  /*
+   * La entrada es corta a propósito. Con el nombre a 44rem ocupaba la pantalla entera y
+   * había que bajar para ver un solo bolso: quien entra tiene que ver la obra, no un
+   * logotipo. El nombre completo ya está en el pie, y el símbolo en la barra de arriba.
+   */
+  .entrada {
+    display: grid;
+    justify-items: center;
+    gap: 0.9rem;
+    padding: 2.25rem 1.25rem 0;
+    text-align: center;
+  }
+  .frase {
+    max-width: 44ch;
+    color: var(--color-ink-soft);
+    font-size: 1.0625rem;
+  }
+</style>

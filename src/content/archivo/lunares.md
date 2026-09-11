@@ -3,6 +3,7 @@ nombre: Lunares
 tipo: Vestido de flamenca
 ano: 2026
 foto: ../../assets/piezas/lunares/01.jpg
+recorte: ../../assets/piezas/lunares/recorte.webp
 fotos:
   - ../../assets/piezas/lunares/02.jpg
   - ../../assets/piezas/lunares/03.jpg

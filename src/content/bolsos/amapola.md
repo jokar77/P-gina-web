@@ -8,6 +8,7 @@ ancho: 27
 alto: 24
 orden: 3
 foto: ../../assets/piezas/amapola/01.jpg
+recorte: ../../assets/piezas/amapola/recorte.webp
 fotos:
   - ../../assets/piezas/amapola/02.jpg
   - ../../assets/piezas/amapola/03.jpg
