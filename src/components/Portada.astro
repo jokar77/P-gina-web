@@ -13,8 +13,11 @@
  * foto, ocupando la pantalla entera. Quien quiera ver pieza a pieza baja un poco más y
  * las encuentra en su propia sección, en la rejilla de siempre.
  *
- * Los portones se construyen solos desde las colecciones, igual que el desfile: si
- * archivo está vacío, se quedan solo los dos primeros.
+ * Cuáles aparecen se decide solo, igual que el desfile: si archivo está vacío, se
+ * quedan solo los dos primeros. Pero la foto de cada uno la elige Sakina en Pages CMS
+ * (entrada «portada»), no sale de la pieza que toque por orden — así puede poner una de
+ * grupo, o la que mejor quede en un hueco vertical y estrecho, sin que dependa de qué
+ * pieza sea la primera de la colección ni se rompa si esa pieza se borra.
  *
  * Todo el movimiento es CSS atado al scroll: cero JavaScript, y corre fuera del hilo
  * principal, así que no se entrecorta mientras la página carga las fotos.
@@ -24,8 +27,6 @@ import { getCollection } from 'astro:content';
 import Marca from './Marca.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
-import grupo from '../assets/piezas/_portada/grupo.jpg';
-import conjuntoCuadros from '../assets/piezas/conjunto-cuadros/01.jpg';
 
 const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
   [...l].sort((a, b) => a.data.orden - b.data.orden);
@@ -33,6 +34,8 @@ const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
 const bolsos = porOrden(await getCollection('bolsos'));
 const ninos = porOrden(await getCollection('ninos'));
 const archivo = porOrden(await getCollection('archivo'));
+// Solo hay una entrada: las tres fotos de los portones de escritorio, elegidas en Pages CMS.
+const { data: fotosPortones } = (await getCollection('portada'))[0]!;
 
 interface Pase {
   url: string;
@@ -86,32 +89,33 @@ interface Porton {
 }
 
 /**
- * Los tres portones de escritorio: uno por familia, con su propia foto de portada.
- * Vestidos solo aparece si hay algo en el archivo, igual que en el menú.
+ * Los tres portones de escritorio: uno por familia, con su propia foto de portada,
+ * elegida a mano en Pages CMS (entrada «portada»). Vestidos solo aparece si hay algo
+ * en el archivo, igual que en el menú; niño, si hay algún conjunto.
  */
 const portones: Porton[] = [
   ...(ninos.length > 0
     ? [
         {
           href: '/#nino',
-          foto: conjuntoCuadros,
-          alt: 'Conjunto de cuadros para niño, camisa y pantalón.',
+          foto: fotosPortones.ninos,
+          alt: fotosPortones.ninosAlt || 'Conjunto para niño.',
           nombre: site.secciones.nino.titulo,
         },
       ]
     : []),
   {
     href: '/#bolsos',
-    foto: grupo,
-    alt: 'Varios bolsos de ganchillo, en distintos colores.',
+    foto: fotosPortones.bolsos,
+    alt: fotosPortones.bolsosAlt || 'Bolsos de ganchillo.',
     nombre: site.secciones.bolsos.titulo,
   },
   ...(archivo.length > 0
     ? [
         {
           href: '/#archivo',
-          foto: archivo[0]!.data.foto,
-          alt: `${archivo[0]!.data.nombre}, ${archivo[0]!.data.tipo.toLowerCase()}.`,
+          foto: fotosPortones.archivo,
+          alt: fotosPortones.archivoAlt || 'Otros trabajos.',
           nombre: site.secciones.archivo.titulo,
         },
       ]
