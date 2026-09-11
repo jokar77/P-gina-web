@@ -8,6 +8,9 @@
  *
  * En pantalla estrecha las miniaturas bajan debajo: una columna al lado se come un octavo
  * del ancho, y en un móvil eso se lo quita a lo único que importa mirar.
+ *
+ * La foto grande se puede ampliar: al pulsarla (o el icono de lupa) se abre a pantalla
+ * completa, con las mismas flechas para seguir pasando fotos sin cerrarla.
  */
 import { Image } from 'astro:assets';
 
@@ -36,8 +39,8 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
           widths={[480, 768, 1100]}
           sizes="(min-width: 1024px) 44rem, 100vw"
           class:list={[
-            'absolute inset-0 h-full w-full object-contain transition-opacity duration-300',
-            i > 0 && 'opacity-0',
+            'foto-zoom absolute inset-0 h-full w-full object-contain transition-opacity duration-300',
+            i > 0 && 'pointer-events-none opacity-0',
           ]}
           data-foto={i}
           aria-hidden={i > 0 ? 'true' : undefined}
@@ -61,6 +64,13 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
         </>
       )
     }
+    <button type="button" class="flecha zoom-abrir" data-zoom-abrir aria-label="Ampliar foto">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="M20 20 15.7 15.7" />
+        <path d="M10.5 8v5M8 10.5h5" />
+      </svg>
+    </button>
   </div>
 
   {
@@ -86,6 +96,48 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
     )
   }
 </div>
+
+<dialog class="zoom oscuro m-0 h-dvh max-h-none w-full max-w-none border-0 p-0" data-zoom aria-label={`${tipo} ${nombre} ampliado`}>
+  <div class="relative flex h-full w-full items-center justify-center p-4" data-zoom-fondo>
+    {
+      fotos.map((foto, i) => (
+        <Image
+          src={foto}
+          alt={i === 0 ? `${tipo} ${nombre}, visto de frente.` : `${tipo} ${nombre}, detalle ${i}.`}
+          widths={[768, 1100, 1600]}
+          sizes="100vw"
+          class:list={[
+            'absolute inset-0 m-auto h-auto w-auto max-h-full max-w-full object-contain transition-opacity duration-200',
+            i > 0 && 'pointer-events-none opacity-0',
+          ]}
+          data-foto-zoom={i}
+          loading="lazy"
+        />
+      ))
+    }
+    <button type="button" class="cerrar-zoom" data-zoom-cerrar aria-label="Cerrar foto ampliada">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
+    </button>
+    {
+      fotos.length > 1 && (
+        <>
+          <button type="button" class="flecha izquierda" data-flecha-zoom="-1" aria-label="Foto anterior">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 4 7 12l8 8" />
+            </svg>
+          </button>
+          <button type="button" class="flecha derecha" data-flecha-zoom="1" aria-label="Foto siguiente">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 4 8 8-8 8" />
+            </svg>
+          </button>
+        </>
+      )
+    }
+  </div>
+</dialog>
 
 <style>
   .flecha {
@@ -114,6 +166,39 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
   .derecha {
     right: 10px;
   }
+  .zoom-abrir {
+    top: auto;
+    right: 10px;
+    bottom: 10px;
+    transform: none;
+  }
+
+  .foto-zoom {
+    cursor: zoom-in;
+  }
+
+  dialog.zoom {
+    border: 0;
+  }
+  dialog.zoom::backdrop {
+    background-color: var(--color-deep);
+  }
+  .cerrar-zoom {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    color: var(--color-paper);
+    background-color: color-mix(in srgb, var(--color-paper) 12%, transparent);
+    transition: background-color 220ms var(--ease-salida);
+  }
+  .cerrar-zoom:hover {
+    background-color: color-mix(in srgb, var(--color-paper) 20%, transparent);
+  }
 
   .miniatura img {
     outline: 1px solid var(--color-line);
@@ -129,16 +214,27 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
 <script>
   const galeria = document.querySelector<HTMLElement>('[data-galeria]');
   const minis = [...document.querySelectorAll<HTMLButtonElement>('[data-mini]')];
+  const zoom = document.querySelector<HTMLDialogElement>('[data-zoom]');
 
-  if (galeria && minis.length > 1) {
+  if (galeria) {
     const fotos = [...galeria.querySelectorAll<HTMLElement>('[data-foto]')];
     const flechas = [...galeria.querySelectorAll<HTMLButtonElement>('[data-flecha]')];
+    const fotosZoom = zoom ? [...zoom.querySelectorAll<HTMLElement>('[data-foto-zoom]')] : [];
+    const flechasZoom = zoom ? [...zoom.querySelectorAll<HTMLButtonElement>('[data-flecha-zoom]')] : [];
+
+    const actual = () => fotos.findIndex((foto) => !foto.classList.contains('opacity-0'));
 
     const activar = (i: number) => {
       for (const foto of fotos) {
         const activa = Number(foto.dataset.foto) === i;
         foto.classList.toggle('opacity-0', !activa);
+        foto.classList.toggle('pointer-events-none', !activa);
         foto.toggleAttribute('aria-hidden', !activa);
+      }
+      for (const foto of fotosZoom) {
+        const activa = Number(foto.dataset.fotoZoom) === i;
+        foto.classList.toggle('opacity-0', !activa);
+        foto.classList.toggle('pointer-events-none', !activa);
       }
       for (const mini of minis) mini.setAttribute('aria-current', String(Number(mini.dataset.mini) === i));
     };
@@ -149,8 +245,26 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
 
     for (const flecha of flechas) {
       flecha.addEventListener('click', () => {
-        const actual = fotos.findIndex((foto) => !foto.classList.contains('opacity-0'));
-        activar((actual + Number(flecha.dataset.flecha) + fotos.length) % fotos.length);
+        activar((actual() + Number(flecha.dataset.flecha) + fotos.length) % fotos.length);
+      });
+    }
+
+    for (const flecha of flechasZoom) {
+      flecha.addEventListener('click', () => {
+        activar((actual() + Number(flecha.dataset.flechaZoom) + fotos.length) % fotos.length);
+      });
+    }
+
+    if (zoom) {
+      const abrir = () => zoom.showModal();
+      for (const foto of fotos) foto.addEventListener('click', abrir);
+      galeria.querySelector('[data-zoom-abrir]')?.addEventListener('click', abrir);
+      zoom.querySelector('[data-zoom-cerrar]')?.addEventListener('click', () => zoom.close());
+      // El fondo alrededor de la foto también cierra al pulsarlo. La foto llena la caja
+      // con object-contain, así que casi siempre queda margen visible donde pulsar.
+      const fondo = zoom.querySelector('[data-zoom-fondo]');
+      zoom.addEventListener('click', (e) => {
+        if (e.target === zoom || e.target === fondo) zoom.close();
       });
     }
   }
