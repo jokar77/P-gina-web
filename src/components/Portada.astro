@@ -25,6 +25,7 @@ import Marca from './Marca.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
 import grupo from '../assets/piezas/_portada/grupo.jpg';
+import ambosConjuntos from '../assets/piezas/conjunto-cuadros/02.jpg';
 
 const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
   [...l].sort((a, b) => a.data.orden - b.data.orden);
@@ -89,22 +90,22 @@ interface Porton {
  * Vestidos solo aparece si hay algo en el archivo, igual que en el menú.
  */
 const portones: Porton[] = [
+  ...(ninos.length > 0
+    ? [
+        {
+          href: '/#nino',
+          foto: ambosConjuntos,
+          alt: 'Los dos conjuntos de niño, de cuadros y de lino, puestos uno junto al otro.',
+          nombre: site.secciones.nino.titulo,
+        },
+      ]
+    : []),
   {
     href: '/#bolsos',
     foto: grupo,
     alt: 'Varios bolsos de ganchillo, en distintos colores.',
     nombre: site.secciones.bolsos.titulo,
   },
-  ...(ninos.length > 0
-    ? [
-        {
-          href: '/#nino',
-          foto: ninos[0]!.data.foto,
-          alt: `Conjunto ${ninos[0]!.data.nombre}.`,
-          nombre: site.secciones.nino.titulo,
-        },
-      ]
-    : []),
   ...(archivo.length > 0
     ? [
         {
