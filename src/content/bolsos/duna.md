@@ -2,7 +2,7 @@
 nombre: Duna
 precio: 25
 estado: disponible
-color: crudo
+color: blanco
 material: Trapillo grueso, sin asa
 ancho: 32
 alto: 20

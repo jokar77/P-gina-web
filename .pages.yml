@@ -63,10 +63,14 @@ content:
             - rosa
             - teja
             - amarillo
+            - verde
+            - morado
             - crudo
+            - blanco
             - dorado
             - chocolate
             - gris
+            - negro
             - bicolor
         description: >-
           Es el que agrupa la pieza en los filtros de la colección. Son familias
