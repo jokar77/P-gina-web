@@ -2,7 +2,7 @@
 nombre: pijama rayas
 tipo: conjunto
 material: idk
-nota: blablabal
+nota: blablabal Bolso no incluido.
 ano: 2026
 foto: ../../assets/piezas/pijama rayas/pijama-rayas-3.jpg
 fotos:
