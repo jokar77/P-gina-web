@@ -1,0 +1,214 @@
+---
+/**
+ * El menú: las tres rayitas de arriba a la izquierda y el panel que abren.
+ *
+ * Hasta ahora los enlaces solo existían a partir de 1024px de ancho: por debajo no había
+ * menú ninguno y la única forma de llegar a una sección era bajar por toda la página.
+ * Ahora es el mismo menú en todos los tamaños.
+ *
+ * Panel en papel, no oscuro como el del pedido: son dos cosas distintas —uno es la casa,
+ * el otro una transacción— y distinguirlas de un vistazo ahorra una lectura.
+ *
+ * Es un `<dialog>` de verdad, abierto con `showModal()`: el foco se queda dentro, Escape
+ * lo cierra y el resto de la página queda inerte, todo eso sin escribirlo.
+ */
+import { secciones, LEGALES } from '../data/navegacion';
+import Redes from './Redes.astro';
+import site from '../data/site.json';
+
+const enlaces = await secciones();
+---
+
+<button type="button" class="rayitas" data-abrir-menu aria-haspopup="dialog" aria-expanded="false">
+  <span class="sr-only">Abrir el menú</span>
+  <span class="raya" aria-hidden="true"></span>
+  <span class="raya" aria-hidden="true"></span>
+  <span class="raya" aria-hidden="true"></span>
+</button>
+
+<dialog data-menu class="panel" aria-label="Menú">
+  <div class="flex h-full flex-col px-6 py-5">
+    <button type="button" class="cerrar" data-cerrar-menu>
+      <span class="sr-only">Cerrar el menú</span>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M5 5l14 14M19 5L5 19"></path>
+      </svg>
+    </button>
+
+    <nav class="mt-8" aria-label="Secciones">
+      <ul class="grid gap-1">
+        {
+          enlaces.map((e) => (
+            <li>
+              <a class="seccion" href={e.href} data-cerrar-al-pulsar>
+                {e.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="filete mt-auto pt-6">
+      <Redes />
+      <nav class="mt-5 grid gap-1.5 text-[14px]" aria-label="Información legal">
+        {
+          LEGALES.map((l) => (
+            <a class="text-ink-soft no-underline hover:text-ink" href={l.href} data-cerrar-al-pulsar>
+              {l.texto}
+            </a>
+          ))
+        }
+      </nav>
+      <p class="mt-4 text-[13px] text-ink-soft">© {new Date().getFullYear()} {site.marca}</p>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* El botón: 44px de lado, que es el mínimo para que se pulse bien con el pulgar. */
+  .rayitas {
+    display: grid;
+    align-content: center;
+    gap: 4px;
+    width: 44px;
+    height: 44px;
+    margin-left: -10px;
+    padding: 0 9px;
+  }
+  .raya {
+    display: block;
+    height: 1.5px;
+    background-color: var(--color-ink);
+    transition: transform 220ms var(--ease-salida);
+  }
+  .raya:nth-child(3) {
+    width: 68%;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .rayitas:hover .raya:nth-child(3) {
+      transform: scaleX(1.47);
+      transform-origin: left;
+    }
+  }
+
+  .panel {
+    /* Pegado a la izquierda, que es de donde sale: el panel viene del botón. */
+    margin: 0 auto 0 0;
+    height: 100dvh;
+    max-height: none;
+    width: min(22rem, 86vw);
+    max-width: none;
+    padding: 0;
+    border: 0;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    transform: translateX(-100%);
+    transition:
+      transform 260ms var(--ease-salida),
+      overlay 260ms allow-discrete,
+      display 260ms allow-discrete;
+  }
+  .panel[open] {
+    transform: translateX(0);
+  }
+  @starting-style {
+    .panel[open] {
+      transform: translateX(0%);
+    }
+  }
+  .panel::backdrop {
+    background-color: rgb(31 29 27 / 0.32);
+    opacity: 0;
+    transition:
+      opacity 260ms var(--ease-salida),
+      overlay 260ms allow-discrete,
+      display 260ms allow-discrete;
+  }
+  .panel[open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    .panel[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .cerrar {
+    margin-left: -0.5rem;
+    padding: 0.6rem;
+    color: var(--color-ink);
+  }
+
+  .seccion {
+    display: block;
+    padding: 0.45rem 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 6vw, 1.9rem);
+    line-height: 1.15;
+    text-decoration: none;
+    transition: opacity 180ms var(--ease-salida);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .seccion:hover {
+      opacity: 0.55;
+    }
+  }
+
+  /*
+   * Con menos animación pedida se conserva el desvanecido —dice que algo ha aparecido—
+   * y se quita el desplazamiento lateral. Menos y más suave, no nada.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .panel {
+      transform: none;
+      opacity: 0;
+      transition:
+        opacity 180ms var(--ease-salida),
+        overlay 180ms allow-discrete,
+        display 180ms allow-discrete;
+    }
+    .panel[open] {
+      opacity: 1;
+    }
+    @starting-style {
+      .panel[open] {
+        opacity: 0;
+      }
+    }
+    .raya {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const panel = document.querySelector<HTMLDialogElement>('[data-menu]');
+  const abrir = document.querySelector<HTMLButtonElement>('[data-abrir-menu]');
+
+  if (panel && abrir) {
+    const marcar = () => abrir.setAttribute('aria-expanded', String(panel.open));
+
+    abrir.addEventListener('click', () => {
+      panel.showModal();
+      marcar();
+    });
+    panel.addEventListener('close', marcar);
+
+    document.querySelector('[data-cerrar-menu]')?.addEventListener('click', () => panel.close());
+
+    /*
+     * Los enlaces de sección son anclas de esta misma página: sin esto el panel se
+     * quedaría abierto tapando justo aquello a lo que acabas de saltar.
+     */
+    for (const a of panel.querySelectorAll('[data-cerrar-al-pulsar]')) {
+      a.addEventListener('click', () => panel.close());
+    }
+
+    // Pulsar fuera del panel lo cierra, que es lo que espera todo el mundo.
+    panel.addEventListener('click', (e) => {
+      if (e.target === panel) panel.close();
+    });
+  }
+</script>
