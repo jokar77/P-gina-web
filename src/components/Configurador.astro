@@ -79,6 +79,7 @@ const seccion = site.secciones.disena;
       </div>
 
       <aside class="lg:sticky lg:top-24 lg:self-start">
+        <canvas class="hilo mx-auto block" data-hilo width="220" height="220" aria-hidden="true"></canvas>
         <div class="border-t border-paper/25 pt-6">
           <p class="text-[15px] text-paper/70">Tu bolso</p>
           <p class="mt-2 font-display text-2xl" data-resumen-forma></p>
@@ -102,6 +103,12 @@ const seccion = site.secciones.disena;
 </section>
 
 <style>
+  .hilo {
+    width: 220px;
+    height: 220px;
+    max-width: 100%;
+  }
+
   .opcion-forma {
     cursor: pointer;
     display: block;
@@ -173,6 +180,83 @@ const seccion = site.secciones.disena;
   import { anadir } from '../lib/carrito';
   import { precio } from '../lib/formato';
 
+  /**
+   * El nudo de hilo del panel «Tu bolso»: un torus knot en three.js, cargado aparte
+   * (import dinámico) para no meter la librería en el resto de la web. Gira solo y
+   * toma el color que se vaya eligiendo; es decorativo, así que cualquier fallo —sin
+   * WebGL, sin soporte— se traga y el configurador sigue funcionando sin él.
+   */
+  function iniciarHilo(): Promise<((hex: string) => void) | null> {
+    const canvas = document.querySelector<HTMLCanvasElement>('[data-hilo]');
+    if (!canvas) return Promise.resolve(null);
+
+    // Three.js pesa lo suyo para algo puramente decorativo: no se pide hasta que el
+    // panel esté a punto de entrar en pantalla, para no cargarlo en quien no llega
+    // a bajar hasta «Diseña tu bolso».
+    return new Promise((resolver) => {
+      const obs = new IntersectionObserver(
+        ([entrada]) => {
+          if (!entrada.isIntersecting) return;
+          obs.disconnect();
+          cargar(canvas).then(resolver);
+        },
+        { rootMargin: '200px' }
+      );
+      obs.observe(canvas);
+    });
+  }
+
+  async function cargar(canvas: HTMLCanvasElement) {
+    try {
+      const THREE = await import('three');
+      const LADO = 220;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(LADO, LADO, false);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 10);
+      camera.position.set(0, 0, 4.2);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const sol = new THREE.DirectionalLight(0xffffff, 1.3);
+      sol.position.set(2, 3, 4);
+      scene.add(sol);
+
+      const geometria = new THREE.TorusKnotGeometry(0.85, 0.26, 140, 16, 2, 3);
+      const material = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0.05 });
+      const nudo = new THREE.Mesh(geometria, material);
+      scene.add(nudo);
+
+      const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Solo gira mientras se ve: fuera de pantalla no hay razón para gastar el
+      // fotograma, y respeta «menos animación» igual que el resto de la web.
+      let visible = true;
+      new IntersectionObserver(([entrada]) => (visible = entrada.isIntersecting), {
+        threshold: 0.05,
+      }).observe(canvas);
+
+      const paso = () => {
+        if (visible && !document.hidden) {
+          nudo.rotation.x += 0.0035;
+          nudo.rotation.y += 0.0055;
+          renderer.render(scene, camera);
+        }
+        if (!reducido) requestAnimationFrame(paso);
+      };
+
+      if (reducido) renderer.render(scene, camera);
+      else paso();
+
+      return (hex: string) => material.color.set(hex);
+    } catch {
+      canvas.hidden = true;
+      return null;
+    }
+  }
+
   const form = document.querySelector<HTMLFormElement>('[data-configurador]');
 
   if (form) {
@@ -191,6 +275,12 @@ const seccion = site.secciones.disena;
       return { forma, color: COLORES[colorId], extras, total };
     };
 
+    // El bicolor no tiene un único hex: es un degradado CSS. Para el nudo de hilo se
+    // coge el primer tono, que basta para que el color se note sin dibujar dos mitades.
+    const primerColorHex = (muestra: string) => muestra.match(/#[0-9a-f]{3,8}/i)?.[0] ?? '#B6B2AE';
+
+    let fijarColorHilo: ((hex: string) => void) | null = null;
+
     const pintar = () => {
       const { forma, color, extras, total } = estado();
       resumenForma.textContent = `${forma.nombre}, ${color.nombre.toLowerCase()}`;
@@ -199,10 +289,16 @@ const seccion = site.secciones.disena;
         : 'Sin detalles añadidos';
       resumenTotal.textContent = precio(total);
       colorElegido.textContent = color.nombre;
+      fijarColorHilo?.(primerColorHex(color.muestra));
     };
 
     form.addEventListener('change', pintar);
     pintar();
+
+    iniciarHilo().then((fijar) => {
+      fijarColorHilo = fijar;
+      fijarColorHilo?.(primerColorHex(estado().color.muestra));
+    });
 
     boton.addEventListener('click', () => {
       const { forma, color, extras, total } = estado();
