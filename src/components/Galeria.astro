@@ -9,8 +9,11 @@
  * En pantalla estrecha las miniaturas bajan debajo: una columna al lado se come un octavo
  * del ancho, y en un móvil eso se lo quita a lo único que importa mirar.
  *
- * La foto grande se puede ampliar: al pulsarla (o el icono de lupa) se abre a pantalla
- * completa, con las mismas flechas para seguir pasando fotos sin cerrarla.
+ * La foto grande se puede ampliar de dos formas. Con ratón, pasarlo por encima saca una
+ * lupa que sigue el puntero y muestra esa zona ampliada, como una lupa de verdad sobre
+ * el papel. En pantalla táctil no hay puntero que seguir, así que ahí (y si se prefiere,
+ * también con ratón) pulsar la foto o el icono abre la misma foto a pantalla completa,
+ * con las mismas flechas para seguir pasando fotos sin cerrarla.
  */
 import { Image } from 'astro:assets';
 
@@ -71,6 +74,9 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
         <path d="M10.5 8v5M8 10.5h5" />
       </svg>
     </button>
+    {/* Solo se activa con ratón (ver el script): en táctil se queda oculta y de por
+        medio. */}
+    <div class="lente" data-lente hidden aria-hidden="true" />
   </div>
 
   {
@@ -177,6 +183,26 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
     cursor: zoom-in;
   }
 
+  .lente {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 9999px;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    box-shadow:
+      0 0 0 4px var(--color-paper),
+      inset 0 0 0 1px rgb(31 29 27 / 0.25),
+      0 6px 20px rgb(31 29 27 / 0.35);
+    z-index: 10;
+  }
+  /* Con el puntero encima, el cursor del sistema estorba junto a la lupa. La foto
+     tiene su propio cursor (zoom-in) que si no, ganaría por ser más específico. */
+  [data-galeria].con-lente,
+  [data-galeria].con-lente .foto-zoom {
+    cursor: none;
+  }
+
   dialog.zoom {
     border: 0;
   }
@@ -215,14 +241,17 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
   const galeria = document.querySelector<HTMLElement>('[data-galeria]');
   const minis = [...document.querySelectorAll<HTMLButtonElement>('[data-mini]')];
   const zoom = document.querySelector<HTMLDialogElement>('[data-zoom]');
+  const lente = document.querySelector<HTMLElement>('[data-lente]');
 
   if (galeria) {
-    const fotos = [...galeria.querySelectorAll<HTMLElement>('[data-foto]')];
+    const fotos = [...galeria.querySelectorAll<HTMLImageElement>('[data-foto]')];
     const flechas = [...galeria.querySelectorAll<HTMLButtonElement>('[data-flecha]')];
     const fotosZoom = zoom ? [...zoom.querySelectorAll<HTMLElement>('[data-foto-zoom]')] : [];
     const flechasZoom = zoom ? [...zoom.querySelectorAll<HTMLButtonElement>('[data-flecha-zoom]')] : [];
 
     const actual = () => fotos.findIndex((foto) => !foto.classList.contains('opacity-0'));
+
+    const fotoActivaParaLente = () => fotos[actual()];
 
     const activar = (i: number) => {
       for (const foto of fotos) {
@@ -237,6 +266,10 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
         foto.classList.toggle('pointer-events-none', !activa);
       }
       for (const mini of minis) mini.setAttribute('aria-current', String(Number(mini.dataset.mini) === i));
+      if (lente && !lente.hidden) {
+        const foto = fotoActivaParaLente();
+        if (foto) lente.style.backgroundImage = `url(${foto.currentSrc || foto.src})`;
+      }
     };
 
     for (const mini of minis) {
@@ -265,6 +298,44 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
       const fondo = zoom.querySelector('[data-zoom-fondo]');
       zoom.addEventListener('click', (e) => {
         if (e.target === zoom || e.target === fondo) zoom.close();
+      });
+    }
+
+    /*
+     * La lupa de verdad: solo con ratón (o lápiz), nunca en táctil, donde no hay
+     * puntero que la mueva y taparía la foto con el dedo encima. Se activa aunque el
+     * dispositivo también tenga pantalla táctil, mientras el puntero usado sea fino.
+     */
+    if (lente && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const AUMENTO = 2.4;
+
+      galeria.addEventListener('mouseenter', () => {
+        const foto = fotoActivaParaLente();
+        if (!foto) return;
+        lente.style.backgroundImage = `url(${foto.currentSrc || foto.src})`;
+        lente.hidden = false;
+        galeria.classList.add('con-lente');
+      });
+
+      galeria.addEventListener('mouseleave', () => {
+        lente.hidden = true;
+        galeria.classList.remove('con-lente');
+      });
+
+      galeria.addEventListener('mousemove', (e) => {
+        const caja = galeria.getBoundingClientRect();
+        const x = e.clientX - caja.left;
+        const y = e.clientY - caja.top;
+        const lado = lente.offsetWidth;
+
+        // La lupa se queda dentro de la caja aunque el puntero ande cerca del borde.
+        const cx = Math.min(Math.max(x, lado / 2), caja.width - lado / 2);
+        const cy = Math.min(Math.max(y, lado / 2), caja.height - lado / 2);
+        lente.style.left = `${cx - lado / 2}px`;
+        lente.style.top = `${cy - lado / 2}px`;
+
+        lente.style.backgroundSize = `${caja.width * AUMENTO}px ${caja.height * AUMENTO}px`;
+        lente.style.backgroundPosition = `${-(x * AUMENTO - lado / 2)}px ${-(y * AUMENTO - lado / 2)}px`;
       });
     }
   }
