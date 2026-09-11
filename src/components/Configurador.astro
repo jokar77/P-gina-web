@@ -140,8 +140,10 @@ const seccion = site.secciones.disena;
       transform 200ms var(--ease-salida),
       box-shadow 200ms var(--ease-salida);
   }
-  .opcion-color:hover .punto {
-    transform: scale(1.1);
+  @media (hover: hover) and (pointer: fine) {
+    .opcion-color:hover .punto {
+      transform: scale(1.1);
+    }
   }
   .opcion-color:has(input:checked) .punto {
     box-shadow:

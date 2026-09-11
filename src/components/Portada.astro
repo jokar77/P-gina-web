@@ -609,8 +609,10 @@ const finDelNombre = pct(1.9);
       .foto-porton {
         transition: transform 600ms var(--ease-salida);
       }
-      .porton a:hover .foto-porton {
-        transform: scale(1.04);
+      @media (hover: hover) and (pointer: fine) {
+        .porton a:hover .foto-porton {
+          transform: scale(1.04);
+        }
       }
     }
   }
