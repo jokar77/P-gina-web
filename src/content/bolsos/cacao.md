@@ -8,7 +8,6 @@ ancho: 30
 alto: 22
 orden: 11
 foto: ../../assets/piezas/cacao/01.jpg
-recorte: ../../assets/piezas/cacao/recorte.webp
 fotos:
   - ../../assets/piezas/cacao/02.jpg
   - ../../assets/piezas/cacao/03.jpg

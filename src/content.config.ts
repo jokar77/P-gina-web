@@ -17,13 +17,6 @@ const bolsos = defineCollection({
       ancho: z.number(),
       alto: z.number(),
       foto: image(),
-      /**
-       * La pieza sin fondo, para el montón de la portada. Es opcional a propósito: una
-       * pieza recién subida sale en su página desde el primer momento, y se une al
-       * montón cuando alguien le haga el recorte. Obligarlo sería poner una puerta
-       * entre Sakina y publicar.
-       */
-      recorte: image().optional(),
       fotos: z.array(image()).default([]),
       orden: z.number().default(0),
     }),
@@ -39,13 +32,6 @@ const ninos = defineCollection({
       material: z.string(),
       estado: estado.default('encargo'),
       foto: image(),
-      /**
-       * La pieza sin fondo, para el montón de la portada. Es opcional a propósito: una
-       * pieza recién subida sale en su página desde el primer momento, y se une al
-       * montón cuando alguien le haga el recorte. Obligarlo sería poner una puerta
-       * entre Sakina y publicar.
-       */
-      recorte: image().optional(),
       fotos: z.array(image()).default([]),
       orden: z.number().default(0),
     }),
@@ -72,13 +58,6 @@ const archivo = defineCollection({
       nota: z.string().optional(),
       ano: z.number().optional(),
       foto: image(),
-      /**
-       * La pieza sin fondo, para el montón de la portada. Es opcional a propósito: una
-       * pieza recién subida sale en su página desde el primer momento, y se une al
-       * montón cuando alguien le haga el recorte. Obligarlo sería poner una puerta
-       * entre Sakina y publicar.
-       */
-      recorte: image().optional(),
       fotos: z.array(image()).default([]),
       orden: z.number().default(0),
     }),

@@ -8,7 +8,6 @@ ancho: 28
 alto: 22
 orden: 6
 foto: ../../assets/piezas/lazada/01.jpg
-recorte: ../../assets/piezas/lazada/recorte.webp
 fotos:
   - ../../assets/piezas/lazada/02.jpg
   - ../../assets/piezas/lazada/03.jpg
