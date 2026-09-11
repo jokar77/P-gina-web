@@ -362,9 +362,9 @@ const finDelNombre = pct(1.9);
    * `clip-path` abriéndose desde el centro —eso es cosa de la fila de tres, y en móvil
    * van apilados, uno debajo de otro, así que ese gesto no tiene equivalente—. Cada
    * portón se ata a su propia entrada en pantalla, sin tocar el `--escena` compartido
-   * de escritorio: sube y aparece según va entrando, y el siguiente hace lo mismo un
-   * poco más abajo, en su turno. No hace falta escalonarlos a mano con un retraso: el
-   * propio orden de la página ya los separa.
+   * de escritorio: gira hacia quien mira y aparece según va entrando, y el siguiente
+   * hace lo mismo un poco más abajo, en su turno. No hace falta escalonarlos a mano con
+   * un retraso: el propio orden de la página ya los separa.
    */
   @supports (animation-timeline: view()) {
     @media (max-width: 1023.98px) {
@@ -385,10 +385,16 @@ const finDelNombre = pct(1.9);
     }
   }
 
+  /*
+   * Cada portón entra dando un giro, como si la puerta se abriera hacia quien mira: un
+   * gesto más vistoso que un simple desvanecido, y que además juega con su propio
+   * nombre. `perspective` en la misma propiedad, junto al `rotateY`, es lo que le da
+   * profundidad al giro; sin ella se vería estirado en vez de rotado.
+   */
   @keyframes aparecer-porton {
     from {
       opacity: 0;
-      transform: translateY(2.75rem) scale(0.97);
+      transform: perspective(1200px) rotateY(-34deg) translateY(1.25rem) scale(0.95);
     }
     to {
       opacity: 1;
@@ -722,17 +728,16 @@ const finDelNombre = pct(1.9);
    * los tres portones de móvil no tienen forma de animarse solo con CSS, y se quedaban
    * quietos —los tres a la vez según entra la página, sin que ninguno «apareciera» por
    * su cuenta—. El script de más abajo detecta ese caso y le pone a cada uno este
-   * atributo; con él entra con el mismo gesto que la versión atada al scroll —opacidad
-   * y un pequeño avance, los mismos valores de `aparecer-porton`— la primera vez que se
-   * asoma a la pantalla, y se queda así.
+   * atributo; con él entra con el mismo giro que `aparecer-porton`, la primera vez que
+   * se asoma a la pantalla, y se queda así.
    */
   @media (max-width: 1023.98px) {
     .porton[data-revela] {
       opacity: 0;
-      transform: translateY(2.75rem) scale(0.97);
+      transform: perspective(1200px) rotateY(-34deg) translateY(1.25rem) scale(0.95);
       transition:
-        opacity 450ms var(--ease-salida),
-        transform 450ms var(--ease-salida);
+        opacity 550ms var(--ease-salida),
+        transform 550ms var(--ease-salida);
     }
     .porton[data-revela][data-visible] {
       opacity: 1;
