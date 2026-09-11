@@ -297,114 +297,167 @@ const finDelNombre = pct(1.9);
     display: none;
   }
 
-  /* Los portones son cosa de pantalla ancha: en móvil se queda el desfile de arriba. */
-  .portones {
-    display: none;
+  /*
+   * Bajo 1024px la portada es también los tres portones, no el desfile pieza a pieza:
+   * el mismo motivo que llevó a cambiarlo en pantalla ancha —quince piezas es mucho
+   * scroll antes de llegar a ningún sitio— pesa igual o más en un móvil, donde cada
+   * palmo de scroll cuesta más dedo. Van apilados en vez de en fila, que es lo que cabe
+   * a lo ancho de un teléfono; en fila se habrían quedado en columnas de unos 100px.
+   *
+   * Todo esto vive en su propia `@media`, aparte del bloque de escritorio de más abajo,
+   * así que no le toca ni una propiedad a como se ve allí.
+   */
+  @media (max-width: 1023.98px) {
+    .pases {
+      display: none;
+    }
+
+    .portones {
+      display: grid;
+      grid-template-columns: 1fr;
+      margin: 2.5rem -1.25rem 0;
+      padding: 0;
+      list-style: none;
+    }
+    .porton {
+      position: relative;
+      overflow: hidden;
+      height: 44svh;
+    }
+    .porton a {
+      display: block;
+      position: relative;
+      height: 100%;
+      text-decoration: none;
+    }
+    .foto-porton {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .nombre-porton {
+      position: absolute;
+      inset: auto 0 1.5rem;
+      text-align: center;
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 7vw, 2.1rem);
+      color: var(--color-paper);
+      text-shadow: 0 2px 20px rgb(0 0 0 / 0.4);
+    }
   }
 
   @supports (animation-timeline: view()) {
     /*
-     * La escena mide más que la pantalla y la tarima se queda clavada dentro: ese
-     * desfase es el recorrido. `contain` es justo el tramo en el que la escena tapa la
-     * pantalla entera, o sea exactamente lo que dura el clavado.
+     * Todo este bloque es cosa de escritorio: es el que clava la escena y hace pasar
+     * las piezas una a una. Bajo 1024px el nombre ya no se retira ni se ata al scroll
+     * —se queda quieto, como en el resto de la web— y los portones son un bloque más
+     * de la página, no una capa que se superpone al desfile. Nada de aquí abajo toca
+     * cómo se ve en escritorio: es exactamente lo que había, metido un nivel más adentro.
      */
-    .escena {
+    @media (min-width: 1024px) {
       /*
-       * El recorrido crece con lo que haya —unos 22vh por pieza— para que a cada una
-       * le toque el mismo rato. Con dieciséis piezas repartidas en 320vh cada nombre
-       * duraba menos de un golpe de rueda. El tope de 560vh está para que añadir la
-       * pieza cuarenta no convierta la portada en un túnel.
+       * La escena mide más que la pantalla y la tarima se queda clavada dentro: ese
+       * desfase es el recorrido. `contain` es justo el tramo en el que la escena tapa la
+       * pantalla entera, o sea exactamente lo que dura el clavado.
        */
-      height: min(calc(100vh + (var(--piezas) + 1) * 22vh), 560vh);
-      padding: 0;
-      view-timeline: --escena block;
-    }
+      .escena {
+        /*
+         * El recorrido crece con lo que haya —unos 22vh por pieza— para que a cada una
+         * le toque el mismo rato. Con dieciséis piezas repartidas en 320vh cada nombre
+         * duraba menos de un golpe de rueda. El tope de 560vh está para que añadir la
+         * pieza cuarenta no convierta la portada en un túnel.
+         */
+        height: min(calc(100vh + (var(--piezas) + 1) * 22vh), 560vh);
+        padding: 0;
+        view-timeline: --escena block;
+      }
 
-    .fija {
-      position: sticky;
-      top: 0;
-      display: grid;
-      place-items: center;
-      height: 100svh;
-      overflow: hidden;
-      padding: 0 1.25rem;
-    }
+      .fija {
+        position: sticky;
+        top: 0;
+        display: grid;
+        place-items: center;
+        height: 100svh;
+        overflow: hidden;
+        padding: 0 1.25rem;
+      }
 
-    .cabecera,
-    .pases {
-      grid-area: 1 / 1;
-    }
+      .cabecera,
+      .pases {
+        grid-area: 1 / 1;
+      }
 
-    .pases {
-      display: grid;
-      place-items: center;
-      overflow: visible;
-      margin: 0;
-    }
-    .pase {
-      grid-area: 1 / 1;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
+      .pases {
+        display: grid;
+        place-items: center;
+        overflow: visible;
+        margin: 0;
+      }
+      .pase {
+        grid-area: 1 / 1;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
 
-    /*
-     * `animation-timeline` va en una regla aparte a propósito, y no puede volver a
-     * juntarse con la de al lado.
-     *
-     * Puesta junto al atajo `animation`, el minificador las fusiona en
-     * `animation: linear both pasar --escena`. Ese atajo no admite el carril de tiempo,
-     * así que el navegador tira la declaración entera y no anima nada: ni error, ni
-     * aviso, solo una portada quieta. Con selectores distintos no hay nada que fusionar.
-     */
-    .cabecera {
-      animation: retirar linear both;
-      animation-range: contain 0% contain var(--fin-nombre);
-    }
-    .fija > .cabecera {
-      animation-timeline: --escena;
-    }
+      /*
+       * `animation-timeline` va en una regla aparte a propósito, y no puede volver a
+       * juntarse con la de al lado.
+       *
+       * Puesta junto al atajo `animation`, el minificador las fusiona en
+       * `animation: linear both pasar --escena`. Ese atajo no admite el carril de tiempo,
+       * así que el navegador tira la declaración entera y no anima nada: ni error, ni
+       * aviso, solo una portada quieta. Con selectores distintos no hay nada que fusionar.
+       */
+      .cabecera {
+        animation: retirar linear both;
+        animation-range: contain 0% contain var(--fin-nombre);
+      }
+      .fija > .cabecera {
+        animation-timeline: --escena;
+      }
 
-    .pase {
-      animation: pasar linear both;
-      animation-range: contain var(--ini) contain var(--fin);
-    }
-    .pases > .pase {
-      animation-timeline: --escena;
-    }
+      .pase {
+        animation: pasar linear both;
+        animation-range: contain var(--ini) contain var(--fin);
+      }
+      .pases > .pase {
+        animation-timeline: --escena;
+      }
 
-    /*
-     * El rótulo entra y sale más deprisa que la foto, en la misma ventana en la que la
-     * pieza manda. Fundiéndose como la foto, los dos nombres se solapaban a mitad del
-     * relevo y quedaba un amasijo ilegible: dos fotos superpuestas se leen como una
-     * disolvencia, dos textos superpuestos se leen como un error.
-     */
-    .rotulo {
-      animation: rotular linear both;
-      animation-range: contain var(--ini) contain var(--fin);
-    }
-    .pase .rotulo {
-      animation-timeline: --escena;
-    }
+      /*
+       * El rótulo entra y sale más deprisa que la foto, en la misma ventana en la que la
+       * pieza manda. Fundiéndose como la foto, los dos nombres se solapaban a mitad del
+       * relevo y quedaba un amasijo ilegible: dos fotos superpuestas se leen como una
+       * disolvencia, dos textos superpuestos se leen como un error.
+       */
+      .rotulo {
+        animation: rotular linear both;
+        animation-range: contain var(--ini) contain var(--fin);
+      }
+      .pase .rotulo {
+        animation-timeline: --escena;
+      }
 
-    .regla {
-      display: block;
-      position: absolute;
-      inset: auto 1.25rem 2.25rem;
-      height: 1px;
-      background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
-    }
-    .regla span {
-      display: block;
-      height: 100%;
-      background-color: var(--color-ink);
-      transform-origin: left;
-      transform: scaleX(0);
-      animation: avanzar linear both;
-      animation-range: contain 0% contain 100%;
-    }
-    .regla > span {
-      animation-timeline: --escena;
+      .regla {
+        display: block;
+        position: absolute;
+        inset: auto 1.25rem 2.25rem;
+        height: 1px;
+        background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
+      }
+      .regla span {
+        display: block;
+        height: 100%;
+        background-color: var(--color-ink);
+        transform-origin: left;
+        transform: scaleX(0);
+        animation: avanzar linear both;
+        animation-range: contain 0% contain 100%;
+      }
+      .regla > span {
+        animation-timeline: --escena;
+      }
     }
   }
 
