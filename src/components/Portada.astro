@@ -25,7 +25,7 @@ import Marca from './Marca.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
 import grupo from '../assets/piezas/_portada/grupo.jpg';
-import ambosConjuntos from '../assets/piezas/conjunto-cuadros/02.jpg';
+import conjuntoCuadros from '../assets/piezas/conjunto-cuadros/01.jpg';
 
 const porOrden = <T extends { data: { orden: number } }>(l: T[]) =>
   [...l].sort((a, b) => a.data.orden - b.data.orden);
@@ -94,8 +94,8 @@ const portones: Porton[] = [
     ? [
         {
           href: '/#nino',
-          foto: ambosConjuntos,
-          alt: 'Los dos conjuntos de niño, de cuadros y de lino, puestos uno junto al otro.',
+          foto: conjuntoCuadros,
+          alt: 'Conjunto de cuadros para niño, camisa y pantalón.',
           nombre: site.secciones.nino.titulo,
         },
       ]
