@@ -1,0 +1,509 @@
+---
+/**
+ * La maqueta del bolso a medida: un dibujo que se rehace solo con lo que se va
+ * eligiendo al lado —forma, color y detalles—, para ver la pieza antes de pedirla.
+ *
+ * Es un dibujo y no una foto por lo evidente: tres formas por quince colores por seis
+ * detalles son cientos de combinaciones, y ninguna existe todavía. Tampoco es three.js,
+ * que es lo que había aquí antes: un bolso de trapillo en 3D de verdad pide una malla y
+ * un material tejido que no tenemos, y lo que salía era un bulto de plástico girando.
+ * Dibujado, con su textura de punto, se parece mucho más a lo que sale del taller.
+ *
+ * Las tres formas están sacadas de piezas reales: el tote de Mimosa, el de hombro de
+ * Lazada y el de mano sin asa de Duna, con sus proporciones y su número de puntos.
+ * Las tres se apoyan en la misma línea de suelo, así que al cambiar de forma el bolso no
+ * da saltos: crece o mengua, como crecen o menguan las piezas de verdad.
+ *
+ * Las tres se dibujan siempre y CSS enciende la que toca, así que el configurador solo
+ * tiene que poner dos atributos —`data-forma` y `data-extras`— y los dos tonos de la
+ * lana; no hay que rehacer el SVG a cada clic.
+ *
+ * Los tonos van en dos paradas de un degradado en diagonal: en los colores lisos las dos
+ * valen lo mismo y no se nota, y el bicolor parte el bolso igual que parte su muestra.
+ *
+ * El punto, las sombras y los contornos son negros y blancos translúcidos, nunca un
+ * color propio: así la misma textura vale para la lana blanca y para la negra. Por lo
+ * mismo cada detalle lleva a la vez un aclarado y un contorno oscuro, para que se vea
+ * sobre cualquier lana.
+ *
+ * No lo leen los lectores de pantalla: lo elegido se cuenta en palabras justo debajo, en
+ * «Tu bolso», y repetirlo aquí sería ruido.
+ */
+---
+
+<svg class="maqueta" viewBox="0 0 280 310" data-maqueta aria-hidden="true">
+  <defs>
+    <linearGradient id="lana" x1="0" y1="0" x2="1" y2="1">
+      <stop class="tono-a" offset="50%"></stop>
+      <stop class="tono-b" offset="50%"></stop>
+    </linearGradient>
+
+    {/* El bolso no es una silueta plana: le entra luz por arriba y se apaga abajo. */}
+    <linearGradient id="bulto" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".15"></stop>
+      <stop offset=".45" stop-color="#fff" stop-opacity="0"></stop>
+      <stop offset="1" stop-color="#000" stop-opacity=".2"></stop>
+    </linearGradient>
+
+    {/* Y tiene fondo: los costados se van de sombra, que es lo que lo redondea. */}
+    <linearGradient id="lados" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#000" stop-opacity=".22"></stop>
+      <stop offset=".16" stop-color="#000" stop-opacity="0"></stop>
+      <stop offset=".84" stop-color="#000" stop-opacity="0"></stop>
+      <stop offset="1" stop-color="#000" stop-opacity=".22"></stop>
+    </linearGradient>
+
+    <radialGradient id="suelo">
+      <stop offset="0" stop-color="#000" stop-opacity=".45"></stop>
+      <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+    </radialGradient>
+
+    {/*
+      El punto. Cada uno es una «uve» suelta, no una onda continua: lo segundo sale un
+      zigzag de estampado, y lo que hace el ganchillo son puntos separados, cada uno
+      sobre el hueco de dos de la vuelta de abajo —de ahí que las filas vayan corridas
+      medio punto—. El tamaño está medido sobre las fotos: unos catorce puntos de ancho y
+      doce vueltas de alto en un bolso. Se ve grueso porque es trapillo, no lana fina.
+    */}
+    <pattern id="punto" width="26" height="22" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        {/* La raya de la vuelta, que es la que separa una fila de la siguiente. */}
+        <path d="M0 11.5h26M0 22.5h26" stroke="#000" stroke-opacity=".07" stroke-width="3"></path>
+        <path
+          d="M2 2Q6.5 10.5 11 2M15 2Q19.5 10.5 24 2M-4.5 13Q0 21.5 4.5 13M8.5 13Q13 21.5 17.5 13M21.5 13Q26 21.5 30.5 13"
+          stroke="#000"
+          stroke-opacity=".17"
+          stroke-width="2.8"></path>
+        <path
+          d="M2 .3Q6.5 8.8 11 .3M15 .3Q19.5 8.8 24 .3M-4.5 11.3Q0 19.8 4.5 11.3M8.5 11.3Q13 19.8 17.5 11.3M21.5 11.3Q26 19.8 30.5 11.3"
+          stroke="#fff"
+          stroke-opacity=".14"
+          stroke-width="2.1"></path>
+      </g>
+    </pattern>
+
+    <path
+      id="cuerpo-tote"
+      d="M54 132h172a8 8 0 0 1 8 8v102a20 20 0 0 1-20 20H66a20 20 0 0 1-20-20V140a8 8 0 0 1 8-8Z"
+    ></path>
+    <path
+      id="cuerpo-hombro"
+      d="M70 140h140a8 8 0 0 1 8 8v96a18 18 0 0 1-18 18H80a18 18 0 0 1-18-18v-96a8 8 0 0 1 8-8Z"
+    ></path>
+    <path
+      id="cuerpo-sin-asa"
+      d="M46 150h188a10 10 0 0 1 10 10v82a20 20 0 0 1-20 20H56a20 20 0 0 1-20-20v-82a10 10 0 0 1 10-10Z"
+    ></path>
+    <path
+      id="cuerpo-monedero"
+      d="M196 224a6 6 0 0 1 6-6h36a6 6 0 0 1 6 6v30a12 12 0 0 1-12 12h-24a12 12 0 0 1-12-12Z"
+    ></path>
+
+    {/*
+      Los pétalos no llegan al centro: si se tocan, sus seis contornos se amontonan y en
+      vez de una flor sale una estrella sucia. El botón de en medio tapa el hueco.
+    */}
+    <g id="flor-petalos">
+      <ellipse cx="86" cy="193" rx="6.5" ry="10"></ellipse>
+      <ellipse cx="86" cy="193" rx="6.5" ry="10" transform="rotate(60 86 206)"></ellipse>
+      <ellipse cx="86" cy="193" rx="6.5" ry="10" transform="rotate(120 86 206)"></ellipse>
+      <ellipse cx="86" cy="193" rx="6.5" ry="10" transform="rotate(180 86 206)"></ellipse>
+      <ellipse cx="86" cy="193" rx="6.5" ry="10" transform="rotate(240 86 206)"></ellipse>
+      <ellipse cx="86" cy="193" rx="6.5" ry="10" transform="rotate(300 86 206)"></ellipse>
+    </g>
+
+    <g id="lazo-bucles">
+      <path d="M194 188c-13-11-22-9-22 0s9 11 22 0Z"></path>
+      <path d="M194 188c13-11 22-9 22 0s-9 11-22 0Z"></path>
+    </g>
+
+    <g id="lazo-colas">
+      <path d="M191 193c-4 9-7 13-10 19"></path>
+      <path d="M197 193c4 9 7 13 10 19"></path>
+    </g>
+  </defs>
+
+  {/* La tarima: el bolso necesita apoyarse en algo, o flota en mitad del panel. */}
+  <rect class="tarima" width="280" height="310"></rect>
+
+  {/*
+    Todo lo demás va junto en la escena para poder subirla o bajarla de una pieza según
+    la forma. Las tres piezas son de alturas muy distintas —del tote con asa al monedero
+    de mano, que es la mitad— y, ancladas todas al mismo suelo, la más baja dejaba media
+    tarima vacía por arriba, que se lee como un fallo y no como un bolso pequeño. Moviendo
+    la escena entera se recentra sin que los detalles se despeguen del bolso.
+  */}
+  <g class="escena">
+    <ellipse class="sombra" cx="140" cy="268" rx="100" ry="11"></ellipse>
+
+    {/* Los flecos cuelgan del borde de abajo, que es el mismo en las tres formas. */}
+    <g class="flecos" data-extra="flecos" stroke-linecap="round" stroke-width="4.2" fill="none">
+      <path d="M84 252c2 9-2 13 0 22"></path>
+      <path d="M92 252c-2 9 2 14 0 24"></path>
+      <path d="M100 252c2 10-2 13 0 21"></path>
+      <path d="M108 252c-2 9 2 13 0 23"></path>
+      <path d="M116 252c2 9-2 14 0 22"></path>
+      <path d="M124 252c-2 10 2 13 0 25"></path>
+      <path d="M132 252c2 9-2 13 0 21"></path>
+      <path d="M140 252c-2 9 2 14 0 24"></path>
+      <path d="M148 252c2 10-2 13 0 22"></path>
+      <path d="M156 252c-2 9 2 13 0 21"></path>
+      <path d="M164 252c2 9-2 14 0 23"></path>
+      <path d="M172 252c-2 10 2 13 0 22"></path>
+      <path d="M180 252c2 9-2 13 0 24"></path>
+      <path d="M188 252c-2 9 2 14 0 21"></path>
+      <path d="M196 252c2 10-2 13 0 23"></path>
+    </g>
+
+    <g class="forma" data-forma="tote">
+      <ellipse class="hueco" cx="140" cy="133" rx="86" ry="11"></ellipse>
+      <ellipse class="hueco-sombra" cx="140" cy="133" rx="86" ry="11"></ellipse>
+      <ellipse class="hueco-borde" cx="140" cy="133" rx="86" ry="11"></ellipse>
+      <path class="asa-borde" d="M98 136c0-52 18-64 42-64s42 12 42 64"></path>
+      <path class="asa" d="M98 136c0-52 18-64 42-64s42 12 42 64"></path>
+      <path class="asa-trenza" d="M98 136c0-52 18-64 42-64s42 12 42 64"></path>
+      <use class="cuerpo-borde" href="#cuerpo-tote"></use>
+      <use class="cuerpo" href="#cuerpo-tote"></use>
+      <use class="tejido" href="#cuerpo-tote"></use>
+      <use class="volumen" href="#cuerpo-tote"></use>
+      <use class="costados" href="#cuerpo-tote"></use>
+      <path class="remate" d="M46 145v-5a8 8 0 0 1 8-8h172a8 8 0 0 1 8 8v5Z"></path>
+      <path class="remate-linea" d="M46 145h188"></path>
+    </g>
+
+    <g class="forma" data-forma="hombro">
+      <ellipse class="hueco" cx="140" cy="141" rx="74" ry="10"></ellipse>
+      <ellipse class="hueco-sombra" cx="140" cy="141" rx="74" ry="10"></ellipse>
+      <ellipse class="hueco-borde" cx="140" cy="141" rx="74" ry="10"></ellipse>
+      <path class="asa-borde" d="M80 144c0-82 22-108 60-108s60 26 60 108"></path>
+      <path class="asa" d="M80 144c0-82 22-108 60-108s60 26 60 108"></path>
+      <path class="asa-trenza" d="M80 144c0-82 22-108 60-108s60 26 60 108"></path>
+      <use class="cuerpo-borde" href="#cuerpo-hombro"></use>
+      <use class="cuerpo" href="#cuerpo-hombro"></use>
+      <use class="tejido" href="#cuerpo-hombro"></use>
+      <use class="volumen" href="#cuerpo-hombro"></use>
+      <use class="costados" href="#cuerpo-hombro"></use>
+      <path class="remate" d="M62 153v-5a8 8 0 0 1 8-8h140a8 8 0 0 1 8 8v5Z"></path>
+      <path class="remate-linea" d="M62 153h156"></path>
+      <circle class="anilla-borde" cx="80" cy="144" r="5.5"></circle>
+      <circle class="anilla" cx="80" cy="144" r="5.5"></circle>
+      <circle class="anilla-borde" cx="200" cy="144" r="5.5"></circle>
+      <circle class="anilla" cx="200" cy="144" r="5.5"></circle>
+    </g>
+
+    <g class="forma" data-forma="sin-asa">
+      <use class="cuerpo-borde" href="#cuerpo-sin-asa"></use>
+      <use class="cuerpo" href="#cuerpo-sin-asa"></use>
+      <use class="tejido" href="#cuerpo-sin-asa"></use>
+      <use class="volumen" href="#cuerpo-sin-asa"></use>
+      <use class="costados" href="#cuerpo-sin-asa"></use>
+      <path class="remate" d="M36 164v-4a10 10 0 0 1 10-10h188a10 10 0 0 1 10 10v4Z"></path>
+      <path class="remate-linea" d="M36 164h208"></path>
+      {/* El agarre: en la pieza de verdad es una ranura abierta en el propio remate. */}
+      <rect class="hueco" x="98" y="160" width="84" height="15" rx="7.5"></rect>
+      <rect class="hueco-sombra" x="98" y="160" width="84" height="15" rx="7.5"></rect>
+      <rect class="hueco-borde" x="98" y="160" width="84" height="15" rx="7.5"></rect>
+    </g>
+
+    <g class="bolsillo" data-extra="bolsillo">
+      <rect class="bolsillo-fondo" x="118" y="212" width="56" height="40" rx="6"></rect>
+      <rect class="bolsillo-luz" x="118" y="213" width="56" height="40" rx="6"></rect>
+      <rect class="bolsillo-linea" x="118" y="212" width="56" height="40" rx="6"></rect>
+      {/* La jareta de la boca, que es lo que lo hace leerse como bolsillo y no como caja. */}
+      <path class="bolsillo-luz" d="M119 223h54"></path>
+      <path class="bolsillo-linea" d="M119 222h54"></path>
+    </g>
+
+    <g class="flor" data-extra="flor">
+      <use class="cuerpo" href="#flor-petalos"></use>
+      <use class="tinte" href="#flor-petalos"></use>
+      <use class="linea" href="#flor-petalos"></use>
+      <circle class="flor-centro" cx="86" cy="206" r="5.5"></circle>
+      <circle class="flor-centro-linea" cx="86" cy="206" r="5.5"></circle>
+    </g>
+
+    <g class="lazo" data-extra="lazos">
+      <use class="lazo-cola-borde" href="#lazo-colas"></use>
+      <use class="lazo-cola" href="#lazo-colas"></use>
+      <use class="cuerpo" href="#lazo-bucles"></use>
+      <use class="tinte" href="#lazo-bucles"></use>
+      <use class="linea" href="#lazo-bucles"></use>
+      <ellipse class="lazo-nudo" cx="194" cy="188" rx="5.5" ry="7"></ellipse>
+      <ellipse class="lazo-nudo-sombra" cx="194" cy="188" rx="5.5" ry="7"></ellipse>
+    </g>
+
+    <g class="monedero" data-extra="monedero">
+      <path class="asa-borde monedero-asa-borde" d="M206 219c0-12 24-12 24 0"></path>
+      <path class="asa monedero-asa" d="M206 219c0-12 24-12 24 0"></path>
+      <use class="cuerpo-borde" href="#cuerpo-monedero"></use>
+      <use class="cuerpo" href="#cuerpo-monedero"></use>
+      <use class="tejido" href="#cuerpo-monedero"></use>
+      <use class="volumen" href="#cuerpo-monedero"></use>
+      <use class="costados" href="#cuerpo-monedero"></use>
+    </g>
+  </g>
+</svg>
+
+<style>
+  .maqueta {
+    display: block;
+    width: 100%;
+    max-width: 20rem;
+    height: auto;
+    margin: 0 auto 1.75rem;
+  }
+
+  .tarima {
+    fill: rgb(255 255 255 / 0.05);
+  }
+  .sombra {
+    fill: url(#suelo);
+  }
+
+  /*
+   * Cada forma centra la escena a su altura. Va con transición para que al cambiar de
+   * forma el bolso se acomode en vez de saltar; son unos pocos píxeles y se lee como que
+   * la pieza se posa.
+   */
+  .escena {
+    transition: transform 260ms var(--ease-salida);
+  }
+  .maqueta[data-forma='tote'] .escena {
+    transform: translateY(-16px);
+  }
+  .maqueta[data-forma='hombro'] .escena {
+    transform: translateY(-2px);
+  }
+  .maqueta[data-forma='sin-asa'] .escena {
+    transform: translateY(-48px);
+  }
+
+  /*
+   * Los dos tonos de la lana. El configurador los cambia poniendo las dos variables en
+   * la raíz del dibujo; del resto se encarga el degradado.
+   */
+  .tono-a {
+    stop-color: var(--tono-a, #b6b2ae);
+  }
+  .tono-b {
+    stop-color: var(--tono-b, #b6b2ae);
+  }
+  .maqueta stop {
+    transition: stop-color 320ms var(--ease-salida);
+  }
+
+  .cuerpo {
+    fill: url(#lana);
+  }
+  .tejido {
+    fill: url(#punto);
+  }
+  .volumen {
+    fill: url(#bulto);
+  }
+  .costados {
+    fill: url(#lados);
+  }
+  /* Un filo claro alrededor: sin él, la lana negra se pierde dentro del panel oscuro. */
+  .cuerpo-borde {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.16);
+    stroke-width: 2;
+  }
+  /* El remate de arriba, que en ganchillo es una vuelta aparte y se nota. */
+  .remate {
+    fill: rgb(0 0 0 / 0.1);
+  }
+  .remate-linea {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.16);
+    stroke-width: 1.6;
+  }
+
+  /*
+   * La boca del bolso. Se tiñe de la misma lana y se oscurece encima, en vez de pintarse
+   * de un gris fijo: así el hueco es siempre la sombra de ese bolso y no un agujero
+   * pegado, y el forro solo tiene que aclararla.
+   */
+  .hueco {
+    fill: url(#lana);
+  }
+  .hueco-sombra {
+    fill: rgb(0 0 0 / 0.55);
+    transition: fill 320ms var(--ease-salida);
+  }
+  .hueco-borde {
+    fill: none;
+    stroke: url(#lana);
+    stroke-width: 4;
+  }
+  /* El forro se ve por la boca, que es justo por donde se vería de verdad. */
+  .maqueta[data-extras~='forro'] .hueco {
+    fill: #e7dfcf;
+  }
+  .maqueta[data-extras~='forro'] .hueco-sombra {
+    fill: rgb(0 0 0 / 0.22);
+  }
+
+  .asa {
+    fill: none;
+    stroke: url(#lana);
+    stroke-width: 11;
+    stroke-linecap: round;
+  }
+  .asa-borde {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.16);
+    stroke-width: 13.5;
+    stroke-linecap: round;
+  }
+  /* Las rayitas del asa: el trenzado del trapillo, que se ve hasta de lejos. */
+  .asa-trenza {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.16);
+    stroke-width: 11;
+    stroke-dasharray: 2 6.5;
+  }
+  .anilla {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.3);
+    stroke-width: 2.6;
+  }
+  .anilla-borde {
+    fill: none;
+    stroke: rgb(255 255 255 / 0.3);
+    stroke-width: 4.5;
+  }
+
+  .flecos {
+    stroke: url(#lana);
+  }
+
+  /* Cada detalle: el aclarado lo separa del cuerpo y el contorno lo salva en lana clara. */
+  .tinte {
+    fill: rgb(255 255 255 / 0.2);
+  }
+  .linea {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.32);
+    stroke-width: 1.4;
+  }
+  .flor-centro {
+    fill: url(#lana);
+  }
+  .flor-centro-linea {
+    fill: rgb(0 0 0 / 0.3);
+    stroke: rgb(0 0 0 / 0.32);
+    stroke-width: 1.4;
+  }
+  .lazo-nudo {
+    fill: url(#lana);
+    stroke: rgb(0 0 0 / 0.32);
+    stroke-width: 1.4;
+  }
+  .lazo-nudo-sombra {
+    fill: rgb(0 0 0 / 0.14);
+  }
+  .lazo-cola {
+    fill: none;
+    stroke: url(#lana);
+    stroke-width: 4.5;
+    stroke-linecap: round;
+  }
+  .lazo-cola-borde {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.3);
+    stroke-width: 6.5;
+    stroke-linecap: round;
+  }
+
+  /*
+   * El bolsillo interior no se ve desde fuera —está dentro—, así que se dibuja como se
+   * dibuja lo que queda detrás de algo: a trazos. Van dos líneas, una oscura y otra clara
+   * un pelo por encima, para que no desaparezca ni sobre lana blanca ni sobre negra.
+   */
+  .bolsillo-linea,
+  .bolsillo-luz {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-dasharray: 5 4.5;
+    stroke-linecap: round;
+  }
+  .bolsillo-linea {
+    stroke: rgb(0 0 0 / 0.38);
+  }
+  .bolsillo-luz {
+    stroke: rgb(255 255 255 / 0.3);
+  }
+  .bolsillo-fondo {
+    fill: rgb(255 255 255 / 0.06);
+  }
+
+  /* El asa del monedero es la misma, a escala de monedero. */
+  .monedero-asa {
+    stroke-width: 5;
+  }
+  .monedero-asa-borde {
+    stroke-width: 7.5;
+  }
+
+  /*
+   * El relevo entre formas: se cruzan desvaneciéndose. Corto a propósito —200ms— para
+   * que se lea como un cambio de pieza y no como una disolvencia.
+   */
+  .forma {
+    opacity: 0;
+    transition: opacity 200ms var(--ease-salida);
+  }
+  .maqueta[data-forma='tote'] .forma[data-forma='tote'],
+  .maqueta[data-forma='hombro'] .forma[data-forma='hombro'],
+  .maqueta[data-forma='sin-asa'] .forma[data-forma='sin-asa'] {
+    opacity: 1;
+  }
+
+  [data-extra] {
+    opacity: 0;
+    transform: scale(0.9);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      opacity 220ms var(--ease-salida),
+      transform 220ms var(--ease-salida);
+  }
+  /* Los flecos se descuelgan del borde, no crecen desde su centro. */
+  [data-extra='flecos'] {
+    transform: scaleY(0.55);
+    transform-origin: center top;
+  }
+  /* El monedero se arrima al bolso desde abajo, que es por donde entra en la escena. */
+  [data-extra='monedero'] {
+    transform: translateY(8px) scale(0.94);
+  }
+  .maqueta[data-extras~='flecos'] [data-extra='flecos'],
+  .maqueta[data-extras~='flor'] [data-extra='flor'],
+  .maqueta[data-extras~='lazos'] [data-extra='lazos'],
+  .maqueta[data-extras~='monedero'] [data-extra='monedero'],
+  .maqueta[data-extras~='bolsillo'] [data-extra='bolsillo'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /*
+   * Con menos animación pedida se conservan los desvanecidos —son los que cuentan que
+   * algo ha cambiado— y se quita todo lo que se mueve. Menos y más suave, no nada.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    [data-extra],
+    [data-extra='flecos'],
+    [data-extra='monedero'] {
+      transform: none;
+    }
+    /*
+     * Aquí se quita la transición, no el desplazamiento: el de la escena no es un adorno,
+     * es dónde va colocado el bolso. Sin él se descoloca en vez de quedarse quieto.
+     */
+    .escena {
+      transition: none;
+    }
+  }
+</style>
