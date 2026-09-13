@@ -9,6 +9,18 @@
   --color-line: #a9afa9;
 
   /*
+   * El suelo: el pie de página, y solo él.
+   *
+   * El pie y el configurador compartían el mismo oscuro, y en la página de bolsos van uno
+   * pegado al otro: se leían como un único bloque negro de dos pantallas de alto, sin
+   * saber dónde acababa lo que se puede tocar y dónde empezaba la letra pequeña. Con el
+   * pie un punto más oscuro, la costura se ve sola, sin necesidad de meter una raya en
+   * medio. Y vale para cualquier sección oscura que se ponga ahí arriba el día de mañana:
+   * el pie siempre es lo más oscuro de la página, que es lo que lo hace suelo.
+   */
+  --color-suelo: #151a1c;
+
+  /*
    * El fondo de la portada: la manta sobre la que están hechas las fotos, aclarada.
    *
    * Medido sobre los píxeles que se pintan de verdad, el fondo de las fotos va de
