@@ -12,8 +12,8 @@ const parrafos = site.taller.texto.split('\n\n');
 
 <section id="taller" class="scroll-mt-20 px-5 py-section sm:px-8">
   <div class="mx-auto max-w-7xl">
-    <div class="grid items-start gap-x-12 gap-y-10 lg:grid-cols-2">
-      <div class="max-w-[62ch]">
+    <div class="taller-grid gap-x-12 gap-y-10">
+      <div class="texto max-w-[62ch]">
         <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{site.taller.titulo}</h2>
         {parrafos.map((p) => <p class="mt-5 text-lg">{p}</p>)}
 
@@ -32,34 +32,34 @@ const parrafos = site.taller.texto.split('\n\n');
         alt="Detalle del punto de ganchillo: lana marrón con un ribete de lana cruda más gruesa."
         widths={[480, 768, 1100]}
         sizes="(min-width: 1024px) 40rem, 100vw"
-        class="w-full"
+        class="foto-detalle w-full"
         loading="lazy"
       />
+
+      <figure class="foto-grupo mt-6 max-w-[26rem] lg:mt-0">
+        {/*
+          La foto de grupo vivía en la portada, donde envejecía: cada pieza nueva la
+          dejaba incompleta. Aquí no es un catálogo sino un retrato de una tanda de
+          trabajo, y que no salgan las últimas deja de ser un problema.
+
+          Va pequeña porque el original mide 928px de ancho: a 62rem había que ampliarla
+          al doble en una pantalla buena, y ampliar una foto es lo que saca a la luz cada
+          grano y cada borde blando. A 26rem se enseña por debajo de su tamaño real y sale
+          limpia. Si algún día aparece el original a resolución completa, puede crecer.
+        */}
+        <Image
+          src={grupo}
+          alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
+          widths={[416, 832]}
+          sizes="26rem"
+          class="w-full"
+          loading="lazy"
+        />
+        <figcaption class="mt-4 text-[15px] text-ink-soft">
+          Una tanda de trabajo, antes de salir del taller.
+        </figcaption>
+      </figure>
     </div>
-
-    <figure class="mt-16 max-w-[26rem]">
-      {/*
-        La foto de grupo vivía en la portada, donde envejecía: cada pieza nueva la
-        dejaba incompleta. Aquí no es un catálogo sino un retrato de una tanda de
-        trabajo, y que no salgan las últimas deja de ser un problema.
-
-        Va pequeña porque el original mide 928px de ancho: a 62rem había que ampliarla
-        al doble en una pantalla buena, y ampliar una foto es lo que saca a la luz cada
-        grano y cada borde blando. A 26rem se enseña por debajo de su tamaño real y sale
-        limpia. Si algún día aparece el original a resolución completa, puede crecer.
-      */}
-      <Image
-        src={grupo}
-        alt="Nueve bolsos de ganchillo colocados en círculo sobre lino, alrededor de un ovillo, unas agujas de madera y una rama de eucalipto seca."
-        widths={[416, 832]}
-        sizes="26rem"
-        class="w-full"
-        loading="lazy"
-      />
-      <figcaption class="mt-4 text-[15px] text-ink-soft">
-        Una tanda de trabajo, antes de salir del taller.
-      </figcaption>
-    </figure>
 
     <div class="filete mt-16 grid gap-x-12 gap-y-9 pt-9 sm:grid-cols-2 lg:grid-cols-3">
       <div>
@@ -92,3 +92,34 @@ const parrafos = site.taller.texto.split('\n\n');
     </div>
   </div>
 </section>
+
+<style>
+  /*
+   * En móvil las tres piezas van cada una a lo suyo, en el orden en que aparecen: texto,
+   * foto de detalle, foto de grupo. En escritorio la foto de detalle es mucho más alta
+   * que el texto y dejaba un hueco vacío enorme bajo la firma; con áreas con nombre la
+   * foto de grupo pasa a llenar justo ese hueco, sin tocar el orden ni el espaciado de
+   * móvil.
+   */
+  .taller-grid {
+    display: grid;
+  }
+  @media (min-width: 1024px) {
+    .taller-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        'texto foto'
+        'grupo foto';
+      align-items: start;
+    }
+    .texto {
+      grid-area: texto;
+    }
+    .foto-detalle {
+      grid-area: foto;
+    }
+    .foto-grupo {
+      grid-area: grupo;
+    }
+  }
+</style>
