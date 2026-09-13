@@ -203,8 +203,6 @@ const finDelNombre = pct(1.9);
         ))
       }
     </ul>
-
-    <div class="regla" aria-hidden="true"><span></span></div>
   </div>
 </section>
 
@@ -294,10 +292,6 @@ const finDelNombre = pct(1.9);
     text-transform: uppercase;
     color: var(--color-ink-manta);
   }
-  .regla {
-    display: none;
-  }
-
   /*
    * Bajo 1024px la portada es también los tres portones, no el desfile pieza a pieza:
    * el mismo motivo que llevó a cambiarlo en pantalla ancha —quince piezas es mucho
@@ -506,26 +500,6 @@ const finDelNombre = pct(1.9);
       .pase .rotulo {
         animation-timeline: --escena;
       }
-
-      .regla {
-        display: block;
-        position: absolute;
-        inset: auto 1.25rem 2.25rem;
-        height: 1px;
-        background-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
-      }
-      .regla span {
-        display: block;
-        height: 100%;
-        background-color: var(--color-ink);
-        transform-origin: left;
-        transform: scaleX(0);
-        animation: avanzar linear both;
-        animation-range: contain 0% contain 100%;
-      }
-      .regla > span {
-        animation-timeline: --escena;
-      }
     }
   }
 
@@ -715,12 +689,6 @@ const finDelNombre = pct(1.9);
     to {
       opacity: 0;
       transform: translateY(-6vh) scale(0.62);
-    }
-  }
-
-  @keyframes avanzar {
-    to {
-      transform: scaleX(1);
     }
   }
 
