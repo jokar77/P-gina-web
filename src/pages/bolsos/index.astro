@@ -1,11 +1,32 @@
 ---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 import Coleccion from '../../components/Coleccion.astro';
 import Configurador from '../../components/Configurador.astro';
 import Layout from '../../layouts/Layout.astro';
 import site from '../../data/site.json';
+import { migasDePan } from '../../lib/seo';
+
+// La misma foto que Sakina eligió a mano para el portón de bolsos en la portada.
+const { data: fotosPortones } = (await getCollection('portada'))[0]!;
+const og = await getImage({ src: fotosPortones.bolsos, width: 1200, format: 'jpeg' });
+
+const jsonLd = [
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: site.secciones.bolsos.titulo, url: '/bolsos' },
+  ]),
+];
 ---
 
-<Layout titulo={`${site.secciones.bolsos.titulo} — ${site.marca}`}>
+<Layout
+  titulo={`${site.secciones.bolsos.titulo} — ${site.marca}`}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={fotosPortones.bolsosAlt || 'Bolsos de ganchillo.'}
+  jsonLd={jsonLd}
+>
   <Coleccion />
   <Configurador />
 </Layout>

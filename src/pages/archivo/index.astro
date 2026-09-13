@@ -1,9 +1,29 @@
 ---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 import Archivo from '../../components/Archivo.astro';
 import Layout from '../../layouts/Layout.astro';
 import site from '../../data/site.json';
+import { migasDePan } from '../../lib/seo';
+
+const { data: fotosPortones } = (await getCollection('portada'))[0]!;
+const og = await getImage({ src: fotosPortones.archivo, width: 1200, format: 'jpeg' });
+
+const jsonLd = [
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: site.secciones.archivo.titulo, url: '/archivo' },
+  ]),
+];
 ---
 
-<Layout titulo={`${site.secciones.archivo.titulo} — ${site.marca}`}>
+<Layout
+  titulo={`${site.secciones.archivo.titulo} — ${site.marca}`}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={fotosPortones.archivoAlt || 'Otros trabajos.'}
+  jsonLd={jsonLd}
+>
   <Archivo />
 </Layout>

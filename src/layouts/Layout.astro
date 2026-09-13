@@ -7,16 +7,36 @@ import Nav from '../components/Nav.astro';
 import Pie from '../components/Pie.astro';
 import site from '../data/site.json';
 import { esProvisional } from '../lib/sitio';
+import { organizacion } from '../lib/seo';
 
 interface Props {
   titulo: string;
   descripcion?: string;
   imagen?: string;
+  imagenAncho?: number;
+  imagenAlto?: number;
+  imagenAlt?: string;
+  /** Ficha de producto, migas de pan… lo que cada página tenga de propio, además de la marca. */
+  jsonLd?: object[];
 }
 
-const { titulo, descripcion = site.descripcion, imagen } = Astro.props;
+const {
+  titulo,
+  descripcion = site.descripcion,
+  imagen,
+  imagenAncho,
+  imagenAlto,
+  imagenAlt,
+  jsonLd = [],
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
+
+/*
+ * La ficha de la marca (nombre, logo, redes) va en todas las páginas, no solo en la
+ * portada: es donde Google espera encontrarla para el panel de conocimiento.
+ */
+const datosLd = [organizacion(Astro.site!), ...jsonLd];
 
 /**
  * Mientras la web viva en una dirección provisional de Cloudflare, se pide a los
@@ -49,17 +69,34 @@ const provisional = esProvisional(Astro.site);
     <meta property="og:description" content={descripcion} />
     <meta property="og:url" content={canonical} />
     {imagenAbsoluta && <meta property="og:image" content={imagenAbsoluta} />}
+    {imagenAncho && <meta property="og:image:width" content={String(imagenAncho)} />}
+    {imagenAlto && <meta property="og:image:height" content={String(imagenAlto)} />}
+    {imagenAlt && <meta property="og:image:alt" content={imagenAlt} />}
 
     <meta name="twitter:card" content={imagenAbsoluta ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={titulo} />
     <meta name="twitter:description" content={descripcion} />
     {imagenAbsoluta && <meta name="twitter:image" content={imagenAbsoluta} />}
+    {imagenAlt && <meta name="twitter:image:alt" content={imagenAlt} />}
 
     <meta name="theme-color" content="#e6e8e5" />
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/icono-512.png" type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+
+    {
+      /*
+       * Sin filtrar por "provisional": igual que la propia canonical o el og:url, esto
+       * describe la página tal como está ahora mismo, aunque viva en la dirección
+       * provisional de Cloudflare. El "noindex" ya impide que Google la liste; los
+       * datos aquí no cambian eso, y así se pueden probar con el validador de Google
+       * (Rich Results Test) desde ya, sin esperar al dominio de verdad.
+       */
+      datosLd.map((d) => (
+        <script type="application/ld+json" set:html={JSON.stringify(d)} is:inline />
+      ))
+    }
   </head>
   <body>
     <a
