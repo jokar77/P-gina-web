@@ -1,4 +1,36 @@
 ---
+/**
+ * Condiciones de venta.
+ *
+ * Quien vende es una persona física, no una sociedad, y no está dada de alta como
+ * autónoma (ver PLAN.md §4). Eso no la saca de esta ley: el TRLGDCU (art. 4) considera
+ * «empresario» a quien vende de forma habitual y con ánimo de lucro, sea sociedad,
+ * autónomo o particular que vende así —no depende de estar registrada—. Once piezas en
+ * catálogo, un configurador de encargos y una web dedicada a vender es justo el perfil
+ * que la ley llama «empresario», así que el comprador tiene los mismos derechos que si
+ * comprara a una tienda: desistimiento en las piezas de colección, garantía de
+ * conformidad de tres años en todo, información clara antes de pagar. Rebajar estos
+ * derechos por no ser una empresa registrada sería, además de ilegal, quitarle a quien
+ * compra protección que la ley ya le da.
+ *
+ * Lo que sí cambia por ser una persona física: no hay razón social ni CIF, sino nombre
+ * y NIF de quien vende (TRLGDCU art. 97, LSSI-CE art. 10 exigen identificar a quien
+ * vende, sea cual sea su forma). El domicilio que pide la ley es «a efectos de
+ * notificaciones», no el domicilio fiscal: puede ser un apartado de correos o cualquier
+ * dirección donde se la pueda localizar, no hace falta que sea la vivienda. Eso no
+ * resuelve el choque de PLAN.md §4 entre identificarse y no publicar el domicilio
+ * particular, pero lo hace más pequeño de lo que parecía.
+ *
+ * La plataforma europea de resolución de litigios en línea (ODR) dejó de funcionar el
+ * 20 de julio de 2025: no se enlaza porque ya no existe. El arbitraje de consumo es
+ * voluntario para quien vende —nadie está obligado a adherirse—, así que no se puede
+ * decir que este negocio esté adherido sin comprobarlo antes.
+ *
+ * Sigue habiendo datos que solo tiene ella —nombre, NIF, domicilio, correo— y una
+ * decisión de fondo —si se da de alta como autónoma— que no le corresponde resolver a
+ * esta página ni a quien la escribe. Nada de esto es asesoramiento legal: antes de
+ * publicar, que lo revise una gestoría, como ya dice PLAN.md.
+ */
 import Layout from '../layouts/Layout.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
@@ -25,10 +57,23 @@ const { envios } = site;
       </p>
 
       <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Quién vende</h2>
+      <p class="mt-4">
+        Quien vende es una persona, no una sociedad: no hay razón social ni CIF, sino el
+        nombre y el NIF de quien teje cada pieza. Eso no cambia nada de lo que sigue en esta
+        página. La ley considera «empresario» a quien vende de forma habitual y con ánimo de
+        lucro, sea una sociedad, un autónomo o una persona particular que vende así
+        (TRLGDCU art. 4), así que los derechos que se explican aquí —desistimiento,
+        garantía, información antes de comprar— son los mismos que si compraras en una
+        tienda.
+      </p>
       <ul class="mt-4 grid gap-2">
-        <li>Nombre o razón social: [PENDIENTE: nombre y apellidos o razón social de quien vende]</li>
+        <li>Nombre y apellidos: [PENDIENTE: nombre y apellidos de quien vende]</li>
         <li>NIF: [PENDIENTE: NIF de quien vende]</li>
-        <li>Domicilio: [PENDIENTE: domicilio a efectos de notificaciones]</li>
+        <li>
+          Domicilio a efectos de notificaciones: [PENDIENTE: una dirección postal donde se
+          te pueda localizar; no hace falta que sea el domicilio particular, vale un
+          apartado de correos]
+        </li>
         <li>Correo de contacto: [PENDIENTE: dirección de correo electrónico de contacto]</li>
       </ul>
 
@@ -128,9 +173,11 @@ const { envios } = site;
       <p class="mt-4">
         Eso no es una devolución por arrepentimiento: es la garantía legal, y cubre también a
         los encargos. Las piezas tienen la garantía de conformidad de tres años que marca la
-        ley (TRLGDCU). Si llega rota, con un defecto o no es lo que se había acordado,
-        escríbele con una foto y se arregla: se repara, se rehace o se te devuelve el dinero,
-        y el coste del envío de vuelta no lo pagas tú.
+        ley (TRLGDCU art. 120); si el defecto aparece dentro de los dos primeros años, se
+        entiende que ya estaba ahí cuando llegó, salvo que se demuestre lo contrario (TRLGDCU
+        art. 121). Si llega rota, con un defecto o no es lo que se había acordado, escríbele
+        con una foto y se arregla: se repara, se rehace o se te devuelve el dinero, y el
+        coste del envío de vuelta no lo pagas tú.
       </p>
       <p class="mt-4">
         Si el paquete llega visiblemente dañado, dilo cuanto antes; cuanto antes se avise al
@@ -143,8 +190,18 @@ const { envios } = site;
         reclamaciones]. Se contesta.
       </p>
       <p class="mt-4">
-        [PENDIENTE: confirmar con la gestoría qué vía de resolución de conflictos hay que
-        ofrecer al cliente y si hay que tener hojas de reclamaciones oficiales].
+        Si no llegáis a un acuerdo, puedes acudir a la Oficina Municipal de Información al
+        Consumidor (OMIC) de [PENDIENTE: municipio] o a la Dirección General de Consumo de tu
+        comunidad autónoma. También existe el arbitraje de consumo, gratuito y que no exige
+        abogado, pero es voluntario para las dos partes: [PENDIENTE: confirmar si este
+        negocio está adherido a alguna Junta Arbitral de Consumo; si no lo está, decir «no
+        está adherido» en vez de omitirlo].
+      </p>
+      <p class="mt-4">
+        La plataforma europea de resolución de litigios en línea dejó de funcionar el 20 de
+        julio de 2025, así que ya no es una vía disponible aunque la menciones en otras
+        tiendas. Si vives en otro país de la Unión Europea, la Red de Centros Europeos del
+        Consumidor sigue ayudando con conflictos entre países.
       </p>
       <p class="mt-4">
         Se aplica la ley española. Si compras como consumidor, conservas los derechos que te
