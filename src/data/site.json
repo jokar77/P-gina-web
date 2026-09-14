@@ -18,7 +18,8 @@
     },
     "disena": {
       "titulo": "Diseña tu bolso",
-      "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan."
+      "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan.",
+      "pregunta": "¿Y si quieres algo que no está en la lista? Otro color, otra medida, un detalle que no aparece: se puede preguntar, y cualquier cosa se habla antes de empezar."
     }
   },
   "fichas": {
