@@ -4,6 +4,7 @@ import config from '../data/configurador.json';
 import Maqueta from './Maqueta.astro';
 import { COLORES, type ColorId } from '../data/colores';
 import site from '../data/site.json';
+import { enlaceWhatsapp } from '../lib/whatsapp';
 import tote from '../assets/piezas/mimosa/01.jpg';
 import hombro from '../assets/piezas/lazada/01.jpg';
 import sinAsa from '../assets/piezas/duna/01.jpg';
@@ -77,6 +78,29 @@ const seccion = site.secciones.disena;
             }
           </div>
         </fieldset>
+
+        {/*
+          Lo que el formulario no puede ofrecer.
+
+          Tres formas y quince colores son los que se tejen a menudo, no todo lo que se
+          puede tejer, y quien busca algo que no está en la lista se queda sin saber si
+          cabe pedirlo. Va aquí, al final de las opciones y no en el panel de la derecha,
+          porque es justo el momento en que uno acaba de mirarlas todas.
+
+          El enlace va aparte del texto y con su etiqueta fija, así Sakina puede reescribir
+          la frase desde el formulario sin riesgo de romperlo.
+        */}
+        <p class="border-t border-paper/25 pt-6 text-[15px] text-paper/70">
+          {seccion.pregunta}{' '}
+          <a
+            class="whitespace-nowrap text-paper underline"
+            href={enlaceWhatsapp('Hola Sakina, quería preguntarte por un bolso a medida.')}
+            rel="noopener"
+            target="_blank"
+          >
+            Pregúntame por WhatsApp
+          </a>
+        </p>
       </div>
 
       <aside class="lg:sticky lg:top-24 lg:self-start">

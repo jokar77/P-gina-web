@@ -294,6 +294,14 @@ content:
             fields:
               - { name: titulo, label: Título, type: string }
               - { name: intro, label: Texto de al lado, type: text }
+              - name: pregunta
+                label: Invitación a preguntar
+                type: text
+                options: { rows: 3 }
+                description: >-
+                  Va debajo de los detalles, para quien quiera algo que no está en la
+                  lista. Al lado sale solo un botón de WhatsApp, así que no hace falta
+                  poner aquí el teléfono ni el enlace.
         description: El título de cada sección es también su nombre en el menú de arriba.
 
       - name: fichas
