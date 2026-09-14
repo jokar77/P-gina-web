@@ -97,9 +97,18 @@ Pendiente de verdad:
       cambia es que se identifica con nombre y NIF, no con razón social y CIF. De paso se
       quitó la referencia a la plataforma europea de resolución de litigios en línea, que
       cerró el 20 de julio de 2025, y se precisaron los artículos de la garantía de
-      conformidad (TRLGDCU art. 120 y 121). **Les faltan 24 datos**, todos marcados en el
-      texto como `[PENDIENTE: ...]`. El más urgente sigue siendo **quién paga la
-      devolución**: si no se dice antes de comprar, por ley lo paga la vendedora.
+      conformidad (TRLGDCU art. 120 y 121). **La de desistimiento también revisada**:
+      confirmado que el nombre y la dirección de quien vende son información obligatoria
+      *antes* de comprar (TRLGDCU art. 97.1.h y el formulario modelo del anexo B), no algo
+      que se pueda dejar para cuando alguien decide desistir — así que ese dato entra en el
+      mismo riesgo asumido a propósito que el NIF y el domicilio (ver §4). Se distinguió esa
+      dirección de identificación de la dirección postal donde recibir la pieza devuelta,
+      que es un dato distinto (logístico, no legal) y puede ser un punto de recogida propio
+      o un apartado de correos que admita paquetería. **Quién paga el envío de vuelta,
+      decidido: paga el comprador** (TRLGDCU art. 108 lo permite si se dice antes de
+      comprar; es distinto del envío de vuelta por garantía, que sigue pagándolo la
+      vendedora). **Quedan 23 datos pendientes**, todos marcados en el texto como
+      `[PENDIENTE: ...]`.
 - [ ] Registro de actividades de tratamiento (versión simplificada para actividad pequeña).
 
 > Nada de esto es asesoramiento legal. Son los puntos a llevar a la gestoría para que ella
@@ -230,6 +239,11 @@ formal, no estar identificada juega en su contra. `src/pages/condiciones.astro` 
 `src/pages/privacidad.astro` siguen con `[PENDIENTE: NIF...]` y
 `[PENDIENTE: domicilio...]`: no se han rellenado con datos falsos ni se han quitado, para
 que quien las lea sepa que falta algo real y no se lea la página como completa.
+
+El mismo riesgo se extiende a `src/pages/desistimiento.astro`: el formulario modelo de
+desistimiento (TRLGDCU, anexo B) también pide el nombre y la dirección completa de quien
+vende, y esa página lo deja igualmente como `[PENDIENTE]` en vez de rellenarlo. Es el
+mismo dato, la misma decisión, solo que aparece en otra página.
 
 ---
 
