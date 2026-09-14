@@ -3,9 +3,11 @@ import { LEGALES, secciones } from '../data/navegacion';
 import Marca from './Marca.astro';
 import Redes from './Redes.astro';
 import site from '../data/site.json';
+import { precio } from '../lib/formato';
 
 const ano = new Date().getFullYear();
 const SECCIONES = await secciones();
+const { envios } = site;
 ---
 
 <footer class="oscuro border-t border-paper/15 bg-suelo px-5 py-section sm:px-8">
@@ -41,8 +43,39 @@ const SECCIONES = await secciones();
     </div>
   </div>
 
+  {/*
+    Envíos, pago y devoluciones, en una línea cada uno.
+
+    Antes eran tres párrafos enteros al final de «El taller», y ahí ocupaban media
+    portada para algo que se consulta una vez. Aquí caben en tres renglones, se ven desde
+    cualquier página y no desde la portada solamente, y las páginas legales —que son las
+    que mandan— quedan justo debajo, a un dedo.
+
+    Es un resumen a propósito: lo que no cabe (el plazo de salida, las islas, el estado en
+    que se devuelve) está entero en Condiciones de venta y en Devoluciones. Las cifras
+    salen de site.json, como salían antes, así que cambiar una tarifa en el formulario las
+    cambia aquí también y no hay dos sitios que puedan contradecirse.
+  */}
   <div
-    class="mx-auto mt-16 flex max-w-7xl flex-wrap items-center gap-x-7 gap-y-2 border-t border-paper/20 pt-6 text-[14px] text-paper/60"
+    class="mx-auto mt-14 grid max-w-7xl gap-x-12 gap-y-3 text-[14px] text-paper/60 sm:grid-cols-3 lg:grid-cols-[1.4fr_1fr_1fr]"
+  >
+    <p>
+      <span class="text-paper/85">Envíos</span> — {envios.zona}. Desde {
+        precio(envios.puntoRecogida)
+      }, gratis a partir de {precio(envios.gratisDesde)}.
+    </p>
+    <p>
+      <span class="text-paper/85">Pago</span> — Por Bizum o transferencia, hablado por
+      WhatsApp. En la web no se paga.
+    </p>
+    <p>
+      <span class="text-paper/85">Devoluciones</span> — Catorce días en las piezas de
+      colección. Los encargos, al ser a medida, quedan fuera.
+    </p>
+  </div>
+
+  <div
+    class="mx-auto mt-10 flex max-w-7xl flex-wrap items-center gap-x-7 gap-y-2 border-t border-paper/20 pt-6 text-[14px] text-paper/60"
   >
     <p>© {ano} {site.marca}</p>
     <p>Hecho a mano en España.</p>

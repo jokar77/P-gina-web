@@ -4,9 +4,7 @@ import detalle from '../assets/piezas/cacao/04.jpg';
 import grupo from '../assets/piezas/_portada/grupo.jpg';
 import firma from '../assets/marca/firma.png';
 import site from '../data/site.json';
-import { precio } from '../lib/formato';
 
-const { envios } = site;
 const parrafos = site.taller.texto.split('\n\n');
 ---
 
@@ -59,36 +57,6 @@ const parrafos = site.taller.texto.split('\n\n');
           Una tanda de trabajo, antes de salir del taller.
         </figcaption>
       </figure>
-    </div>
-
-    <div class="filete mt-16 grid gap-x-12 gap-y-9 pt-9 sm:grid-cols-2 lg:grid-cols-3">
-      <div>
-        <h3 class="font-sans text-[15px] tracking-normal">Envíos</h3>
-        <p class="mt-2 text-ink-soft">
-          {envios.zona}. {precio(envios.puntoRecogida)} a punto de recogida y {
-            precio(envios.domicilio)
-          } a domicilio, siempre con seguimiento. Gratis a partir de {precio(envios.gratisDesde)}.
-          Sale del taller en {envios.plazoDias}. Canarias, Ceuta y Melilla se quedan fuera de
-          momento por el papeleo de aduana.
-        </p>
-      </div>
-
-      <div>
-        <h3 class="font-sans text-[15px] tracking-normal">Pago</h3>
-        <p class="mt-2 text-ink-soft">
-          Por Bizum o transferencia, acordado por WhatsApp. En la web no se paga: sirve para
-          reunir el pedido y mandárselo escrito.
-        </p>
-      </div>
-
-      <div>
-        <h3 class="font-sans text-[15px] tracking-normal">Devoluciones</h3>
-        <p class="mt-2 text-ink-soft">
-          Catorce días para desistir en las piezas de colección, en el mismo estado en que
-          llegaron. Las piezas por encargo están hechas a tu medida y a tu gusto, así que
-          quedan fuera de ese derecho.
-        </p>
-      </div>
     </div>
   </div>
 </section>
