@@ -1,4 +1,31 @@
 ---
+/**
+ * Derecho de desistimiento.
+ *
+ * Misma base que condiciones.astro (ver ahí y PLAN.md §4): quien vende es una persona
+ * física, no dada de alta como autónoma, y eso no reduce los derechos del comprador. El
+ * derecho de desistimiento y sus condiciones son los mismos que si vendiera una tienda
+ * registrada (TRLGDCU art. 94 y 102-108).
+ *
+ * El formulario modelo de desistimiento (TRLGDCU, anexo B) exige el nombre y la
+ * dirección completa de quien vende como información previa a la compra (TRLGDCU
+ * art. 97.1.h): no es algo que se pueda dejar para el momento en que alguien decide
+ * desistir, hay que darlo antes. Es el mismo dato que condiciones.astro y
+ * privacidad.astro dejan pendiente por decisión consciente (PLAN.md §4, «de momento no
+ * se publican»): aquí se mantiene el mismo criterio, con el mismo riesgo asumido a
+ * propósito, no por descuido.
+ *
+ * La dirección a la que se devuelve la pieza es un dato distinto: no es de
+ * identificación legal, es simplemente dónde tiene que llegar el paquete. Puede ser una
+ * dirección distinta del domicilio particular —un punto de recogida propio, un apartado
+ * de correos que admita paquetería, que no todos la admiten—, pero tiene que existir y
+ * poder recibir un bulto, no solo cartas.
+ *
+ * Quién paga el envío de vuelta es una decisión de negocio, no una obligación legal fija:
+ * la ley deja elegir (TRLGDCU art. 108) siempre que se diga antes de comprar; si no se
+ * dice, paga la vendedora por defecto. Decidido con Sakina (septiembre 2026): paga el
+ * comprador, salvo que la pieza llegue con un defecto, que es la garantía y es otro caso.
+ */
 import Layout from '../layouts/Layout.astro';
 import site from '../data/site.json';
 import { precio } from '../lib/formato';
@@ -64,8 +91,10 @@ const { envios } = site;
         </li>
         <li>
           <strong class="font-normal">Manda la pieza de vuelta</strong> en los catorce días
-          siguientes a ese aviso, a [PENDIENTE: dirección postal a la que se devuelven las
-          piezas]. Guarda el resguardo del envío: es la prueba de que la mandaste a tiempo.
+          siguientes a ese aviso, a [PENDIENTE: dirección postal donde se pueda recibir el
+          paquete devuelto; no hace falta que sea el domicilio particular, pero tiene que
+          admitir paquetería, no solo cartas]. Guarda el resguardo del envío: es la prueba
+          de que la mandaste a tiempo.
         </li>
       </ol>
 
@@ -73,13 +102,17 @@ const { envios } = site;
       <p class="mt-4">
         En el mismo en que llegó. Puedes mirarla, abrirla y probártela, igual que harías en una
         tienda. Si se ha usado más de lo necesario para ver cómo es y vuelve estropeada,
-        manchada o con olor, se puede descontar del importe lo que haya perdido de valor.
+        manchada o con olor, se puede descontar del importe lo que haya perdido de valor
+        (TRLGDCU art. 107.2).
       </p>
 
       <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Quién paga el envío de vuelta</h2>
       <p class="mt-4">
-        [PENDIENTE: decidir y confirmar quién asume el coste de devolver la pieza. La ley obliga
-        a decirlo antes de comprar; si no se dice, lo paga la vendedora].
+        Si desistes porque has cambiado de opinión, el envío de vuelta lo pagas tú
+        (TRLGDCU art. 108). Es distinto si la pieza llega con un defecto o no es lo que se
+        había acordado: eso no es un desistimiento, es la garantía, y ahí el envío de
+        vuelta no lo pagas tú. Está explicado en las
+        <a href="/condiciones">condiciones de venta</a>.
       </p>
 
       <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Cuándo recuperas el dinero</h2>
