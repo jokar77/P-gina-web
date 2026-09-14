@@ -5,6 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 import Galeria from '../../components/Galeria.astro';
 import site from '../../data/site.json';
 import { precio } from '../../lib/formato';
+import { migasDePan, producto } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const conjuntos = (await getCollection('ninos')).sort((a, b) => a.data.orden - b.data.orden);
@@ -18,9 +19,35 @@ const tallas = [1, 2, 3, 4, 5, 6];
 
 const og = await getImage({ src: d.foto, width: 1200, format: 'jpeg' });
 const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. Tallas de ${d.tallas}. Cosido a mano por encargo, desde ${precio(d.precioDesde)}.`;
+
+const jsonLd = [
+  producto(Astro.site!, {
+    nombre: d.nombre,
+    descripcion,
+    imagen: og.src,
+    sku: conjunto.id,
+    material: d.material,
+    url: `/ninos/${conjunto.id}`,
+    // Se cose por encargo, así que siempre se puede pedir: no hay unidad que se agote.
+    oferta: { precio: d.precioDesde, disponible: true },
+  }),
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: site.secciones.nino.titulo, url: '/ninos' },
+    { nombre: d.nombre, url: `/ninos/${conjunto.id}` },
+  ]),
+];
 ---
 
-<Layout titulo={`${d.nombre} — ${site.marca}`} descripcion={descripcion} imagen={og.src}>
+<Layout
+  titulo={`${d.nombre} — ${site.marca}`}
+  descripcion={descripcion}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={`Conjunto ${d.nombre}, de lino cosido a mano.`}
+  jsonLd={jsonLd}
+>
   <article class="px-5 py-12 sm:px-8">
     <div class="mx-auto max-w-7xl">
       <a href="/ninos" class="text-[15px] text-ink-soft no-underline hover:text-ink">

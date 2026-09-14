@@ -6,6 +6,7 @@ import Galeria from '../../components/Galeria.astro';
 import { COLORES, type ColorId } from '../../data/colores';
 import site from '../../data/site.json';
 import { medidas, precio } from '../../lib/formato';
+import { migasDePan, producto } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const bolsos = (await getCollection('bolsos')).sort((a, b) => a.data.orden - b.data.orden);
@@ -59,9 +60,34 @@ const textoBoton = vendido
   : site.fichas.disponible;
 
 const descripcion = `${d.nombre}: ${d.material.toLowerCase()}. ${medidas(d.ancho, d.alto)}. Bolso de ganchillo hecho a mano, pieza única.`;
+
+const jsonLd = [
+  producto(Astro.site!, {
+    nombre: d.nombre,
+    descripcion,
+    imagen: og.src,
+    sku: bolso.id,
+    material: d.material,
+    url: `/bolsos/${bolso.id}`,
+    oferta: { precio: d.precio, disponible: !vendido },
+  }),
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: site.secciones.bolsos.titulo, url: '/bolsos' },
+    { nombre: d.nombre, url: `/bolsos/${bolso.id}` },
+  ]),
+];
 ---
 
-<Layout titulo={`${d.nombre} — ${site.marca}`} descripcion={descripcion} imagen={og.src}>
+<Layout
+  titulo={`${d.nombre} — ${site.marca}`}
+  descripcion={descripcion}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={`Bolso ${d.nombre}, de ganchillo.`}
+  jsonLd={jsonLd}
+>
   <article class="px-5 py-12 sm:px-8">
     <div class="mx-auto max-w-7xl">
       <a href="/bolsos" class="-ml-1 inline-block px-1 py-2 text-[15px] text-ink-soft no-underline hover:text-ink">

@@ -4,6 +4,7 @@ import { getImage } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import Galeria from '../../components/Galeria.astro';
 import site from '../../data/site.json';
+import { migasDePan } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const piezas = (await getCollection('archivo')).sort((a, b) => a.data.orden - b.data.orden);
@@ -38,9 +39,30 @@ const linea = {
 };
 
 const descripcion = `${d.nombre}: ${d.tipo.toLowerCase()}${d.material ? `, ${d.material.toLowerCase()}` : ''}. Pieza hecha a mano por ${site.marca}.`;
+
+/*
+ * Sin ficha de producto: esto no se vende, así que un precio o una disponibilidad
+ * serían un dato inventado. Las migas de pan sí describen algo real, la ruta hasta
+ * aquí, así que se quedan.
+ */
+const jsonLd = [
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: site.secciones.archivo.titulo, url: '/archivo' },
+    { nombre: d.nombre, url: `/archivo/${pieza.id}` },
+  ]),
+];
 ---
 
-<Layout titulo={`${d.nombre} — ${site.marca}`} descripcion={descripcion} imagen={og.src}>
+<Layout
+  titulo={`${d.nombre} — ${site.marca}`}
+  descripcion={descripcion}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={`${d.nombre}, ${d.tipo.toLowerCase()}.`}
+  jsonLd={jsonLd}
+>
   <article class="px-5 py-12 sm:px-8">
     <div class="mx-auto max-w-7xl">
       <a

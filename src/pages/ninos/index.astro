@@ -1,9 +1,29 @@
 ---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
 import Ninos from '../../components/Ninos.astro';
 import Layout from '../../layouts/Layout.astro';
 import site from '../../data/site.json';
+import { migasDePan } from '../../lib/seo';
+
+const { data: fotosPortones } = (await getCollection('portada'))[0]!;
+const og = await getImage({ src: fotosPortones.ninos, width: 1200, format: 'jpeg' });
+
+const jsonLd = [
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: site.secciones.nino.titulo, url: '/ninos' },
+  ]),
+];
 ---
 
-<Layout titulo={`${site.secciones.nino.titulo} — ${site.marca}`}>
+<Layout
+  titulo={`${site.secciones.nino.titulo} — ${site.marca}`}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={fotosPortones.ninosAlt || 'Conjunto para niño.'}
+  jsonLd={jsonLd}
+>
   <Ninos />
 </Layout>
