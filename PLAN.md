@@ -84,18 +84,31 @@ premarcado, y **no cargar nada hasta que acepten**. Ver la alternativa sin banne
 Pendiente de verdad:
 
 - [ ] **Aviso legal** (LSSI-CE art. 10): nombre, NIF, domicilio y contacto de quien vende.
-      **Ojo, esto choca de frente con §4:** publicar NIF y domicilio es exactamente lo que
-      se está evitando. Es una decisión para la gestoría, no para el código.
+      **Esto choca con §4, pero menos de lo que parecía:** el domicilio que exige la ley es
+      «a efectos de notificaciones», no el domicilio fiscal — puede ser un apartado de
+      correos, no hace falta la vivienda. Lo que no tiene vuelta es identificarse con
+      nombre y NIF reales: eso lo exige la ley a cualquiera que venda de forma habitual, sea
+      cual sea su forma (TRLGDCU art. 4, ver el punto siguiente). Sigue siendo decisión de
+      la gestoría, no del código.
 - [x] **Política de privacidad, condiciones de venta y desistimiento** escritas y enlazadas
       desde el pie. Redactadas sobre lo que la web hace de verdad, no sobre una plantilla:
       la de privacidad nombra la clave real del carrito y explica por qué no hay banner.
-      **Les faltan 16 datos**, todos marcados en el texto como `[PENDIENTE: ...]`. El más
-      urgente es **quién paga la devolución**: si no se dice antes de comprar, por ley lo
-      paga la vendedora.
+      **Revisadas contra la ley vigente** (septiembre 2026): confirmado que ser persona
+      física y no estar dada de alta como autónoma **no reduce los derechos del
+      comprador** — el TRLGDCU (art. 4) considera «empresario» a quien vende de forma
+      habitual y con ánimo de lucro, sea sociedad, autónomo o particular; lo único que
+      cambia es que se identifica con nombre y NIF, no con razón social y CIF. De paso se
+      quitó la referencia a la plataforma europea de resolución de litigios en línea, que
+      cerró el 20 de julio de 2025, y se precisaron los artículos de la garantía de
+      conformidad (TRLGDCU art. 120 y 121). **Les faltan 24 datos**, todos marcados en el
+      texto como `[PENDIENTE: ...]`. El más urgente sigue siendo **quién paga la
+      devolución**: si no se dice antes de comprar, por ley lo paga la vendedora.
 - [ ] Registro de actividades de tratamiento (versión simplificada para actividad pequeña).
 
 > Nada de esto es asesoramiento legal. Son los puntos a llevar a la gestoría para que ella
-> confirme cuáles aplican y en qué orden.
+> confirme cuáles aplican y en qué orden. La investigación de septiembre 2026 se hizo con
+> búsquedas web sobre fuentes públicas (BOE, Ministerio de Consumo, despachos), no
+> sustituye la consulta profesional que sigue pendiente en §4.
 
 ### Fase 3 — Seguridad
 
