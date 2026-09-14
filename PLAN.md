@@ -84,12 +84,9 @@ premarcado, y **no cargar nada hasta que acepten**. Ver la alternativa sin banne
 Pendiente de verdad:
 
 - [ ] **Aviso legal** (LSSI-CE art. 10): nombre, NIF, domicilio y contacto de quien vende.
-      **Esto choca con §4, pero menos de lo que parecía:** el domicilio que exige la ley es
-      «a efectos de notificaciones», no el domicilio fiscal — puede ser un apartado de
-      correos, no hace falta la vivienda. Lo que no tiene vuelta es identificarse con
-      nombre y NIF reales: eso lo exige la ley a cualquiera que venda de forma habitual, sea
-      cual sea su forma (TRLGDCU art. 4, ver el punto siguiente). Sigue siendo decisión de
-      la gestoría, no del código.
+      **Decidido de momento: no se publican** (ver §4, «Decidido»). No es que no aplique
+      —la ley no exime por vender poco volumen—, es un riesgo asumido a propósito mientras
+      se decide con la gestoría. El correo y el WhatsApp sí quedan como contacto.
 - [x] **Política de privacidad, condiciones de venta y desistimiento** escritas y enlazadas
       desde el pie. Redactadas sobre lo que la web hace de verdad, no sobre una plantilla:
       la de privacidad nombra la clave real del carrito y explica por qué no hay banner.
@@ -219,6 +216,20 @@ problema desaparece.
 
 **Consulta con gestoría antes de publicar.** De ahí sale también qué se puede poner en el
 aviso legal (§3.2).
+
+**Decidido (septiembre 2026): de momento no se publican NIF ni domicilio.** Se planteó si
+vender poco volumen (menos de un bolso al mes) libraba de identificarse en la web. No: la
+ley no mide «habitual» por cuántas ventas se cierran, sino por si hay actividad organizada
+con ánimo de lucro (fabricar para vender, catálogo permanente, taller en marcha), y eso se
+cumple aunque las ventas vayan despacio. No hay ningún umbral de volumen que exima de la
+identificación (LSSI-CE art. 10). Aun así, Sakina decide asumir el riesgo por ahora y no
+publicar NIF ni domicilio —el correo y el WhatsApp sí quedan como contacto—. Queda dicho
+con conocimiento de causa, no por creer que no aplica: el riesgo real no es una inspección
+de oficio —rara para algo tan pequeño—, sino que si un pedido sale mal y hay una queja
+formal, no estar identificada juega en su contra. `src/pages/condiciones.astro` y
+`src/pages/privacidad.astro` siguen con `[PENDIENTE: NIF...]` y
+`[PENDIENTE: domicilio...]`: no se han rellenado con datos falsos ni se han quitado, para
+que quien las lea sepa que falta algo real y no se lea la página como completa.
 
 ---
 
