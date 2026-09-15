@@ -1,9 +1,9 @@
 ---
-nombre: Dominó
+nombre: Gaultier
 precio: 25
 estado: disponible
 color: bicolor
-material: Trapillo jaspeado en crudo y negro
+material: Trapillo al estampado marinero con lazo, asa de mano estable con cuerpo,
 ancho: 32
 alto: 24
 orden: 10
