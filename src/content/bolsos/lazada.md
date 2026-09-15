@@ -1,9 +1,9 @@
 ---
-nombre: Lazada
-precio: 25
+nombre: Sakura
+precio: 30
 estado: disponible
 color: rosa
-material: Trapillo grueso, lazada lateral, asa de hombro
+material: Trapillo rosa, asa de hombro con arandelas y lazos.
 ancho: 28
 alto: 22
 orden: 6
