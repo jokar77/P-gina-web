@@ -137,35 +137,13 @@ const portones: Porton[] = [
 const huecos = pases.length + 1;
 const pct = (x: number) => `${((x / huecos) * 100).toFixed(3)}%`;
 const finDelNombre = pct(1.9);
-
-/**
- * El mismo reparto, pero para el clavado de móvil: aquí no hay una fila que abrir de
- * golpe, sino un portón detrás de otro, cada uno a pantalla completa. Mismo principio
- * que el desfile de arriba —cada uno ocupa hueco y medio y empieza antes de que el
- * anterior termine, para que el relevo no deje la pantalla vacía— pero con menos
- * huecos, uno por portón.
- *
- * El último no se cierra —no hay nada detrás a lo que cederle el turno—, así que no
- * necesita el mismo truco de recortar su tramo: su animación (`abrir-portones`) solo
- * tiene un fotograma de llegada, así que con `both` se queda abierta sola en cuanto el
- * recorrido la alcanza, sin que haga falta pararla antes de que un cierre que no tiene
- * llegue a empezar.
- */
-const huecosMovil = portones.length + 1;
-const pctMovil = (x: number) => `${((x / huecosMovil) * 100).toFixed(3)}%`;
-const finDelNombreMovil = pctMovil(1.15);
-const portonesConRango = portones.map((p, i) => ({
-  ...p,
-  iniMovil: pctMovil(i + 0.85),
-  finMovil: i === portones.length - 1 ? '100%' : pctMovil(i + 2.15),
-}));
 ---
 
 <section
   id="inicio"
   class="escena"
   data-escena
-  style={`--fin-nombre:${finDelNombre};--fin-nombre-movil:${finDelNombreMovil};--piezas:${pases.length};--portones:${portones.length}`}
+  style={`--fin-nombre:${finDelNombre};--piezas:${pases.length};--portones:${portones.length}`}
 >
   <div class="fija">
     <div class="cabecera">
@@ -208,8 +186,8 @@ const portonesConRango = portones.map((p, i) => ({
 
     <ul class="portones">
       {
-        portonesConRango.map((p) => (
-          <li class="porton" style={`--ini-movil:${p.iniMovil};--fin-movil:${p.finMovil}`}>
+        portones.map((p) => (
+          <li class="porton">
             <a href={p.href}>
               <Image
                 src={p.foto}
@@ -391,102 +369,6 @@ const portonesConRango = portones.map((p, i) => ({
       font-family: var(--font-display);
       font-size: clamp(1.6rem, 7vw, 2.1rem);
       color: var(--color-deep);
-    }
-  }
-
-  /*
-   * El mismo gesto que en escritorio, esta vez de verdad clavado: la pantalla del
-   * nombre no baja ni se va con el scroll —se queda quieta, como en el ordenador—,
-   * y lo que avanza con el scroll es la propia secuencia: el nombre se retira con
-   * `retirar` mientras el primer portón se abre debajo con el mismo `clip-path` de
-   * escritorio (`abrir-portones`, la misma «puerta» que se abre desde el centro hacia
-   * los lados). Cuando le llega el turno al siguiente, el anterior se cierra con el
-   * mismo gesto al revés —`abrirse-y-cerrarse`— y el que entra se abre encima, así que
-   * nunca hay dos a la vez del todo ni un hueco vacío entre relevo y relevo.
-   *
-   * La diferencia con escritorio no es el gesto sino el reparto: allí los tres portones
-   * caben en una fila y se abren los tres de golpe; aquí, uno por pantalla, así que en
-   * vez de una única ventana comparten el recorrido uno detrás de otro (ver «El reparto
-   * del recorrido, para móvil» en el frontmatter). El último no se cierra —no hay nada
-   * detrás a lo que cederle el turno—, así que se queda abierto en cuanto llega.
-   */
-  @supports (animation-timeline: view()) {
-    @media (max-width: 1023.98px) {
-      /*
-       * El mismo clavado que en escritorio (`.fija` pegado arriba, recortado a una
-       * pantalla) pero con su propio nombre de carril —`--escena-movil`, no
-       * `--escena`— porque el recorrido es otro: aquí cada portón ocupa su propio
-       * turno entero en vez de compartir uno solo con los otros dos.
-       */
-      .escena {
-        height: min(calc(100vh + (var(--portones) + 1) * 90vh), 500vh);
-        padding: 0;
-        view-timeline: --escena-movil block;
-      }
-
-      .fija {
-        position: sticky;
-        top: 0;
-        display: grid;
-        place-items: center;
-        height: 100svh;
-        overflow: hidden;
-        padding: 0;
-      }
-
-      .cabecera,
-      .portones {
-        grid-area: 1 / 1;
-      }
-
-      /*
-       * `animation-timeline` va en una regla aparte, con otro selector, a propósito:
-       * junto al atajo `animation` de la regla de al lado, el minificador las fusiona
-       * en una sola declaración que ese atajo no admite, y el navegador la tira entera
-       * sin avisar —no anima nada, ni error ni aviso—. Con selectores distintos no hay
-       * nada que fusionar. Ya pasó una vez con el desfile de escritorio, más abajo.
-       */
-      .cabecera {
-        animation: retirar linear both;
-        animation-range: contain 0% contain var(--fin-nombre-movil);
-      }
-      .fija > .cabecera {
-        animation-timeline: --escena-movil;
-      }
-
-      .portones {
-        display: grid;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-      }
-      /*
-       * `animation-range` va en la misma regla que el atajo `animation`, no en el
-       * `.porton` de más arriba: `:not(:last-child)` y `:last-child` pesan más que
-       * `.porton` a secas, así que un `animation-range` puesto ahí perdía siempre
-       * contra el `normal` que el propio atajo `animation` deja implícito en las
-       * reglas de más especificidad. Ya pasó una vez —cada portón se abría con el
-       * recorrido entero en vez de con su propio tramo— y así no puede volver a pasar.
-       */
-      .porton {
-        grid-area: 1 / 1;
-        width: 100%;
-        height: 100%;
-        clip-path: inset(0 50% 0 50%);
-      }
-      .porton:not(:last-child) {
-        animation: abrirse-y-cerrarse linear both;
-        animation-range: contain var(--ini-movil) contain var(--fin-movil);
-      }
-      .porton:last-child {
-        animation: abrir-portones linear both;
-        animation-range: contain var(--ini-movil) contain var(--fin-movil);
-      }
-      .portones > .porton {
-        animation-timeline: --escena-movil;
-      }
     }
   }
 
@@ -691,51 +573,6 @@ const portonesConRango = portones.map((p, i) => ({
   }
 
   /*
-   * El mismo gesto, pero de ida y vuelta: para el relevo de un portón a otro en móvil,
-   * donde a diferencia de la fila de escritorio cada uno tiene que dejarle sitio al
-   * siguiente en la misma pantalla. Se abre, se queda abierto un rato largo —hay que
-   * poder leerlo, no es un simple cruce— y se cierra otra vez hacia el centro, cediendo
-   * el turno. `visibility` y `pointer-events` siguen la misma lógica que `pasar`, la
-   * animación del desfile de escritorio: invisible del todo solo en los extremos, y
-   * pulsable solo mientras es él quien manda, para que un clic a medio relevo no se lo
-   * lleve el que se está cerrando.
-   */
-  @keyframes abrirse-y-cerrarse {
-    0% {
-      clip-path: inset(0 50% 0 50%);
-      visibility: hidden;
-      pointer-events: none;
-    }
-    1% {
-      visibility: visible;
-    }
-    20%,
-    80% {
-      clip-path: inset(0 0% 0 0%);
-    }
-    29% {
-      pointer-events: none;
-    }
-    31% {
-      pointer-events: auto;
-    }
-    69% {
-      pointer-events: auto;
-    }
-    71% {
-      pointer-events: none;
-    }
-    99% {
-      visibility: visible;
-    }
-    100% {
-      clip-path: inset(0 50% 0 50%);
-      visibility: hidden;
-      pointer-events: none;
-    }
-  }
-
-  /*
    * Verse y poder pulsarse son dos cosas distintas, y por eso van en dos propiedades.
    *
    * `pointer-events` deja pulsar solo del 30% al 70% del tramo, o sea únicamente
@@ -818,52 +655,6 @@ const portonesConRango = portones.map((p, i) => ({
     }
   }
 
-  /*
-   * Reserva para cuando el navegador no soporta `animation-timeline: view()` —el caso
-   * real es Safari e iOS por debajo de la versión 26, de 2025—: sin eso ni el nombre ni
-   * los tres portones tienen forma de atarse al scroll solo con CSS. Antes esto se
-   * conformaba con un revelado suelto, sin clavar nada, y así se perdía justo lo que se
-   * había pedido —que el nombre no se fuera con la página—. `position: sticky` sí lo
-   * soporta hasta el Safari más viejo, así que la estructura clavada (esta regla) es la
-   * misma para todos; lo único que cambia es quién mueve el `clip-path`: aquí, en vez de
-   * una animación de CSS atada al scroll, el script de más abajo mide el scroll a mano
-   * en cada fotograma y pone él mismo la opacidad y el recorte, con el mismo reparto de
-   * `--ini-movil`/`--fin-movil` que ya llevan los portones en su propio estilo.
-   *
-   * Va en una clase, no en `@supports`: la pone el script solo cuando de verdad hace
-   * falta, así un navegador que sí soporta `animation-timeline` nunca toca esta regla.
-   */
-  .escena.js-secuencia {
-    height: min(calc(100vh + (var(--portones) + 1) * 90vh), 500vh);
-    padding: 0;
-  }
-  .js-secuencia .fija {
-    position: sticky;
-    top: 0;
-    display: grid;
-    place-items: center;
-    height: 100svh;
-    overflow: hidden;
-    padding: 0;
-  }
-  .js-secuencia .cabecera,
-  .js-secuencia .portones {
-    grid-area: 1 / 1;
-  }
-  .js-secuencia .portones {
-    display: grid;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-  }
-  .js-secuencia .porton {
-    grid-area: 1 / 1;
-    width: 100%;
-    height: 100%;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     @keyframes pasar {
       0% {
@@ -905,104 +696,3 @@ const portonesConRango = portones.map((p, i) => ({
     }
   }
 </style>
-
-<script>
-  /**
-   * Reserva del nombre y de los tres portones de móvil para cuando el navegador no
-   * soporta animaciones atadas al scroll —el caso real es Safari e iOS por debajo de la
-   * versión 26, de 2025—. `position: sticky` sí lo soporta hasta el Safari más viejo, y
-   * esa parte del CSS ya es la misma para todos (ver `.js-secuencia` más arriba); lo
-   * único que falta aquí es quien mueva la opacidad y el `clip-path`, ya que sin
-   * `animation-timeline` no hay forma de atarlos al scroll solo con CSS. Este script
-   * mide el scroll en cada fotograma y calcula él mismo el mismo reparto que ya llevan
-   * los portones en su propio `--ini-movil`/`--fin-movil` —incluido que el último se
-   * abre y se queda así, sin volver a cerrarse—, en vez de dejárselo a una animación.
-   *
-   * También comprueba si cambia de tamaño la ventana, no solo al cargar: quien prueba a
-   * estrechar la pestaña del ordenador para ver cómo se comporta en móvil no recarga la
-   * página al hacerlo, y sin esto se quedaba sin la reserva aunque el navegador no
-   * soportara animation-timeline.
-   */
-  const mql = window.matchMedia('(max-width: 1023.98px)');
-  let activada = false;
-
-  function activar() {
-    if (activada || !mql.matches || CSS.supports('(animation-timeline: view())')) return;
-    activada = true;
-
-    const escena = document.querySelector<HTMLElement>('[data-escena]');
-    const cabecera = document.querySelector<HTMLElement>('.cabecera');
-    const portones = [...document.querySelectorAll<HTMLElement>('.porton')];
-    if (!escena || !cabecera || !portones.length) return;
-
-    escena.classList.add('js-secuencia');
-
-    const menosAnimacion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finNombre = parseFloat(getComputedStyle(escena).getPropertyValue('--fin-nombre-movil'));
-    const rangos = portones.map((el, i) => ({
-      el,
-      ini: parseFloat(getComputedStyle(el).getPropertyValue('--ini-movil')),
-      fin: parseFloat(getComputedStyle(el).getPropertyValue('--fin-movil')),
-      ultimo: i === portones.length - 1,
-    }));
-
-    let inicio = 0;
-    let recorrido = 1;
-
-    // El scroll donde `.fija` se clava, y cuánto dura el clavado: se vuelve a medir en
-    // cada cambio de tamaño, porque el alto de `.escena` depende de `vh`.
-    function medir() {
-      inicio = escena!.getBoundingClientRect().top + window.scrollY;
-      recorrido = Math.max(escena!.offsetHeight - window.innerHeight, 1);
-    }
-
-    // El mismo dibujo que `abrirse-y-cerrarse`: cerrado en los dos extremos, abierto de
-    // sobra en medio para poder leerlo, no solo un cruce.
-    const clipAbrirCerrar = (localPct: number) => {
-      if (localPct <= 0 || localPct >= 100) return 50;
-      if (localPct <= 20) return 50 - (localPct / 20) * 50;
-      if (localPct <= 80) return 0;
-      return ((localPct - 80) / 20) * 50;
-    };
-
-    // El mismo `abrir-portones`: se abre y no vuelve a cerrarse.
-    const clipAbrir = (localPct: number) => 50 - Math.min(Math.max(localPct, 0), 100) * 0.5;
-
-    let pendiente = false;
-    function pintar() {
-      pendiente = false;
-      const progreso = Math.min(Math.max(((window.scrollY - inicio) / recorrido) * 100, 0), 100);
-
-      cabecera!.style.opacity = String(Math.max(1 - progreso / finNombre, 0));
-      if (!menosAnimacion) {
-        const t = Math.min(progreso / finNombre, 1);
-        cabecera!.style.transform = `translateY(${(-6 * t).toFixed(2)}vh) scale(${(1 - 0.38 * t).toFixed(3)})`;
-      }
-
-      for (const { el, ini, fin, ultimo } of rangos) {
-        const local = ((progreso - ini) / (fin - ini)) * 100;
-        const valor = ultimo ? clipAbrir(local) : clipAbrirCerrar(local);
-        el.style.clipPath = `inset(0 ${valor.toFixed(2)}% 0 ${valor.toFixed(2)}%)`;
-        el.style.visibility = !ultimo && valor >= 49.9 ? 'hidden' : 'visible';
-        el.style.pointerEvents = valor < 1 ? 'auto' : 'none';
-      }
-    }
-
-    function pedirPintado() {
-      if (pendiente) return;
-      pendiente = true;
-      requestAnimationFrame(pintar);
-    }
-
-    medir();
-    pintar();
-    window.addEventListener('scroll', pedirPintado, { passive: true });
-    window.addEventListener('resize', () => {
-      medir();
-      pedirPintado();
-    });
-  }
-
-  activar();
-  mql.addEventListener('change', activar);
-</script>
