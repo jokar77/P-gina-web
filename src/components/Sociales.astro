@@ -1,48 +1,65 @@
 ---
 /**
- * El apartado de redes: una ventana por red, con una captura al azar que cambia en cada
- * visita, enlazando siempre a la cuenta de verdad.
+ * El apartado de redes: una ventana por red, con una foto o un vídeo al azar que cambia
+ * en cada visita.
  *
  * No lee las redes en directo. Un feed de verdad pediría la API oficial de cada
  * plataforma —cuenta de empresa, aprobación de la app, un token que caduca y hay que ir
  * renovando—, que es mantenimiento continuo y no encaja con una web estática sin
  * servidor que lleva una sola persona sin conocimientos técnicos. En su lugar, Sakina
- * sube un puñado de capturas por red desde Pages CMS —lo mismo que ya hace con las
- * fotos de pieza— y aquí se elige una al azar.
+ * sube un puñado de fotos y vídeos por red desde Pages CMS —lo mismo que ya hace con las
+ * fotos de pieza— y aquí se elige uno al azar de entre los dos tipos mezclados.
  *
- * Una ventana solo aparece si tiene las dos cosas: el enlace relleno en «Textos y datos
- * de la web» y al menos una captura subida. Si falta cualquiera de las dos, esa ventana
- * no sale, igual que un icono del pie sin enlace no aparece (ver Redes.astro). Y si no
- * queda ninguna ventana, la sección entera desaparece, como «Otros trabajos» cuando está
- * vacío (ver Archivo.astro).
+ * Cada foto y cada vídeo puede llevar su propio enlace a esa publicación exacta, para
+ * que al pulsar se vaya justo ahí y no al perfil general. Es opcional: si Sakina no lo
+ * rellena, se usa el enlace del perfil (site.json) como respaldo, así que subir una
+ * captura sin buscar su URL exacta no rompe nada, solo lleva a un sitio menos preciso.
+ *
+ * Una ventana solo aparece si tiene las dos cosas: el enlace del perfil relleno en
+ * «Textos y datos de la web» (para el respaldo, y para el icono) y al menos un medio
+ * (foto o vídeo) subido. Si falta cualquiera de las dos, esa ventana no sale, igual que
+ * un icono del pie sin enlace no aparece (ver Redes.astro). Y si no queda ninguna
+ * ventana, la sección entera desaparece, como «Otros trabajos» cuando está vacío (ver
+ * Archivo.astro).
  */
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { opcional } from '../lib/ajustes';
-import site from '../data/site.json';
 
 const entrada = (await getCollection('redes'))[0];
+
+type Medio =
+  | { tipo: 'foto'; valor: ImageMetadata; enlace?: string }
+  | { tipo: 'video'; valor: string; enlace?: string };
+
+const mezclar = (
+  fotos: { foto: ImageMetadata; enlace?: string }[],
+  videos: { video: string; enlace?: string }[]
+): Medio[] => [
+  ...fotos.map((f): Medio => ({ tipo: 'foto', valor: f.foto, enlace: f.enlace })),
+  ...videos.map((v): Medio => ({ tipo: 'video', valor: v.video, enlace: v.enlace })),
+];
 
 const plataformas = [
   {
     id: 'instagram',
     nombre: 'Instagram',
     href: opcional('instagram'),
-    capturas: entrada?.data.instagram ?? [],
+    medios: mezclar(entrada?.data.instagram ?? [], entrada?.data.instagramVideos ?? []),
   },
   {
     id: 'tiktok',
     nombre: 'TikTok',
     href: opcional('tiktok'),
-    capturas: entrada?.data.tiktok ?? [],
+    medios: mezclar(entrada?.data.tiktok ?? [], entrada?.data.tiktokVideos ?? []),
   },
   {
     id: 'youtube',
     nombre: 'YouTube',
     href: opcional('youtube'),
-    capturas: entrada?.data.youtube ?? [],
+    medios: mezclar(entrada?.data.youtube ?? [], entrada?.data.youtubeVideos ?? []),
   },
-].filter((p) => p.href && p.capturas.length > 0);
+].filter((p) => p.href && p.medios.length > 0);
 ---
 
 {
@@ -60,25 +77,42 @@ const plataformas = [
           {plataformas.map((p) => (
             <li>
               <a
-                href={p.href}
+                href={p.medios[0]!.enlace || p.href}
                 class="group block no-underline"
                 rel="me noopener"
                 target="_blank"
-                aria-label={`Ver ${p.nombre} de ${site.marca}`}
+                aria-label={`Ver publicación de ${p.nombre}`}
+                data-enlace-respaldo={p.href}
               >
                 <div class="ventana relative overflow-hidden bg-paper" data-capturas>
-                  {p.capturas.map((foto, i) => (
-                    <Image
-                      src={foto}
-                      alt={`Publicación de ${p.nombre}.`}
-                      widths={[320, 480, 640]}
-                      sizes="(min-width: 640px) 22rem, 90vw"
-                      class="captura absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                      data-captura={i}
-                      hidden={i !== 0}
-                      loading="lazy"
-                    />
-                  ))}
+                  {p.medios.map((m, i) =>
+                    m.tipo === 'foto' ? (
+                      <Image
+                        src={m.valor}
+                        alt={`Publicación de ${p.nombre}.`}
+                        widths={[320, 480, 640]}
+                        sizes="(min-width: 640px) 22rem, 90vw"
+                        class="captura absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                        data-captura={i}
+                        data-enlace={m.enlace || ''}
+                        hidden={i !== 0}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <video
+                        src={m.valor}
+                        class="captura absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                        data-captura={i}
+                        data-enlace={m.enlace || ''}
+                        hidden={i !== 0}
+                        muted
+                        loop
+                        playsinline
+                        preload="none"
+                        aria-label={`Vídeo de ${p.nombre}.`}
+                      />
+                    )
+                  )}
                 </div>
                 <span class="etiqueta mt-3 flex items-center gap-2 text-[15px]">
                   <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
@@ -111,8 +145,13 @@ const plataformas = [
 }
 
 <style>
+  /*
+   * Más alta que ancha, como la pantalla de un móvil (o una story/reel): 9:16 en vez del
+   * 4:5 de una publicación normal de Instagram. Aquí lo que se enseña es justo ese tipo
+   * de formato vertical, así que la ventana se parece a lo que va a haber dentro.
+   */
   .ventana {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 9 / 16;
   }
 
   .etiqueta svg {
@@ -130,18 +169,36 @@ const plataformas = [
 
 <script>
   /*
-   * Cada ventana sale del servidor con la primera captura visible y las demás con
-   * `hidden`, para que sin JavaScript se vea igualmente una foto fija en vez de nada.
-   * Aquí se elige una al azar y se cambia cuál queda visible — así cada visita enseña
-   * una publicación distinta, sin depender de recargar el sitio entero para variar.
+   * Cada ventana sale del servidor con el primer medio visible (foto o vídeo, sin
+   * reproducir) y los demás con `hidden`, para que sin JavaScript se vea igualmente algo
+   * fijo —y el enlace de esa primera publicación— en vez de nada. Aquí se elige uno al
+   * azar de entre fotos y vídeos mezclados, se cambia cuál queda visible, se actualiza el
+   * enlace de la tarjeta al de esa publicación en concreto (o al del perfil, si no tiene
+   * uno propio) y, si es un vídeo, se pone en marcha.
+   *
+   * El vídeo elegido solo se reproduce si no se ha pedido «menos movimiento»: por eso no
+   * lleva el atributo `autoplay` en el HTML —eso reproduciría igual aunque el sistema
+   * pida reducir la animación—, sino que se arranca aquí a mano, ya comprobada la
+   * preferencia.
    */
-  for (const caja of document.querySelectorAll<HTMLElement>('[data-capturas]')) {
-    const capturas = [...caja.querySelectorAll<HTMLElement>('[data-captura]')];
-    if (capturas.length < 2) continue;
+  const reducirMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const elegida = Math.floor(Math.random() * capturas.length);
-    for (const foto of capturas) {
-      foto.hidden = Number(foto.dataset.captura) !== elegida;
+  for (const tarjeta of document.querySelectorAll<HTMLAnchorElement>('[data-enlace-respaldo]')) {
+    const caja = tarjeta.querySelector<HTMLElement>('[data-capturas]');
+    if (!caja) continue;
+
+    const medios = [...caja.querySelectorAll<HTMLElement>('[data-captura]')];
+    const elegido = medios.length > 1 ? Math.floor(Math.random() * medios.length) : 0;
+
+    for (const medio of medios) {
+      const visible = Number(medio.dataset.captura) === elegido;
+      medio.hidden = !visible;
+      if (visible) {
+        tarjeta.href = medio.dataset.enlace || tarjeta.dataset.enlaceRespaldo!;
+        if (medio instanceof HTMLVideoElement && !reducirMovimiento) {
+          medio.play().catch(() => {});
+        }
+      }
     }
   }
 </script>

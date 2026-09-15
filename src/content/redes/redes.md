@@ -1,8 +1,11 @@
 ---
 instagram:
-  - ../../assets/piezas/cd8af718-6478-4fcb-ba32-047eb82bac5c.jpg
+  - foto: ../../assets/piezas/cd8af718-6478-4fcb-ba32-047eb82bac5c.jpg
+instagramVideos: []
 tiktok:
-  - ../../assets/piezas/pijama-rayas-2.jpg
+  - foto: ../../assets/piezas/pijama-rayas-2.jpg
+tiktokVideos: []
 youtube:
-  - ../../assets/piezas/05.jpg
+  - foto: ../../assets/piezas/05.jpg
+youtubeVideos: []
 ---

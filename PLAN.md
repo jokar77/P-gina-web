@@ -301,18 +301,32 @@ Cosas que decidí yo y pueden estar mal.
 
 ## 7. Decisiones tomadas, y por qué
 
-- **El apartado «Redes» enseña capturas subidas, no las redes en directo.** Sakina pidió
-  algo parecido a un feed en vivo (una ventana por red, con una publicación al azar).
-  Conectar de verdad con Instagram o TikTok pide la API oficial de cada plataforma —cuenta
-  de empresa, app aprobada, token que caduca y hay que ir renovando—, que es mantenimiento
-  continuo y no encaja con una web estática sin servidor que lleva una sola persona sin
-  conocimientos técnicos (YouTube es la excepción, su API es más simple, pero no compensa
-  meterla solo para una de las tres). En su lugar, Sakina sube un puñado de capturas por
-  red desde Pages CMS —lo mismo que ya hace con las fotos de pieza— y `Sociales.astro`
-  elige una al azar en cada visita (con JavaScript; sin él se ve fija la primera). Una
-  ventana solo sale si tiene captura y su enlace está relleno en «Textos y datos de la
-  web»; si no queda ninguna, la sección entera desaparece, igual que «Otros trabajos»
-  cuando está vacío. Vive entre la portada y «El taller», que es donde lo pidió.
+- **El apartado «Redes» enseña fotos y vídeos subidos, no las redes en directo.** Sakina
+  pidió algo parecido a un feed en vivo (una ventana por red, con una publicación al
+  azar, foto o vídeo). Conectar de verdad con Instagram o TikTok pide la API oficial de
+  cada plataforma —cuenta de empresa, app aprobada, token que caduca y hay que ir
+  renovando—, que es mantenimiento continuo y no encaja con una web estática sin
+  servidor que lleva una sola persona sin conocimientos técnicos (YouTube es la
+  excepción, su API es más simple, pero no compensa meterla solo para una de las tres).
+  En su lugar, Sakina sube un puñado de fotos y vídeos cortos por red desde Pages CMS
+  —lo mismo que ya hace con las fotos de pieza— y `Sociales.astro` elige uno al azar en
+  cada visita (con JavaScript; sin él se ve fijo el primero, sin reproducir si es
+  vídeo). Cada foto o vídeo puede llevar su propio enlace a esa publicación exacta
+  —pegado a mano desde «Copiar enlace» en la red correspondiente—, así que al pulsar se
+  va justo ahí y no al perfil general; si no lo rellena, cae al enlace del perfil como
+  respaldo, así que no hace falta rellenarlo en todos para que funcione. Las ventanas
+  son más altas que anchas (9:16, como una pantalla de móvil o una story), que es el
+  formato en el que va a estar casi todo este contenido. Una ventana solo sale si tiene
+  algo subido y el enlace del perfil está relleno en «Textos y datos de la web»; si no
+  queda ninguna, la sección entera desaparece, igual que «Otros trabajos» cuando está
+  vacío. Vive entre la portada y «El taller», que es donde lo pidió.
+  **Sin probar en el Pages CMS real**: la configuración de `.pages.yml` (el campo de
+  vídeo, que usa un segundo origen de medios hacia `public/videos/redes` en vez del de
+  fotos) está escrita según la documentación pública de Pages CMS, pero esa parte no se
+  puede comprobar desde este entorno de trabajo —es una herramienta externa atada al
+  repositorio de GitHub—, así que hay que verificarla la primera vez que Sakina suba un
+  vídeo de verdad. Si el campo no se comporta como se espera, es un ajuste pequeño en
+  ese archivo, no hay que rehacer nada del código.
 - **Contenido en el repositorio, no en la nube.** Son 12 piezas: el contenido es diminuto,
   queda versionado y reversible, es gratis para siempre y se puede arreglar a mano. Sanity
   daría mejor experiencia en móvil pero mete una dependencia externa que no compensa a esta
