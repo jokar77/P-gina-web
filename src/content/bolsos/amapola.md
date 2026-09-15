@@ -1,9 +1,10 @@
 ---
-nombre: Amapola
+nombre: Scarlett
 precio: 25
 estado: disponible
 color: rojo
-material: Lana con brillo, flores cosidas a mano
+material: Lana acrílica junto a hilo con lentejuelas, tres hibiscos cosidos a
+  mano y tarjetero a juego
 ancho: 27
 alto: 24
 orden: 3
