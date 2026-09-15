@@ -1,5 +1,5 @@
 ---
-nombre: Cacao
+nombre: Ego
 precio: 25
 estado: disponible
 color: gris
