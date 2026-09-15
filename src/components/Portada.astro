@@ -197,6 +197,7 @@ const finDelNombre = pct(1.9);
                 class="foto-porton"
                 loading="eager"
               />
+              <span class="velo-porton" aria-hidden="true" />
               <span class="nombre-porton">{p.nombre}</span>
             </a>
           </li>
@@ -292,6 +293,25 @@ const finDelNombre = pct(1.9);
     text-transform: uppercase;
     color: var(--color-ink-manta);
   }
+
+  /*
+   * El velo de cada portón: un degradado oscuro que sube desde el borde inferior, para
+   * que el nombre se lea encima de cualquier foto. Antes era solo un halo claro detrás
+   * de letra oscura (`text-shadow`), y con una foto de cuadros como la de los conjuntos
+   * de niño se rompía: el halo se confunde con los cuadros blancos y la letra con los
+   * negros. Un velo sólido no depende de lo que haya en la foto.
+   */
+  .velo-porton {
+    position: absolute;
+    inset: auto 0 0;
+    height: 62%;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--color-deep) 75%, transparent),
+      transparent
+    );
+    pointer-events: none;
+  }
   /*
    * Bajo 1024px la portada es también los tres portones, no el desfile pieza a pieza:
    * el mismo motivo que llevó a cambiarlo en pantalla ancha —quince piezas es mucho
@@ -347,7 +367,8 @@ const finDelNombre = pct(1.9);
       text-align: center;
       font-family: var(--font-display);
       font-size: clamp(1.6rem, 7vw, 2.1rem);
-      color: var(--color-deep);
+      color: var(--color-paper);
+      text-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
     }
   }
 
@@ -542,7 +563,8 @@ const finDelNombre = pct(1.9);
       text-align: center;
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 2.6vw, 2.25rem);
-      color: var(--color-deep);
+      color: var(--color-paper);
+      text-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
     }
   }
 
