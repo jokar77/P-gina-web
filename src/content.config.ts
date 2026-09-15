@@ -85,23 +85,40 @@ const portada = defineCollection({
 });
 
 /**
- * Un puñado de capturas por red, para el apartado de la portada que enseña una al azar
- * en cada visita y enlaza a la cuenta de verdad. No son las publicaciones en directo —eso
- * pediría la API de cada plataforma, con token que caduca y hay que ir renovando, que es
- * mantenimiento que no encaja con una web estática sin servidor (ver PLAN.md)—, son
- * capturas de pantalla que Sakina sube ella misma, como ya hace con las fotos de pieza.
+ * Un puñado de fotos y vídeos por red, para el apartado de la portada que enseña uno al
+ * azar en cada visita. No son las publicaciones en directo —eso pediría la API de cada
+ * plataforma, con token que caduca y hay que ir renovando, que es mantenimiento que no
+ * encaja con una web estática sin servidor (ver PLAN.md)—, son capturas y clips que
+ * Sakina sube ella misma, como ya hace con las fotos de pieza.
  *
- * Solo hay una entrada, "redes.md", con las tres listas dentro: no hace falta una
+ * Cada foto y cada vídeo lleva su propio `enlace`, opcional: la URL de esa publicación
+ * en concreto, para que al pulsar se vaya justo ahí y no al perfil general. Si se deja en
+ * blanco, `Sociales.astro` usa el enlace del perfil (el de site.json) como respaldo, así
+ * que no hace falta rellenarlo en todas para que el apartado siga funcionando.
+ *
+ * Los vídeos guardan `video` como `z.string()`, no `image()`: `image()` solo sabe
+ * procesar imágenes (pasa cada una por Sharp para optimizarla), así que un vídeo ahí
+ * rompería la compilación. En vez de eso, los vídeos se suben a `public/videos/redes` y
+ * aquí se guarda la ruta pública tal cual (por ejemplo, `/videos/redes/clip.mp4`): lo de
+ * `public/` no pasa por Vite, así que la ruta ya es la URL final, sin nada que resolver.
+ *
+ * Solo hay una entrada, "redes.md", con las seis listas dentro: no hace falta una
  * colección por red para algo que nunca va a tener más de una entrada.
  */
 const redes = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/redes' }),
-  schema: ({ image }) =>
-    z.object({
-      instagram: z.array(image()).default([]),
-      tiktok: z.array(image()).default([]),
-      youtube: z.array(image()).default([]),
-    }),
+  schema: ({ image }) => {
+    const foto = z.object({ foto: image(), enlace: z.string().optional() });
+    const video = z.object({ video: z.string(), enlace: z.string().optional() });
+    return z.object({
+      instagram: z.array(foto).default([]),
+      instagramVideos: z.array(video).default([]),
+      tiktok: z.array(foto).default([]),
+      tiktokVideos: z.array(video).default([]),
+      youtube: z.array(foto).default([]),
+      youtubeVideos: z.array(video).default([]),
+    });
+  },
 });
 
 export const collections = { bolsos, ninos, archivo, portada, redes };

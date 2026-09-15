@@ -10,16 +10,27 @@
 # Los campos de aquí tienen que coincidir con el esquema de src/content.config.ts. Si se
 # añade un campo allí, hay que añadirlo aquí.
 
+# Dos orígenes de medios: "fotos" es el de siempre (primero de la lista, así que sigue
+# siendo el que usan por defecto todos los campos de imagen sin decir lo contrario). Y
+# "videos" es nuevo, para los vídeos de "Redes": va a public/, no a src/assets/, porque
+# ahí Astro no lo procesa como imagen — la ruta que guarda Pages CMS ya es la URL final
+# (ver el comentario sobre esto en content.config.ts). El campo `media: videos` de cada
+# campo de vídeo, más abajo, es quien elige este segundo origen en vez del de fotos.
 media:
-  input: src/assets/piezas
-  output: ../../assets/piezas
-  categories: [image]
-  # Las fotos del móvil suelen llevar la extensión en mayúsculas (.JPG en vez de
-  # .jpg) y Pages CMS las compara tal cual, así que sin esto rechazaba fotos que
-  # sí eran jpg con el error "invalid extension ... for media". Con "safe" les
-  # pone la extensión en minúsculas (y quita espacios/acentos del nombre) antes
-  # de subirlas.
-  rename: safe
+  - name: fotos
+    input: src/assets/piezas
+    output: ../../assets/piezas
+    categories: [image]
+    # Las fotos del móvil suelen llevar la extensión en mayúsculas (.JPG en vez de
+    # .jpg) y Pages CMS las compara tal cual, así que sin esto rechazaba fotos que
+    # sí eran jpg con el error "invalid extension ... for media". Con "safe" les
+    # pone la extensión en minúsculas (y quita espacios/acentos del nombre) antes
+    # de subirlas.
+    rename: safe
+  - name: videos
+    input: public/videos/redes
+    output: /videos/redes
+    rename: safe
 
 content:
   - name: bolsos
@@ -231,19 +242,102 @@ content:
         description: Opcional.
 
   - name: redes
-    label: Redes sociales (capturas)
+    label: Redes sociales (capturas y vídeos)
     type: file
     path: src/content/redes/redes.md
     description: >-
-      Un par de capturas de pantalla por red, de publicaciones que ya tengas subidas
-      (no hace falta que sean las últimas). La web enseña una al azar cada vez que
-      alguien entra y enlaza siempre a la cuenta de verdad, la que pongas en «Textos y
-      datos de la web». Una red solo aparece en la portada si tiene captura Y su enlace
-      está relleno ahí; si falta cualquiera de las dos cosas, esa ventana no sale.
+      Un par de capturas o vídeos por red, de publicaciones que ya tengas subidas (no
+      hace falta que sean las últimas). La web enseña uno al azar cada vez que alguien
+      entra. Una red solo aparece en la portada si tiene algo subido (foto o vídeo) Y su
+      enlace de perfil está relleno en «Textos y datos de la web»; si falta cualquiera de
+      las dos cosas, esa ventana no sale. Los vídeos, mejor cortos y ligeros: se
+      reproducen en bucle y sin sonido, como una previsualización, así que no hace falta
+      que pesen mucho.
     fields:
-      - { name: instagram, label: Capturas de Instagram, type: image, list: true }
-      - { name: tiktok, label: Capturas de TikTok, type: image, list: true }
-      - { name: youtube, label: Capturas de YouTube, type: image, list: true }
+      - name: instagram
+        label: Capturas de Instagram
+        type: object
+        list: true
+        fields:
+          - { name: foto, label: Foto, type: image, required: true }
+          - name: enlace
+            label: Enlace a esta publicación
+            type: string
+            description: >-
+              Opcional. Pégalo desde «Copiar enlace» en la propia publicación de
+              Instagram. Si lo dejas en blanco, al pulsar la foto se va a tu perfil en
+              general, no a esta publicación en concreto.
+      - name: instagramVideos
+        label: Vídeos de Instagram
+        type: object
+        list: true
+        fields:
+          - name: video
+            label: Vídeo
+            type: file
+            required: true
+            media: videos
+            description: Formato vertical, como un Reel. Nada de audio importante, no se oye.
+          - name: enlace
+            label: Enlace a esta publicación
+            type: string
+            description: Opcional, igual que en las fotos.
+      - name: tiktok
+        label: Capturas de TikTok
+        type: object
+        list: true
+        fields:
+          - { name: foto, label: Foto, type: image, required: true }
+          - name: enlace
+            label: Enlace a esta publicación
+            type: string
+            description: >-
+              Opcional. Pégalo desde «Compartir → Copiar enlace» en el propio vídeo de
+              TikTok. Si lo dejas en blanco, al pulsar la foto se va a tu perfil en
+              general, no a este vídeo en concreto.
+      - name: tiktokVideos
+        label: Vídeos de TikTok
+        type: object
+        list: true
+        fields:
+          - name: video
+            label: Vídeo
+            type: file
+            required: true
+            media: videos
+            description: Formato vertical. Nada de audio importante, no se oye.
+          - name: enlace
+            label: Enlace a esta publicación
+            type: string
+            description: Opcional, igual que en las fotos.
+      - name: youtube
+        label: Capturas de YouTube
+        type: object
+        list: true
+        fields:
+          - { name: foto, label: Foto, type: image, required: true }
+          - name: enlace
+            label: Enlace a este vídeo
+            type: string
+            description: >-
+              Opcional. Pégalo desde «Compartir» en el propio vídeo de YouTube. Si lo
+              dejas en blanco, al pulsar la foto se va a tu canal en general, no a este
+              vídeo en concreto.
+      - name: youtubeVideos
+        label: Vídeos de YouTube
+        type: object
+        list: true
+        fields:
+          - name: video
+            label: Vídeo
+            type: file
+            required: true
+            media: videos
+            description: Nada de audio importante, no se oye.
+          - name: enlace
+            label: Enlace a este vídeo
+            type: string
+            description: Opcional, igual que en las fotos.
 
   - name: ajustes
     label: Textos y datos de la web
