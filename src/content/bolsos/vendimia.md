@@ -1,9 +1,9 @@
 ---
-nombre: Vendimia
-precio: 25
+nombre: Hibiscus
+precio: 30
 estado: disponible
-color: rojo
-material: Trapillo jaspeado, flor lateral
+color: morado
+material: Doble trapillo, bicolor, asa resistente y flor añadida a mano.
 ancho: 28
 alto: 23
 orden: 4
