@@ -359,6 +359,11 @@ const finDelNombre = pct(1.9);
    * de escritorio: gira hacia quien mira y aparece según va entrando, y el siguiente
    * hace lo mismo un poco más abajo, en su turno. No hace falta escalonarlos a mano con
    * un retraso: el propio orden de la página ya los separa.
+   *
+   * El nombre se despide con el mismo gesto pero al revés —se aleja girando, como una
+   * puerta que se cierra—, atado a su propia salida de la pantalla. Es la misma pieza de
+   * vocabulario que el giro de los portones, así que se lee como un solo gesto contado
+   * dos veces: una puerta se cierra según llega la que se abre.
    */
   @supports (animation-timeline: view()) {
     @media (max-width: 1023.98px) {
@@ -369,6 +374,14 @@ const finDelNombre = pct(1.9);
        * sin avisar —no anima nada, ni error ni aviso—. Con selectores distintos no hay
        * nada que fusionar. Ya pasó una vez con el desfile de escritorio, más abajo.
        */
+      .cabecera {
+        animation: despedir-cabecera linear both;
+        animation-range: exit;
+      }
+      .fija > .cabecera {
+        animation-timeline: view();
+      }
+
       .porton {
         animation: aparecer-porton linear both;
         animation-range: entry;
@@ -396,7 +409,26 @@ const finDelNombre = pct(1.9);
     }
   }
 
+  /*
+   * El giro contrario al de `aparecer-porton`: el nombre se cierra hacia el otro lado,
+   * como si fuera él mismo una puerta más. Solo lleva un `to` —el `from` es el propio
+   * aspecto en reposo del nombre, así que no hace falta repetirlo— y sin `translateY`:
+   * a diferencia de los portones, el nombre no necesita entrar desde ningún sitio, solo
+   * irse, así que un solo eje de movimiento (el giro) es más limpio que dos a la vez.
+   */
+  @keyframes despedir-cabecera {
+    to {
+      opacity: 0;
+      transform: perspective(1200px) rotateY(30deg) scale(0.92);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    @keyframes despedir-cabecera {
+      to {
+        opacity: 0;
+      }
+    }
     @keyframes aparecer-porton {
       from {
         opacity: 0;
