@@ -295,11 +295,12 @@ const finDelNombre = pct(1.9);
   }
 
   /*
-   * El velo de cada portón: un degradado oscuro que sube desde el borde inferior, para
-   * que el nombre se lea encima de cualquier foto. Antes era solo un halo claro detrás
-   * de letra oscura (`text-shadow`), y con una foto de cuadros como la de los conjuntos
-   * de niño se rompía: el halo se confunde con los cuadros blancos y la letra con los
-   * negros. Un velo sólido no depende de lo que haya en la foto.
+   * El velo de cada portón: un degradado que sube desde el borde inferior, para que el
+   * nombre se lea encima de cualquier foto sin depender de lo que haya detrás. La letra
+   * es oscura —el mismo tono que el pie de página—, así que el velo va claro, del color
+   * del papel: oscuro sobre oscuro no se habría leído. Antes era un halo (`text-shadow`)
+   * detrás de la letra, y con una foto de cuadros como la de los conjuntos de niño se
+   * rompía: el halo se confundía con los cuadros blancos y la letra con los negros.
    */
   .velo-porton {
     position: absolute;
@@ -307,7 +308,7 @@ const finDelNombre = pct(1.9);
     height: 62%;
     background: linear-gradient(
       to top,
-      color-mix(in srgb, var(--color-deep) 75%, transparent),
+      color-mix(in srgb, var(--color-paper) 75%, transparent),
       transparent
     );
     pointer-events: none;
@@ -367,8 +368,7 @@ const finDelNombre = pct(1.9);
       text-align: center;
       font-family: var(--font-display);
       font-size: clamp(1.6rem, 7vw, 2.1rem);
-      color: var(--color-paper);
-      text-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
+      color: var(--color-deep);
     }
   }
 
@@ -595,8 +595,7 @@ const finDelNombre = pct(1.9);
       text-align: center;
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 2.6vw, 2.25rem);
-      color: var(--color-paper);
-      text-shadow: 0 1px 5px rgb(0 0 0 / 0.4);
+      color: var(--color-deep);
     }
   }
 
