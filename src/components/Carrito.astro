@@ -86,25 +86,56 @@ import { precio } from '../lib/formato';
                 <span>Nombre y apellidos</span>
                 <input type="text" name="nombre" autocomplete="name" data-dato />
               </label>
-              <label class="campo">
-                <span>Dirección</span>
-                <input
-                  type="text"
-                  name="direccion"
-                  autocomplete="street-address"
-                  placeholder="Calle, número, piso"
-                  data-dato
-                />
-              </label>
-              <div class="grid grid-cols-[7rem_1fr] gap-3">
+
+              {/*
+                No hay buscador de oficinas en directo: Correos no ofrece uno público
+                para insertar en cualquier web sin cuenta de empresa, y montarlo con
+                datos propios (miles de oficinas) no encaja aquí. En vez de eso, se
+                enlaza a su localizador oficial y quien compra escribe cuál eligió,
+                igual que ya hace con la dirección: nada se valida solo, todo se
+                confirma hablando.
+              */}
+              <div class="grid gap-3" data-campos-recogida hidden>
+                <a
+                  href="https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle"
+                  target="_blank"
+                  rel="noopener"
+                  class="text-[14px] underline"
+                >
+                  Buscar mi oficina más cercana ↗
+                </a>
                 <label class="campo">
-                  <span>Código postal</span>
-                  <input type="text" name="cp" inputmode="numeric" autocomplete="postal-code" data-dato />
+                  <span>Oficina de recogida</span>
+                  <input
+                    type="text"
+                    name="oficina"
+                    placeholder="Nombre o dirección de la oficina"
+                    data-dato
+                  />
                 </label>
+              </div>
+
+              <div class="grid gap-3" data-campos-domicilio>
                 <label class="campo">
-                  <span>Población</span>
-                  <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+                  <span>Dirección</span>
+                  <input
+                    type="text"
+                    name="direccion"
+                    autocomplete="street-address"
+                    placeholder="Calle, número, piso"
+                    data-dato
+                  />
                 </label>
+                <div class="grid grid-cols-[7rem_1fr] gap-3">
+                  <label class="campo">
+                    <span>Código postal</span>
+                    <input type="text" name="cp" inputmode="numeric" autocomplete="postal-code" data-dato />
+                  </label>
+                  <label class="campo">
+                    <span>Población</span>
+                    <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+                  </label>
+                </div>
               </div>
             </div>
           </fieldset>
@@ -323,6 +354,8 @@ import { precio } from '../lib/formato';
   const pieLista = document.querySelector<HTMLElement>('[data-pie-lista]');
   const pieDatos = document.querySelector<HTMLElement>('[data-pie-datos]');
   const bloqueEnvio = document.querySelector<HTMLElement>('[data-carrito-envio]');
+  const camposRecogida = document.querySelector<HTMLElement>('[data-campos-recogida]');
+  const camposDomicilio = document.querySelector<HTMLElement>('[data-campos-domicilio]');
   const vacio = document.querySelector<HTMLElement>('[data-carrito-vacio]');
   const marcaSubtotal = document.querySelector<HTMLElement>('[data-carrito-subtotal]');
   const marcaSubtotalDatos = document.querySelector<HTMLElement>('[data-carrito-subtotal-datos]');
@@ -395,14 +428,20 @@ import { precio } from '../lib/formato';
           `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
         ];
 
-    // Los datos de envío solo se añaden si se han escrito.
-    const direccion = [
-      dato('nombre'),
-      dato('direccion'),
-      [dato('cp'), dato('poblacion')].filter(Boolean).join(' '),
-    ].filter(Boolean);
+    // Los datos de envío solo se añaden si se han escrito, y cambian según el método:
+    // con recogida no hace falta calle ni código postal, solo qué oficina se eligió.
+    const datos =
+      metodo === 'recogida'
+        ? [dato('nombre'), dato('oficina') && `Oficina de recogida: ${dato('oficina')}`].filter(
+            Boolean
+          )
+        : [
+            dato('nombre'),
+            dato('direccion'),
+            [dato('cp'), dato('poblacion')].filter(Boolean).join(' '),
+          ].filter(Boolean);
 
-    if (direccion.length) partes.push('', 'Mis datos:', ...direccion);
+    if (datos.length) partes.push('', 'Mis datos:', ...datos);
 
     return partes.join('\n');
   }
@@ -483,9 +522,17 @@ import { precio } from '../lib/formato';
     if (!hay && paso === 'datos') mostrarPaso('lista');
 
     const necesitaDatos = requiereDatos(lineas);
-    for (const campo of ['nombre', 'direccion', 'cp', 'poblacion']) {
+    const metodo = metodoElegido();
+    if (camposRecogida) camposRecogida.hidden = metodo !== 'recogida';
+    if (camposDomicilio) camposDomicilio.hidden = metodo !== 'domicilio';
+
+    const CAMPOS_POR_METODO: Record<Metodo, string[]> = {
+      recogida: ['nombre', 'oficina'],
+      domicilio: ['nombre', 'direccion', 'cp', 'poblacion'],
+    };
+    for (const campo of new Set([...CAMPOS_POR_METODO.recogida, ...CAMPOS_POR_METODO.domicilio])) {
       const input = document.querySelector<HTMLInputElement>(`[data-dato][name="${campo}"]`);
-      if (input) input.required = necesitaDatos;
+      if (input) input.required = necesitaDatos && CAMPOS_POR_METODO[metodo].includes(campo);
     }
     if (notaEnvio) {
       notaEnvio.textContent = necesitaDatos
@@ -494,7 +541,7 @@ import { precio } from '../lib/formato';
     }
 
     const piezas = total();
-    const envioCoste = costeEnvio(piezas, metodoElegido());
+    const envioCoste = costeEnvio(piezas, metodo);
     if (marcaSubtotal) marcaSubtotal.textContent = precio(piezas);
     if (marcaSubtotalDatos) marcaSubtotalDatos.textContent = precio(piezas);
     if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
