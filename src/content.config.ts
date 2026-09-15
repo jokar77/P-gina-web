@@ -84,4 +84,24 @@ const portada = defineCollection({
     }),
 });
 
-export const collections = { bolsos, ninos, archivo, portada };
+/**
+ * Un puñado de capturas por red, para el apartado de la portada que enseña una al azar
+ * en cada visita y enlaza a la cuenta de verdad. No son las publicaciones en directo —eso
+ * pediría la API de cada plataforma, con token que caduca y hay que ir renovando, que es
+ * mantenimiento que no encaja con una web estática sin servidor (ver PLAN.md)—, son
+ * capturas de pantalla que Sakina sube ella misma, como ya hace con las fotos de pieza.
+ *
+ * Solo hay una entrada, "redes.md", con las tres listas dentro: no hace falta una
+ * colección por red para algo que nunca va a tener más de una entrada.
+ */
+const redes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/redes' }),
+  schema: ({ image }) =>
+    z.object({
+      instagram: z.array(image()).default([]),
+      tiktok: z.array(image()).default([]),
+      youtube: z.array(image()).default([]),
+    }),
+});
+
+export const collections = { bolsos, ninos, archivo, portada, redes };

@@ -1,0 +1,147 @@
+---
+/**
+ * El apartado de redes: una ventana por red, con una captura al azar que cambia en cada
+ * visita, enlazando siempre a la cuenta de verdad.
+ *
+ * No lee las redes en directo. Un feed de verdad pediría la API oficial de cada
+ * plataforma —cuenta de empresa, aprobación de la app, un token que caduca y hay que ir
+ * renovando—, que es mantenimiento continuo y no encaja con una web estática sin
+ * servidor que lleva una sola persona sin conocimientos técnicos. En su lugar, Sakina
+ * sube un puñado de capturas por red desde Pages CMS —lo mismo que ya hace con las
+ * fotos de pieza— y aquí se elige una al azar.
+ *
+ * Una ventana solo aparece si tiene las dos cosas: el enlace relleno en «Textos y datos
+ * de la web» y al menos una captura subida. Si falta cualquiera de las dos, esa ventana
+ * no sale, igual que un icono del pie sin enlace no aparece (ver Redes.astro). Y si no
+ * queda ninguna ventana, la sección entera desaparece, como «Otros trabajos» cuando está
+ * vacío (ver Archivo.astro).
+ */
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { opcional } from '../lib/ajustes';
+import site from '../data/site.json';
+
+const entrada = (await getCollection('redes'))[0];
+
+const plataformas = [
+  {
+    id: 'instagram',
+    nombre: 'Instagram',
+    href: opcional('instagram'),
+    capturas: entrada?.data.instagram ?? [],
+  },
+  {
+    id: 'tiktok',
+    nombre: 'TikTok',
+    href: opcional('tiktok'),
+    capturas: entrada?.data.tiktok ?? [],
+  },
+  {
+    id: 'youtube',
+    nombre: 'YouTube',
+    href: opcional('youtube'),
+    capturas: entrada?.data.youtube ?? [],
+  },
+].filter((p) => p.href && p.capturas.length > 0);
+---
+
+{
+  plataformas.length > 0 && (
+    <section id="redes" class="scroll-mt-20 bg-panel px-5 py-section sm:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+          <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Redes</h2>
+          <p class="max-w-[52ch] text-ink-soft">
+            Un vistazo a lo último. Cada visita enseña una publicación distinta.
+          </p>
+        </div>
+
+        <ul class="mt-10 grid grid-cols-1 gap-7 sm:grid-cols-3">
+          {plataformas.map((p) => (
+            <li>
+              <a
+                href={p.href}
+                class="group block no-underline"
+                rel="me noopener"
+                target="_blank"
+                aria-label={`Ver ${p.nombre} de ${site.marca}`}
+              >
+                <div class="ventana relative overflow-hidden bg-paper" data-capturas>
+                  {p.capturas.map((foto, i) => (
+                    <Image
+                      src={foto}
+                      alt={`Publicación de ${p.nombre}.`}
+                      widths={[320, 480, 640]}
+                      sizes="(min-width: 640px) 22rem, 90vw"
+                      class="captura absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                      data-captura={i}
+                      hidden={i !== 0}
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+                <span class="etiqueta mt-3 flex items-center gap-2 text-[15px]">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18">
+                    {p.id === 'instagram' && (
+                      <>
+                        <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5" />
+                        <circle cx="12" cy="12" r="4.1" />
+                        <circle cx="17.2" cy="6.8" r="1.15" class="relleno" />
+                      </>
+                    )}
+                    {p.id === 'tiktok' && (
+                      <path d="M13.6 3.2v10.9a3.1 3.1 0 1 1-2.6-3.06M13.6 6.1a4.7 4.7 0 0 0 4.4 3.1" />
+                    )}
+                    {p.id === 'youtube' && (
+                      <>
+                        <rect x="2.6" y="5.6" width="18.8" height="12.8" rx="4" />
+                        <path d="M10.4 9.4 15 12l-4.6 2.6V9.4Z" class="relleno" />
+                      </>
+                    )}
+                  </svg>
+                  {p.nombre}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .ventana {
+    aspect-ratio: 4 / 5;
+  }
+
+  .etiqueta svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .etiqueta svg .relleno {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+
+<script>
+  /*
+   * Cada ventana sale del servidor con la primera captura visible y las demás con
+   * `hidden`, para que sin JavaScript se vea igualmente una foto fija en vez de nada.
+   * Aquí se elige una al azar y se cambia cuál queda visible — así cada visita enseña
+   * una publicación distinta, sin depender de recargar el sitio entero para variar.
+   */
+  for (const caja of document.querySelectorAll<HTMLElement>('[data-capturas]')) {
+    const capturas = [...caja.querySelectorAll<HTMLElement>('[data-captura]')];
+    if (capturas.length < 2) continue;
+
+    const elegida = Math.floor(Math.random() * capturas.length);
+    for (const foto of capturas) {
+      foto.hidden = Number(foto.dataset.captura) !== elegida;
+    }
+  }
+</script>

@@ -60,6 +60,9 @@ Nada de esto es código. Son datos que solo tiene ella.
 - [ ] **Página 404.** No hay ninguna; ahora saldría la genérica de Cloudflare. Es barata y
       es la única página que alguien ve cuando algo va mal.
 - [ ] **`robots.txt` y comprobar el sitemap.** El sitemap ya se genera solo.
+- [ ] **Subir capturas para el apartado «Redes».** Está construido (ver §7) pero sin
+      contenido: mientras no haya ninguna captura subida en Pages CMS («Redes sociales
+      (capturas)»), la sección entera no aparece en la portada.
 - [ ] Decidir si se crea la rama `main` para producción, o se despliega desde
       `claude/ipad-access-issue-xczlml`.
 - [ ] Desplegar en Cloudflare Pages (ver §5).
@@ -298,6 +301,18 @@ Cosas que decidí yo y pueden estar mal.
 
 ## 7. Decisiones tomadas, y por qué
 
+- **El apartado «Redes» enseña capturas subidas, no las redes en directo.** Sakina pidió
+  algo parecido a un feed en vivo (una ventana por red, con una publicación al azar).
+  Conectar de verdad con Instagram o TikTok pide la API oficial de cada plataforma —cuenta
+  de empresa, app aprobada, token que caduca y hay que ir renovando—, que es mantenimiento
+  continuo y no encaja con una web estática sin servidor que lleva una sola persona sin
+  conocimientos técnicos (YouTube es la excepción, su API es más simple, pero no compensa
+  meterla solo para una de las tres). En su lugar, Sakina sube un puñado de capturas por
+  red desde Pages CMS —lo mismo que ya hace con las fotos de pieza— y `Sociales.astro`
+  elige una al azar en cada visita (con JavaScript; sin él se ve fija la primera). Una
+  ventana solo sale si tiene captura y su enlace está relleno en «Textos y datos de la
+  web»; si no queda ninguna, la sección entera desaparece, igual que «Otros trabajos»
+  cuando está vacío. Vive entre la portada y «El taller», que es donde lo pidió.
 - **Contenido en el repositorio, no en la nube.** Son 12 piezas: el contenido es diminuto,
   queda versionado y reversible, es gratis para siempre y se puede arreglar a mano. Sanity
   daría mejor experiencia en móvil pero mete una dependencia externa que no compensa a esta

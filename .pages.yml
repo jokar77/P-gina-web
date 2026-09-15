@@ -230,6 +230,21 @@ content:
         type: string
         description: Opcional.
 
+  - name: redes
+    label: Redes sociales (capturas)
+    type: file
+    path: src/content/redes/redes.md
+    description: >-
+      Un par de capturas de pantalla por red, de publicaciones que ya tengas subidas
+      (no hace falta que sean las últimas). La web enseña una al azar cada vez que
+      alguien entra y enlaza siempre a la cuenta de verdad, la que pongas en «Textos y
+      datos de la web». Una red solo aparece en la portada si tiene captura Y su enlace
+      está relleno ahí; si falta cualquiera de las dos cosas, esa ventana no sale.
+    fields:
+      - { name: instagram, label: Capturas de Instagram, type: image, list: true }
+      - { name: tiktok, label: Capturas de TikTok, type: image, list: true }
+      - { name: youtube, label: Capturas de YouTube, type: image, list: true }
+
   - name: ajustes
     label: Textos y datos de la web
     type: file
