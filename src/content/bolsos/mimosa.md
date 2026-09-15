@@ -1,9 +1,9 @@
 ---
-nombre: Mimosa
+nombre: Sayf
 precio: 25
 estado: disponible
 color: amarillo
-material: Trapillo, punto abierto
+material: Trapillo amarillo, asa de mano resistente.
 ancho: 30
 alto: 24
 orden: 7
