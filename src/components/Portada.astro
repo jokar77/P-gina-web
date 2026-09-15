@@ -819,46 +819,52 @@ const portonesConRango = portones.map((p, i) => ({
   }
 
   /*
-   * Reserva para cuando el navegador no soporta `animation-timeline: view()`: sin eso
-   * ni el nombre ni los tres portones de móvil tienen forma de animarse solo con CSS, y
-   * se quedaban quietos —el nombre sin retirarse, los portones los tres a la vez según
-   * entra la página, sin que ninguno «apareciera» por su cuenta—. El script de más abajo
-   * detecta ese caso y les pone a cada uno el atributo correspondiente: el nombre se
-   * retira igual que `retirar` en cuanto empieza a salir de pantalla, y cada portón se
-   * abre con el mismo `clip-path` que `abrir-portones`, la primera vez que se asoma.
+   * Reserva para cuando el navegador no soporta `animation-timeline: view()` —el caso
+   * real es Safari e iOS por debajo de la versión 26, de 2025—: sin eso ni el nombre ni
+   * los tres portones tienen forma de atarse al scroll solo con CSS. Antes esto se
+   * conformaba con un revelado suelto, sin clavar nada, y así se perdía justo lo que se
+   * había pedido —que el nombre no se fuera con la página—. `position: sticky` sí lo
+   * soporta hasta el Safari más viejo, así que la estructura clavada (esta regla) es la
+   * misma para todos; lo único que cambia es quién mueve el `clip-path`: aquí, en vez de
+   * una animación de CSS atada al scroll, el script de más abajo mide el scroll a mano
+   * en cada fotograma y pone él mismo la opacidad y el recorte, con el mismo reparto de
+   * `--ini-movil`/`--fin-movil` que ya llevan los portones en su propio estilo.
+   *
+   * Va en una clase, no en `@supports`: la pone el script solo cuando de verdad hace
+   * falta, así un navegador que sí soporta `animation-timeline` nunca toca esta regla.
    */
-  @media (max-width: 1023.98px) {
-    .cabecera[data-retira] {
-      transition:
-        opacity 550ms var(--ease-salida),
-        transform 550ms var(--ease-salida);
-    }
-    .cabecera[data-retira][data-oculto] {
-      opacity: 0;
-      transform: translateY(-6vh) scale(0.62);
-    }
-
-    .porton[data-revela] {
-      clip-path: inset(0 50% 0 50%);
-      transition: clip-path 550ms var(--ease-salida);
-    }
-    .porton[data-revela][data-visible] {
-      clip-path: inset(0 0% 0 0%);
-    }
+  .escena.js-secuencia {
+    height: min(calc(100vh + (var(--portones) + 1) * 90vh), 500vh);
+    padding: 0;
+  }
+  .js-secuencia .fija {
+    position: sticky;
+    top: 0;
+    display: grid;
+    place-items: center;
+    height: 100svh;
+    overflow: hidden;
+    padding: 0;
+  }
+  .js-secuencia .cabecera,
+  .js-secuencia .portones {
+    grid-area: 1 / 1;
+  }
+  .js-secuencia .portones {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .js-secuencia .porton {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
   }
 
-  /*
-   * El portón no lleva variante para «menos animación» aquí: como con `abrir-portones`,
-   * no hay desplazamiento que quitar, solo un `clip-path` que revela el contenido, y ese
-   * revelado es necesario para que llegue a verse. El nombre sí la lleva —igual que
-   * `retirar`— porque su salida sí tiene desplazamiento (el `translateY` y el `scale`) de
-   * sobra: con menos animación pedida se queda solo el desvanecido.
-   */
   @media (prefers-reduced-motion: reduce) {
-    .cabecera[data-retira][data-oculto] {
-      transform: none;
-    }
-
     @keyframes pasar {
       0% {
         opacity: 0;
@@ -903,13 +909,14 @@ const portonesConRango = portones.map((p, i) => ({
 <script>
   /**
    * Reserva del nombre y de los tres portones de móvil para cuando el navegador no
-   * soporta animaciones atadas al scroll: sin `animation-timeline`, ninguno tiene forma
-   * de animarse solo con CSS. El nombre se quedaba fijo en vez de retirarse, y los
-   * portones aparecían los tres a la vez según entra la página, en vez de ir uno a uno
-   * según se baja. Se entera cada uno con IntersectionObserver: el nombre, cada vez que
-   * deja de verse (y al revés, si se vuelve a subir); cada portón, solo la primera vez
-   * que asoma, sin volver a jugar con él. En escritorio no hace falta: ahí, sin soporte,
-   * la portada ya se enseña quieta a propósito (ver el CSS de más arriba).
+   * soporta animaciones atadas al scroll —el caso real es Safari e iOS por debajo de la
+   * versión 26, de 2025—. `position: sticky` sí lo soporta hasta el Safari más viejo, y
+   * esa parte del CSS ya es la misma para todos (ver `.js-secuencia` más arriba); lo
+   * único que falta aquí es quien mueva la opacidad y el `clip-path`, ya que sin
+   * `animation-timeline` no hay forma de atarlos al scroll solo con CSS. Este script
+   * mide el scroll en cada fotograma y calcula él mismo el mismo reparto que ya llevan
+   * los portones en su propio `--ini-movil`/`--fin-movil` —incluido que el último se
+   * abre y se queda así, sin volver a cerrarse—, en vez de dejárselo a una animación.
    *
    * También comprueba si cambia de tamaño la ventana, no solo al cargar: quien prueba a
    * estrechar la pestaña del ordenador para ver cómo se comporta en móvil no recarga la
@@ -923,33 +930,77 @@ const portonesConRango = portones.map((p, i) => ({
     if (activada || !mql.matches || CSS.supports('(animation-timeline: view())')) return;
     activada = true;
 
+    const escena = document.querySelector<HTMLElement>('[data-escena]');
     const cabecera = document.querySelector<HTMLElement>('.cabecera');
-    if (cabecera) {
-      cabecera.dataset.retira = '';
-      new IntersectionObserver(
-        ([entrada]) => cabecera.toggleAttribute('data-oculto', !entrada.isIntersecting),
-        { threshold: 0 }
-      ).observe(cabecera);
+    const portones = [...document.querySelectorAll<HTMLElement>('.porton')];
+    if (!escena || !cabecera || !portones.length) return;
+
+    escena.classList.add('js-secuencia');
+
+    const menosAnimacion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finNombre = parseFloat(getComputedStyle(escena).getPropertyValue('--fin-nombre-movil'));
+    const rangos = portones.map((el, i) => ({
+      el,
+      ini: parseFloat(getComputedStyle(el).getPropertyValue('--ini-movil')),
+      fin: parseFloat(getComputedStyle(el).getPropertyValue('--fin-movil')),
+      ultimo: i === portones.length - 1,
+    }));
+
+    let inicio = 0;
+    let recorrido = 1;
+
+    // El scroll donde `.fija` se clava, y cuánto dura el clavado: se vuelve a medir en
+    // cada cambio de tamaño, porque el alto de `.escena` depende de `vh`.
+    function medir() {
+      inicio = escena!.getBoundingClientRect().top + window.scrollY;
+      recorrido = Math.max(escena!.offsetHeight - window.innerHeight, 1);
     }
 
-    const portones = document.querySelectorAll<HTMLElement>('.porton');
-    if (portones.length) {
-      const obs = new IntersectionObserver(
-        (entradas, o) => {
-          for (const entrada of entradas) {
-            if (!entrada.isIntersecting) continue;
-            (entrada.target as HTMLElement).dataset.visible = '';
-            o.unobserve(entrada.target);
-          }
-        },
-        { threshold: 0.2 }
-      );
+    // El mismo dibujo que `abrirse-y-cerrarse`: cerrado en los dos extremos, abierto de
+    // sobra en medio para poder leerlo, no solo un cruce.
+    const clipAbrirCerrar = (localPct: number) => {
+      if (localPct <= 0 || localPct >= 100) return 50;
+      if (localPct <= 20) return 50 - (localPct / 20) * 50;
+      if (localPct <= 80) return 0;
+      return ((localPct - 80) / 20) * 50;
+    };
 
-      for (const porton of portones) {
-        porton.dataset.revela = '';
-        obs.observe(porton);
+    // El mismo `abrir-portones`: se abre y no vuelve a cerrarse.
+    const clipAbrir = (localPct: number) => 50 - Math.min(Math.max(localPct, 0), 100) * 0.5;
+
+    let pendiente = false;
+    function pintar() {
+      pendiente = false;
+      const progreso = Math.min(Math.max(((window.scrollY - inicio) / recorrido) * 100, 0), 100);
+
+      cabecera!.style.opacity = String(Math.max(1 - progreso / finNombre, 0));
+      if (!menosAnimacion) {
+        const t = Math.min(progreso / finNombre, 1);
+        cabecera!.style.transform = `translateY(${(-6 * t).toFixed(2)}vh) scale(${(1 - 0.38 * t).toFixed(3)})`;
+      }
+
+      for (const { el, ini, fin, ultimo } of rangos) {
+        const local = ((progreso - ini) / (fin - ini)) * 100;
+        const valor = ultimo ? clipAbrir(local) : clipAbrirCerrar(local);
+        el.style.clipPath = `inset(0 ${valor.toFixed(2)}% 0 ${valor.toFixed(2)}%)`;
+        el.style.visibility = !ultimo && valor >= 49.9 ? 'hidden' : 'visible';
+        el.style.pointerEvents = valor < 1 ? 'auto' : 'none';
       }
     }
+
+    function pedirPintado() {
+      if (pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(pintar);
+    }
+
+    medir();
+    pintar();
+    window.addEventListener('scroll', pedirPintado, { passive: true });
+    window.addEventListener('resize', () => {
+      medir();
+      pedirPintado();
+    });
   }
 
   activar();
