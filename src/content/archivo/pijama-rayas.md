@@ -1,5 +1,5 @@
 ---
-nombre: pijama rayas
+nombre: Conjunto a rayas
 tipo: conjunto
 material: idk
 nota: blablabal Bolso no incluido.
