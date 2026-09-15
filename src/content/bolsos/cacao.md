@@ -1,6 +1,6 @@
 ---
 nombre: Ego
-precio: 25
+precio: 30
 estado: disponible
 color: gris
 material: Trapillo gris oscuro, es un bolso plano pero espacioso y los acabados
