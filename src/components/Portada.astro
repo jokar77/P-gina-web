@@ -137,13 +137,35 @@ const portones: Porton[] = [
 const huecos = pases.length + 1;
 const pct = (x: number) => `${((x / huecos) * 100).toFixed(3)}%`;
 const finDelNombre = pct(1.9);
+
+/**
+ * El mismo reparto, pero para el clavado de móvil: aquí no hay una fila que abrir de
+ * golpe, sino un portón detrás de otro, cada uno a pantalla completa. Mismo principio
+ * que el desfile de arriba —cada uno ocupa hueco y medio y empieza antes de que el
+ * anterior termine, para que el relevo no deje la pantalla vacía— pero con menos
+ * huecos, uno por portón.
+ *
+ * El último no se cierra —no hay nada detrás a lo que cederle el turno—, así que no
+ * necesita el mismo truco de recortar su tramo: su animación (`abrir-portones`) solo
+ * tiene un fotograma de llegada, así que con `both` se queda abierta sola en cuanto el
+ * recorrido la alcanza, sin que haga falta pararla antes de que un cierre que no tiene
+ * llegue a empezar.
+ */
+const huecosMovil = portones.length + 1;
+const pctMovil = (x: number) => `${((x / huecosMovil) * 100).toFixed(3)}%`;
+const finDelNombreMovil = pctMovil(1.15);
+const portonesConRango = portones.map((p, i) => ({
+  ...p,
+  iniMovil: pctMovil(i + 0.85),
+  finMovil: i === portones.length - 1 ? '100%' : pctMovil(i + 2.15),
+}));
 ---
 
 <section
   id="inicio"
   class="escena"
   data-escena
-  style={`--fin-nombre:${finDelNombre};--piezas:${pases.length};--portones:${portones.length}`}
+  style={`--fin-nombre:${finDelNombre};--fin-nombre-movil:${finDelNombreMovil};--piezas:${pases.length};--portones:${portones.length}`}
 >
   <div class="fija">
     <div class="cabecera">
@@ -186,8 +208,8 @@ const finDelNombre = pct(1.9);
 
     <ul class="portones">
       {
-        portones.map((p) => (
-          <li class="porton">
+        portonesConRango.map((p) => (
+          <li class="porton" style={`--ini-movil:${p.iniMovil};--fin-movil:${p.finMovil}`}>
             <a href={p.href}>
               <Image
                 src={p.foto}
@@ -373,17 +395,50 @@ const finDelNombre = pct(1.9);
   }
 
   /*
-   * El mismo gesto que en escritorio, no uno inventado aparte: el nombre se retira con
-   * `retirar` (el mismo desvanecido y encogido de ahí abajo) y cada portón se abre con
-   * `abrir-portones` (el mismo `clip-path` que se abre desde el centro hacia los lados),
-   * las dos ya definidas más abajo para la fila de tres. Solo cambia a qué va atada
-   * cada una: en escritorio comparten el `--escena` clavado de toda la secuencia; aquí,
-   * sin nada clavado ni fila de tres, cada elemento se ata a su propia entrada o salida
-   * de la pantalla —el nombre a la suya, cada portón a la suya—, y el propio orden de
-   * la página ya los separa sin hacer falta escalonarlos a mano.
+   * El mismo gesto que en escritorio, esta vez de verdad clavado: la pantalla del
+   * nombre no baja ni se va con el scroll —se queda quieta, como en el ordenador—,
+   * y lo que avanza con el scroll es la propia secuencia: el nombre se retira con
+   * `retirar` mientras el primer portón se abre debajo con el mismo `clip-path` de
+   * escritorio (`abrir-portones`, la misma «puerta» que se abre desde el centro hacia
+   * los lados). Cuando le llega el turno al siguiente, el anterior se cierra con el
+   * mismo gesto al revés —`abrirse-y-cerrarse`— y el que entra se abre encima, así que
+   * nunca hay dos a la vez del todo ni un hueco vacío entre relevo y relevo.
+   *
+   * La diferencia con escritorio no es el gesto sino el reparto: allí los tres portones
+   * caben en una fila y se abren los tres de golpe; aquí, uno por pantalla, así que en
+   * vez de una única ventana comparten el recorrido uno detrás de otro (ver «El reparto
+   * del recorrido, para móvil» en el frontmatter). El último no se cierra —no hay nada
+   * detrás a lo que cederle el turno—, así que se queda abierto en cuanto llega.
    */
   @supports (animation-timeline: view()) {
     @media (max-width: 1023.98px) {
+      /*
+       * El mismo clavado que en escritorio (`.fija` pegado arriba, recortado a una
+       * pantalla) pero con su propio nombre de carril —`--escena-movil`, no
+       * `--escena`— porque el recorrido es otro: aquí cada portón ocupa su propio
+       * turno entero en vez de compartir uno solo con los otros dos.
+       */
+      .escena {
+        height: min(calc(100vh + (var(--portones) + 1) * 90vh), 500vh);
+        padding: 0;
+        view-timeline: --escena-movil block;
+      }
+
+      .fija {
+        position: sticky;
+        top: 0;
+        display: grid;
+        place-items: center;
+        height: 100svh;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .cabecera,
+      .portones {
+        grid-area: 1 / 1;
+      }
+
       /*
        * `animation-timeline` va en una regla aparte, con otro selector, a propósito:
        * junto al atajo `animation` de la regla de al lado, el minificador las fusiona
@@ -393,19 +448,44 @@ const finDelNombre = pct(1.9);
        */
       .cabecera {
         animation: retirar linear both;
-        animation-range: exit;
+        animation-range: contain 0% contain var(--fin-nombre-movil);
       }
       .fija > .cabecera {
-        animation-timeline: view();
+        animation-timeline: --escena-movil;
       }
 
+      .portones {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: visible;
+      }
+      /*
+       * `animation-range` va en la misma regla que el atajo `animation`, no en el
+       * `.porton` de más arriba: `:not(:last-child)` y `:last-child` pesan más que
+       * `.porton` a secas, así que un `animation-range` puesto ahí perdía siempre
+       * contra el `normal` que el propio atajo `animation` deja implícito en las
+       * reglas de más especificidad. Ya pasó una vez —cada portón se abría con el
+       * recorrido entero en vez de con su propio tramo— y así no puede volver a pasar.
+       */
       .porton {
+        grid-area: 1 / 1;
+        width: 100%;
+        height: 100%;
         clip-path: inset(0 50% 0 50%);
+      }
+      .porton:not(:last-child) {
+        animation: abrirse-y-cerrarse linear both;
+        animation-range: contain var(--ini-movil) contain var(--fin-movil);
+      }
+      .porton:last-child {
         animation: abrir-portones linear both;
-        animation-range: entry;
+        animation-range: contain var(--ini-movil) contain var(--fin-movil);
       }
       .portones > .porton {
-        animation-timeline: view();
+        animation-timeline: --escena-movil;
       }
     }
   }
@@ -607,6 +687,51 @@ const finDelNombre = pct(1.9);
   @keyframes abrir-portones {
     to {
       clip-path: inset(0 0% 0 0%);
+    }
+  }
+
+  /*
+   * El mismo gesto, pero de ida y vuelta: para el relevo de un portón a otro en móvil,
+   * donde a diferencia de la fila de escritorio cada uno tiene que dejarle sitio al
+   * siguiente en la misma pantalla. Se abre, se queda abierto un rato largo —hay que
+   * poder leerlo, no es un simple cruce— y se cierra otra vez hacia el centro, cediendo
+   * el turno. `visibility` y `pointer-events` siguen la misma lógica que `pasar`, la
+   * animación del desfile de escritorio: invisible del todo solo en los extremos, y
+   * pulsable solo mientras es él quien manda, para que un clic a medio relevo no se lo
+   * lleve el que se está cerrando.
+   */
+  @keyframes abrirse-y-cerrarse {
+    0% {
+      clip-path: inset(0 50% 0 50%);
+      visibility: hidden;
+      pointer-events: none;
+    }
+    1% {
+      visibility: visible;
+    }
+    20%,
+    80% {
+      clip-path: inset(0 0% 0 0%);
+    }
+    29% {
+      pointer-events: none;
+    }
+    31% {
+      pointer-events: auto;
+    }
+    69% {
+      pointer-events: auto;
+    }
+    71% {
+      pointer-events: none;
+    }
+    99% {
+      visibility: visible;
+    }
+    100% {
+      clip-path: inset(0 50% 0 50%);
+      visibility: hidden;
+      pointer-events: none;
     }
   }
 
