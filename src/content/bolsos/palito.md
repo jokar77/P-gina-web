@@ -1,9 +1,9 @@
 ---
-nombre: Palito
-precio: 30
+nombre: Bambo
+precio: 25
 estado: disponible
 color: azul
-material: Trapillo
+material: Trapillo azul y asas de bambú
 ancho: 30
 alto: 30
 orden: 1
