@@ -1,4 +1,33 @@
 ---
+/**
+ * Política de privacidad.
+ *
+ * El listado de qué hay que contar antes de recoger un dato lo fija el RGPD (art. 13):
+ * quién responde, con qué fin y con qué base legal se trata cada dato, a quién se cede,
+ * cuánto se conserva, si hay transferencias fuera de la Unión Europea, y los derechos que
+ * tiene quien compra. Esta página ya cubría casi todo; faltaba nombrar la transferencia
+ * internacional que supone hablar por WhatsApp.
+ *
+ * WhatsApp es de Meta, con sede en Estados Unidos: la conversación sale de la Unión
+ * Europea. Eso necesita una base legal propia (RGPD art. 44-49), y la que usa Meta hoy es
+ * su certificación en el EU-US Data Privacy Framework, la vía de adecuación que reconoce
+ * la Comisión Europea (RGPD art. 45) — confirmado en la propia página legal de WhatsApp
+ * sobre el marco (whatsapp.com/legal/data-privacy-framework). No es una garantía eterna:
+ * el marco anterior (Privacy Shield) se anuló en 2020 (sentencia Schrems II), así que esto
+ * puede volver a cambiar y conviene revisarlo de vez en cuando, no darlo por fijo.
+ *
+ * No hace falta delegado de protección de datos (RGPD art. 37): ese puesto solo es
+ * obligatorio para administraciones públicas o para quien trata datos a gran escala o de
+ * forma sistemática, y esto es justo lo contrario.
+ *
+ * Se ha precisado también la base jurídica de contestar preguntas antes de comprar —son
+ * medidas precontractuales a petición del interesado (RGPD art. 6.1.b), no una base
+ * genérica— y el plazo para responder a los derechos, que la ley permite ampliar si la
+ * petición es complicada (RGPD art. 12.3).
+ *
+ * Nada de esto es asesoramiento legal: antes de publicar, que lo revise una gestoría,
+ * como ya dice PLAN.md.
+ */
 import Layout from '../layouts/Layout.astro';
 ---
 
@@ -38,6 +67,11 @@ import Layout from '../layouts/Layout.astro';
       </ul>
       <p class="mt-4">
         Para esto y para todo lo demás, lo más rápido es WhatsApp: contesta ella misma.
+      </p>
+      <p class="mt-4">
+        No hace falta un delegado de protección de datos (RGPD art. 37): ese cargo es
+        obligatorio para administraciones públicas o para quien trata datos a gran escala
+        o de forma sistemática, y esto es una tienda pequeña que vende hablando.
       </p>
 
       <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Qué guarda la web en tu navegador</h2>
@@ -95,14 +129,27 @@ import Layout from '../layouts/Layout.astro';
         </li>
         <li>
           <strong class="font-normal">Contestar a lo que preguntes</strong> aunque al final no
-          compres nada. Base jurídica: tu propia petición.
+          compres nada. Base jurídica: son medidas precontractuales que pides tú (RGPD
+          art. 6.1.b).
         </li>
       </ul>
       <p class="mt-4">
         Cuánto tiempo se conserva: la conversación, mientras haga falta para el pedido y para
         poder responder de él. La documentación de facturación, el plazo que marque la ley
         [PENDIENTE: confirmar con la gestoría el plazo de conservación de facturas y
-        documentación fiscal]. No se usa tu número para mandarte publicidad.
+        documentación fiscal]. No se usa tu número para mandarte publicidad, y no se toman
+        decisiones automatizadas ni se elaboran perfiles con tus datos.
+      </p>
+      <p class="mt-4">
+        Meta, la empresa detrás de WhatsApp, tiene sede en Estados Unidos: al escribir por
+        ahí, tu conversación sale de la Unión Europea. Esa salida tiene cobertura legal:
+        Meta está certificada en el EU-US Data Privacy Framework, la vía de adecuación que
+        reconoce la Comisión Europea para transferencias a Estados Unidos (RGPD art. 45).
+        Esto no lo decide ni lo controla esta web, es la política de WhatsApp; puedes leerla
+        completa en
+        <a href="https://www.whatsapp.com/legal/data-privacy-framework">
+          whatsapp.com/legal/data-privacy-framework
+        </a>.
       </p>
 
       <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Quién más ve tus datos</h2>
@@ -134,7 +181,8 @@ import Layout from '../layouts/Layout.astro';
         Puedes pedir acceso a tus datos, que se corrijan, que se borren, oponerte a que se
         traten, pedir que se limite su uso o que te los den en un archivo para llevártelos.
         Escribe a [PENDIENTE: dirección de correo electrónico para ejercer los derechos] o por
-        WhatsApp, diciendo qué quieres. Se te contesta en un mes como mucho.
+        WhatsApp, diciendo qué quieres. Se te contesta en un mes como mucho, ampliable a
+        dos meses más si la petición es complicada, avisándote del motivo (RGPD art. 12.3).
       </p>
       <p class="mt-4">
         Si crees que no se ha hecho bien, puedes reclamar ante la Agencia Española de

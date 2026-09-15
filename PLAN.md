@@ -107,8 +107,16 @@ Pendiente de verdad:
       o un apartado de correos que admita paquetería. **Quién paga el envío de vuelta,
       decidido: paga el comprador** (TRLGDCU art. 108 lo permite si se dice antes de
       comprar; es distinto del envío de vuelta por garantía, que sigue pagándolo la
-      vendedora). **Quedan 23 datos pendientes**, todos marcados en el texto como
-      `[PENDIENTE: ...]`.
+      vendedora). **La de privacidad también revisada** (RGPD art. 13, lo que hay que
+      contar antes de recoger un dato): faltaba nombrar que hablar por WhatsApp saca la
+      conversación de la Unión Europea — Meta está certificada en el EU-US Data Privacy
+      Framework, la vía de adecuación que reconoce la Comisión Europea (RGPD art. 45,
+      confirmado en whatsapp.com/legal/data-privacy-framework) — y se aclaró que no hace
+      falta delegado de protección de datos a esta escala (RGPD art. 37), que la base legal
+      de contestar preguntas antes de comprar son medidas precontractuales (RGPD art. 6.1.b,
+      no genérica), y que el plazo de un mes para responder a los derechos es ampliable dos
+      meses más si la petición es complicada (RGPD art. 12.3). **Quedan 23 datos
+      pendientes**, todos marcados en el texto como `[PENDIENTE: ...]`.
 - [ ] Registro de actividades de tratamiento (versión simplificada para actividad pequeña).
 
 > Nada de esto es asesoramiento legal. Son los puntos a llevar a la gestoría para que ella
