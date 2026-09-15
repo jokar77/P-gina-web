@@ -1,9 +1,9 @@
 ---
-nombre: Rescoldo
+nombre: Britney
 precio: 25
 estado: disponible
 color: rosa
-material: Algodón con lentejuelas, monedero a juego
+material: Lana acrílica con brillo incluido, bolso de mano con tarjetero a juego.
 ancho: 30
 alto: 18
 orden: 5
