@@ -40,7 +40,7 @@
   "envios": {
     "puntoRecogida": 5,
     "domicilio": 7,
-    "gratisDesde": 90,
+    "gratisDesde": 60,
     "plazoDias": "2-3 días laborables",
     "zona": "Península y Baleares"
   }

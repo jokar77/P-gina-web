@@ -68,7 +68,9 @@ import { precio } from '../lib/formato';
                     />
                     <span class="marca-radio" aria-hidden="true" />
                     <span class="flex-1">{m.nombre}</span>
-                    <span class="text-paper/60">{precio(m.precio)}</span>
+                    <span class="text-paper/60" data-precio-metodo={m.id}>
+                      {precio(m.precio)}
+                    </span>
                   </label>
                 ))
               }
@@ -383,7 +385,7 @@ import { precio } from '../lib/formato';
     vaciar,
   } from '../lib/carrito';
   import type { Linea } from '../lib/carrito';
-  import { costeEnvio, nombreMetodo, type Metodo } from '../lib/envio';
+  import { costeEnvio, METODOS, nombreMetodo, type Metodo } from '../lib/envio';
   import { precio } from '../lib/formato';
   import site from '../data/site.json';
   import qrcode from 'qrcode-generator';
@@ -594,6 +596,19 @@ import { precio } from '../lib/formato';
 
     const piezas = total();
     const envioCoste = costeEnvio(piezas, metodo);
+
+    // Con el pedido ya por encima del mínimo, el envío es gratis elijas lo que elijas,
+    // así que el precio junto a cada opción sobra —y «5 €» junto a un envío que en
+    // realidad no se cobra es directamente engañoso—. Se quita en vez de ponerlo a
+    // «Gratis» en las dos, que sería repetir la misma palabra dos veces seguidas sin
+    // aportar nada que el aviso de debajo no diga ya.
+    const envioSiempreGratis = piezas >= site.envios.gratisDesde;
+    for (const el of document.querySelectorAll<HTMLElement>('[data-precio-metodo]')) {
+      const id = el.dataset.precioMetodo as Metodo;
+      const precioMetodo = METODOS.find((m) => m.id === id)?.precio ?? 0;
+      el.textContent = envioSiempreGratis ? '' : precio(precioMetodo);
+    }
+
     if (marcaSubtotal) marcaSubtotal.textContent = precio(piezas);
     if (marcaSubtotalDatos) marcaSubtotalDatos.textContent = precio(piezas);
     if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
