@@ -142,8 +142,19 @@ import site from '../data/site.json';
               </div>
             </fieldset>
           </div>
+        </div>
 
-          <dl class="filete mt-7 grid grid-cols-[1fr_auto] gap-y-1 pt-6 text-[15px]">
+        {/*
+          El precio y el botón de enviar van con el QR, no con el formulario: en
+          ordenador forman su propia columna a la derecha —clavada con `lg:sticky`
+          mientras se rellenan los datos de la izquierda, igual que ya hace el maniquí
+          del configurador (ver Configurador.astro)— para que se lean como un bloque de
+          «esto es lo que vas a mandar», separado de los campos que hay que rellenar. En
+          móvil no hay columnas, así que sigue leyéndose de arriba abajo en el mismo
+          orden de siempre: cuentas, avisos, botón y, si hay ratón, el QR debajo.
+        */}
+        <div class="mt-7 lg:sticky lg:top-24 lg:mt-0 lg:self-start">
+          <dl class="grid grid-cols-[1fr_auto] gap-y-1 border-t border-(--color-line) pt-6 text-[15px] lg:border-t-0 lg:pt-0">
             <dt class="text-ink-soft">Piezas</dt>
             <dd class="text-right" data-subtotal></dd>
             <dt class="text-ink-soft">Envío</dt>
@@ -167,30 +178,26 @@ import site from '../data/site.json';
           </p>
 
           <a class="boton mt-6 w-full" data-enviar href="#">Enviar por WhatsApp</a>
-        </div>
 
-        {/*
-          Solo en ordenador (detectado por si hay ratón de verdad, no por ancho de
-          pantalla: una tablet táctil ancha no lo es). En móvil el botón de arriba ya
-          abre la app directamente; aquí, sin la app vinculada, se queda en la pantalla
-          del código de WhatsApp Web, que para quien no sabe qué es eso es un callejón
-          sin salida. El QR evita ese paso entero: se escanea con la cámara del móvil y
-          abre la app ahí, con el pedido ya escrito, sin pasar por WhatsApp Web ni el
-          ordenador para nada.
-
-          A partir de 1024px se clava (`lg:sticky`) en su propia columna, a la derecha,
-          para que siga a la vista mientras se rellena el formulario de la izquierda,
-          igual que ya hace el maniquí del configurador (ver Configurador.astro).
-        */}
-        <div
-          class="qr-escritorio mt-6 grid justify-items-center gap-3 text-center lg:sticky lg:top-24 lg:mt-0 lg:self-start"
-          data-qr-escritorio
-        >
-          <p class="max-w-[26ch] text-[13px] text-ink-soft">
-            ¿No tienes WhatsApp Web en el ordenador? Usa este código con el móvil: te
-            lleva directo a esta conversación con Sakina, con el pedido ya escrito.
-          </p>
-          <div class="qr-caja" data-qr-caja></div>
+          {/*
+            Solo en ordenador (detectado por si hay ratón de verdad, no por ancho de
+            pantalla: una tablet táctil ancha no lo es). En móvil el botón de arriba ya
+            abre la app directamente; aquí, sin la app vinculada, se queda en la
+            pantalla del código de WhatsApp Web, que para quien no sabe qué es eso es un
+            callejón sin salida. El QR evita ese paso entero: se escanea con la cámara
+            del móvil y abre la app ahí, con el pedido ya escrito, sin pasar por
+            WhatsApp Web ni el ordenador para nada.
+          */}
+          <div
+            class="qr-escritorio mt-6 grid justify-items-center gap-3 text-center"
+            data-qr-escritorio
+          >
+            <p class="max-w-[26ch] text-[13px] text-ink-soft">
+              ¿No tienes WhatsApp Web en el ordenador? Usa este código con el móvil: te
+              lleva directo a esta conversación con Sakina, con el pedido ya escrito.
+            </p>
+            <div class="qr-caja" data-qr-caja></div>
+          </div>
         </div>
       </form>
     </div>
