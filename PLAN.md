@@ -221,10 +221,23 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
 - [x] **Auditoría de accesibilidad hecha** y aplicado lo medible: contraste del pie
       (4,16 → 5,25:1, verificado sobre píxeles), zonas de toque por encima de 24 px,
       anillo de foco sin recortar en la tira, y la tira ya no se mueve sin parar
-      (WCAG 2.2.2). Pendientes tres decisiones de diseño, no fallos:
-      el bloque de dirección no se ve en pantallas de 320 px sin desplazar mucho;
-      el configurador deja añadir el mismo encargo dos veces sin avisar; y los filtros
-      de color no dicen cuántas piezas quedan.
+      (WCAG 2.2.2). De las tres decisiones de diseño que quedaban pendientes (no
+      fallos de accesibilidad), las tres están ya resueltas:
+      - **El bloque de dirección en 320px** se resolvió solo, de rebote, al sacar los
+        datos de envío del cajón del carrito a su propia página (`/pedido`, ver más
+        abajo): en un cajón de 28rem con scroll interno el campo quedaba escondido; en
+        una página normal, a 1,3 pantallas de scroll, es lo esperable en cualquier
+        formulario de compra. Verificado con Playwright a 320px de ancho.
+      - **El configurador ya avisa** si la combinación exacta (forma, color y extras)
+        que se va a añadir ya está en el pedido: pide confirmar con un segundo clic en
+        el propio botón, igual que «Vaciar el pedido». No lo bloquea —dos bolsos
+        iguales de regalo es un pedido legítimo—, solo evita que un doble clic sin
+        querer los duplique en silencio.
+      - **Los filtros de color ya cuentan.** Cada muestra lleva una burbuja con cuántas
+        piezas hay de ese color, y «Todos» con el total; se recalculan si se activa
+        «Solo disponibles», así el número siempre dice lo que de verdad se va a
+        encontrar. El nombre accesible de cada muestra pasa a incluir el número
+        (`aria-label`), no solo el color.
 - [ ] El ASCII del logo (`src/assets/marca/ascii.jpg`) como comentario en el código fuente,
       si gusta la idea. Está sin usar.
 
