@@ -198,7 +198,7 @@ const seccion = site.secciones.disena;
 <script>
   import config from '../data/configurador.json';
   import { COLORES, type ColorId } from '../data/colores';
-  import { anadir } from '../lib/carrito';
+  import { anadir, leer } from '../lib/carrito';
   import { precio } from '../lib/formato';
 
   const form = document.querySelector<HTMLFormElement>('[data-configurador]');
@@ -256,16 +256,43 @@ const seccion = site.secciones.disena;
     form.addEventListener('change', pintar);
     pintar();
 
+    // Cada encargo a medida lleva un id propio (`medida-${Date.now()}`), a propósito:
+    // a diferencia de una pieza de catálogo, aquí sí tiene sentido pedir dos iguales
+    // (dos bolsos de regalo, por ejemplo), así que el carrito no puede rechazarlo solo
+    // por duplicado. Lo que sí puede pasar sin querer es un doble clic, o pulsar otra
+    // vez sin darse cuenta de que ya se había añadido: para eso, si la combinación
+    // exacta (forma, color y extras) ya está en el pedido, se pide confirmar con un
+    // segundo clic, igual que «Vaciar el pedido» en el carrito.
+    const ETIQUETA_BOTON = boton.textContent!.trim();
+    let confirmando: ReturnType<typeof setTimeout> | undefined;
+
+    const reponerBoton = () => {
+      clearTimeout(confirmando);
+      confirmando = undefined;
+      boton.textContent = ETIQUETA_BOTON;
+    };
+
     boton.addEventListener('click', () => {
       const { forma, color, extras, total } = estado();
       const detalle = [
         color.nombre.toLowerCase(),
         ...extras.map((e) => e.nombre.toLowerCase()),
       ].join(', ');
+      const nombre = `${forma.nombre} a medida`;
+
+      const yaEsta =
+        !confirmando &&
+        leer().some((l) => l.nombre === nombre && l.detalle === detalle && l.precio === total);
+      if (yaEsta) {
+        boton.textContent = '¿Seguro? Pulsa otra vez para añadirlo igual';
+        confirmando = setTimeout(reponerBoton, 4000);
+        return;
+      }
+      reponerBoton();
 
       anadir({
         id: `medida-${Date.now()}`,
-        nombre: `${forma.nombre} a medida`,
+        nombre,
         precio: total,
         detalle,
         orientativo: true,
