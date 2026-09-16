@@ -2,8 +2,8 @@
 nombre: Escarcha
 precio: 30
 estado: disponible
-color: gris
-material: Lana con lentejuelas, monedero a juego
+color: azul
+material: Lana acrílica más hilo con lentejuelas, efecto encantador y tarjetero a juego.
 ancho: 28
 alto: 22
 orden: 1

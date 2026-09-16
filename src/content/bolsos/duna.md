@@ -1,9 +1,9 @@
 ---
 nombre: Duna
-precio: 25
+precio: 20
 estado: disponible
 color: blanco
-material: Trapillo grueso, sin asa
+material: Trapillo blanco, bolso de mano con asa incorporada.
 ancho: 32
 alto: 20
 orden: 9

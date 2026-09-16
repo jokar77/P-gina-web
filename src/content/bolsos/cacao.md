@@ -1,9 +1,10 @@
 ---
-nombre: Cacao
-precio: 25
+nombre: Ego
+precio: 30
 estado: disponible
-color: chocolate
-material: Lana suave, ribete y asa en crudo
+color: gris
+material: Trapillo gris oscuro, es un bolso plano pero espacioso y los acabados
+  en fibra acrílica blanca brillante al estilo mohair.
 ancho: 30
 alto: 22
 orden: 11

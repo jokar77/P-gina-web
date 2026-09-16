@@ -3,7 +3,8 @@ nombre: Marea
 precio: 25
 estado: disponible
 color: azul
-material: Trapillo de algodón, flecos largos
+material: Bolso en trapillo azul, asa ajustable para poder llevar tanto de mano
+  como en hombro.
 ancho: 26
 alto: 20
 orden: 2

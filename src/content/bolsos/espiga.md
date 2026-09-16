@@ -1,9 +1,9 @@
 ---
-nombre: Espiga
-precio: 30
+nombre: Plata
+precio: 40
 estado: disponible
 color: gris
-material: Hilo dorado, forro interior de tela
+material: Bolos con cierre de trapillo de fibra plateado y forro interior, muy espacioso.
 ancho: 26
 alto: 18
 orden: 8
