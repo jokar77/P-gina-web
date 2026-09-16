@@ -23,143 +23,151 @@ import site from '../data/site.json';
   descripcion="Revisa tu pedido, elige cómo lo recibes y envíalo por WhatsApp."
 >
   <section class="px-5 py-section sm:px-8">
-    <div class="mx-auto max-w-md">
+    <div class="mx-auto max-w-md lg:max-w-4xl">
       <a href="/" class="text-[15px] underline">← Seguir mirando</a>
 
       <h1 class="mt-5 font-display text-[clamp(2rem,6vw,2.75rem)]" data-titulo>
         Datos de envío
       </h1>
 
-      <p class="mt-6 text-[15px] text-ink-soft" data-vacio hidden>
+      <p class="mt-6 max-w-md text-[15px] text-ink-soft" data-vacio hidden>
         Todavía no has añadido nada al pedido.{' '}
         <a href="/" class="underline">Vuelve a la colección</a> para elegir una pieza.
       </p>
 
-      <form data-form hidden>
-        <ul class="mt-7 grid gap-3" data-resumen></ul>
+      {/*
+        Bajo 1024px es una columna, de arriba abajo, como cualquier formulario. A
+        partir de ahí hay sitio de sobra para que el QR no se sienta un móvil estirado
+        sobre una pantalla de ordenador: pasa a su propia columna, a la derecha, más
+        grande y clavada mientras se rellena el formulario de la izquierda.
+      */}
+      <form data-form hidden class="lg:grid lg:grid-cols-[28rem_20rem] lg:items-start lg:gap-16">
+        <div class="min-w-0">
+          <ul class="mt-7 grid gap-3" data-resumen></ul>
 
-        <div class="filete mt-7 pt-6" data-bloque-envio hidden>
-          <fieldset>
-            <legend class="text-[15px] text-ink-soft">Cómo lo recibes</legend>
-            <div class="mt-3 grid gap-2">
-              {
-                METODOS.map((m, i) => (
-                  <label class="opcion-envio">
-                    <input
-                      type="radio"
-                      name="envio"
-                      value={m.id}
-                      checked={i === 0}
-                      class="sr-only"
-                      data-metodo
-                    />
-                    <span class="marca-radio" aria-hidden="true" />
-                    <span class="flex-1">{m.nombre}</span>
-                    <span class="text-ink-soft" data-precio-metodo={m.id}>
-                      {precio(m.precio)}
-                    </span>
-                  </label>
-                ))
-              }
-            </div>
-            <p class="mt-2 text-[14px] text-ink-soft">
-              Gratis a partir de {precio(site.envios.gratisDesde)}. {site.envios.zona}.
-            </p>
-          </fieldset>
-
-          <fieldset class="filete mt-7 pt-6">
-            <legend class="text-[15px] text-ink-soft">Dónde te lo mandamos</legend>
-            <p class="mt-1 mb-4 text-[14px] text-ink-soft" data-envio-nota></p>
-            <div class="grid gap-3">
-              <label class="campo">
-                <span>Nombre y apellidos</span>
-                <input type="text" name="nombre" autocomplete="name" data-dato />
-              </label>
-
-              {/*
-                No hay buscador de oficinas en directo: Correos no ofrece uno público
-                para insertar en cualquier web sin cuenta de empresa, y montarlo con
-                datos propios (miles de oficinas) no encaja aquí. En vez de eso, se
-                enlaza a su localizador oficial y quien compra escribe cuál eligió,
-                igual que ya hace con la dirección: nada se valida solo, todo se
-                confirma hablando.
-              */}
-              <div class="grid gap-3" data-campos-recogida hidden>
-                <a
-                  href="https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle"
-                  target="_blank"
-                  rel="noopener"
-                  class="text-[14px] underline"
-                >
-                  Buscar mi oficina más cercana ↗
-                </a>
-                <label class="campo">
-                  <span>Oficina de recogida</span>
-                  <input
-                    type="text"
-                    name="oficina"
-                    placeholder="Nombre o dirección de la oficina"
-                    data-dato
-                  />
-                </label>
+          <div class="filete mt-7 pt-6" data-bloque-envio hidden>
+            <fieldset>
+              <legend class="text-[15px] text-ink-soft">Cómo lo recibes</legend>
+              <div class="mt-3 grid gap-2">
+                {
+                  METODOS.map((m, i) => (
+                    <label class="opcion-envio">
+                      <input
+                        type="radio"
+                        name="envio"
+                        value={m.id}
+                        checked={i === 0}
+                        class="sr-only"
+                        data-metodo
+                      />
+                      <span class="marca-radio" aria-hidden="true" />
+                      <span class="flex-1">{m.nombre}</span>
+                      <span class="text-ink-soft" data-precio-metodo={m.id}>
+                        {precio(m.precio)}
+                      </span>
+                    </label>
+                  ))
+                }
               </div>
+              <p class="mt-2 text-[14px] text-ink-soft">
+                Gratis a partir de {precio(site.envios.gratisDesde)}. {site.envios.zona}.
+              </p>
+            </fieldset>
 
-              <div class="grid gap-3" data-campos-domicilio>
+            <fieldset class="filete mt-7 pt-6">
+              <legend class="text-[15px] text-ink-soft">Dónde te lo mandamos</legend>
+              <p class="mt-1 mb-4 text-[14px] text-ink-soft" data-envio-nota></p>
+              <div class="grid gap-3">
                 <label class="campo">
-                  <span>Dirección</span>
-                  <input
-                    type="text"
-                    name="direccion"
-                    autocomplete="street-address"
-                    placeholder="Calle, número, piso"
-                    data-dato
-                  />
+                  <span>Nombre y apellidos</span>
+                  <input type="text" name="nombre" autocomplete="name" data-dato />
                 </label>
-                <div class="grid grid-cols-[7rem_1fr] gap-3">
+
+                {/*
+                  No hay buscador de oficinas en directo: Correos no ofrece uno público
+                  para insertar en cualquier web sin cuenta de empresa, y montarlo con
+                  datos propios (miles de oficinas) no encaja aquí. En vez de eso, se
+                  enlaza a su localizador oficial y quien compra escribe cuál eligió,
+                  igual que ya hace con la dirección: nada se valida solo, todo se
+                  confirma hablando.
+                */}
+                <div class="grid gap-3" data-campos-recogida hidden>
+                  <a
+                    href="https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-[14px] underline"
+                  >
+                    Buscar mi oficina más cercana ↗
+                  </a>
                   <label class="campo">
-                    <span>Código postal</span>
+                    <span>Oficina de recogida</span>
                     <input
                       type="text"
-                      name="cp"
-                      inputmode="numeric"
-                      autocomplete="postal-code"
+                      name="oficina"
+                      placeholder="Nombre o dirección de la oficina"
                       data-dato
                     />
                   </label>
+                </div>
+
+                <div class="grid gap-3" data-campos-domicilio>
                   <label class="campo">
-                    <span>Población</span>
-                    <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+                    <span>Dirección</span>
+                    <input
+                      type="text"
+                      name="direccion"
+                      autocomplete="street-address"
+                      placeholder="Calle, número, piso"
+                      data-dato
+                    />
                   </label>
+                  <div class="grid grid-cols-[7rem_1fr] gap-3">
+                    <label class="campo">
+                      <span>Código postal</span>
+                      <input
+                        type="text"
+                        name="cp"
+                        inputmode="numeric"
+                        autocomplete="postal-code"
+                        data-dato
+                      />
+                    </label>
+                    <label class="campo">
+                      <span>Población</span>
+                      <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-          </fieldset>
+            </fieldset>
+          </div>
+
+          <dl class="filete mt-7 grid grid-cols-[1fr_auto] gap-y-1 pt-6 text-[15px]">
+            <dt class="text-ink-soft">Piezas</dt>
+            <dd class="text-right" data-subtotal></dd>
+            <dt class="text-ink-soft">Envío</dt>
+            <dd class="text-right" data-coste-envio></dd>
+            <dt class="mt-1 self-baseline">Total</dt>
+            <dd class="mt-1 text-right font-display text-2xl" data-total></dd>
+          </dl>
+
+          {/* Cuando en el pedido solo hay preguntas, no hay cuentas que echar todavía. */}
+          <p class="text-[15px] text-ink-soft" data-solo-pregunta hidden>
+            Aquí solo hay preguntas: no hay precio ni envío que calcular hasta que lo habléis.
+          </p>
+
+          <p class="mt-1 text-[13px] text-ink-soft" data-aviso hidden>
+            Orientativo: las piezas por encargo se cierran hablando.
+          </p>
+
+          <p class="mt-4 text-[14px] text-ink-soft">
+            Aquí no se paga nada. Al pulsar se abre WhatsApp con este pedido escrito, y el pago
+            lo acordáis por Bizum o transferencia. No se envía a Canarias, Ceuta ni Melilla.
+          </p>
+
+          <a class="boton mt-6 w-full" data-enviar href="#">Enviar por WhatsApp</a>
         </div>
-
-        <dl class="filete mt-7 grid grid-cols-[1fr_auto] gap-y-1 pt-6 text-[15px]">
-          <dt class="text-ink-soft">Piezas</dt>
-          <dd class="text-right" data-subtotal></dd>
-          <dt class="text-ink-soft">Envío</dt>
-          <dd class="text-right" data-coste-envio></dd>
-          <dt class="mt-1 self-baseline">Total</dt>
-          <dd class="mt-1 text-right font-display text-2xl" data-total></dd>
-        </dl>
-
-        {/* Cuando en el pedido solo hay preguntas, no hay cuentas que echar todavía. */}
-        <p class="text-[15px] text-ink-soft" data-solo-pregunta hidden>
-          Aquí solo hay preguntas: no hay precio ni envío que calcular hasta que lo habléis.
-        </p>
-
-        <p class="mt-1 text-[13px] text-ink-soft" data-aviso hidden>
-          Orientativo: las piezas por encargo se cierran hablando.
-        </p>
-
-        <p class="mt-4 text-[14px] text-ink-soft">
-          Aquí no se paga nada. Al pulsar se abre WhatsApp con este pedido escrito, y el pago
-          lo acordáis por Bizum o transferencia. No se envía a Canarias, Ceuta ni Melilla.
-        </p>
-
-        <a class="boton mt-6 w-full" data-enviar href="#">Enviar por WhatsApp</a>
 
         {/*
           Solo en ordenador (detectado por si hay ratón de verdad, no por ancho de
@@ -169,8 +177,15 @@ import site from '../data/site.json';
           sin salida. El QR evita ese paso entero: se escanea con la cámara del móvil y
           abre la app ahí, con el pedido ya escrito, sin pasar por WhatsApp Web ni el
           ordenador para nada.
+
+          A partir de 1024px se clava (`lg:sticky`) en su propia columna, a la derecha,
+          para que siga a la vista mientras se rellena el formulario de la izquierda,
+          igual que ya hace el maniquí del configurador (ver Configurador.astro).
         */}
-        <div class="qr-escritorio mt-6 grid justify-items-center gap-3 text-center" data-qr-escritorio>
+        <div
+          class="qr-escritorio mt-6 grid justify-items-center gap-3 text-center lg:sticky lg:top-24 lg:mt-0 lg:self-start"
+          data-qr-escritorio
+        >
           <p class="max-w-[26ch] text-[13px] text-ink-soft">
             ¿No tienes WhatsApp Web en el ordenador? Usa este código con el móvil: te
             lleva directo a esta conversación con Sakina, con el pedido ya escrito.
@@ -258,6 +273,13 @@ import site from '../data/site.json';
   .qr-caja {
     width: 9.5rem;
     box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+  /* Más grande en su propia columna de escritorio: ahí hay sitio de sobra y el gesto
+     de escanear se hace desde más lejos (el móvil en una mano, la pantalla enfrente). */
+  @media (min-width: 1024px) {
+    .qr-caja {
+      width: 13rem;
+    }
   }
   /*
    * El SVG lo inserta el script con `innerHTML`, así que nunca lleva el atributo
