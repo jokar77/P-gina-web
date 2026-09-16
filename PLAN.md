@@ -138,20 +138,30 @@ Lo que sí aplica, por orden de utilidad real:
 - [ ] **2FA en GitHub y en Cloudflare.** Este es el riesgo de verdad: no que alguien
       "hackee la web", sino que entre en la cuenta y la cambie o la redirija. Es lo más
       importante de esta lista y no toca ni una línea de código.
-- [ ] **Cabeceras de seguridad** en `public/_headers`, que ya existe para el cacheado.
-      Añadir:
-      ```
-      /*
-        X-Content-Type-Options: nosniff
-        Referrer-Policy: strict-origin-when-cross-origin
-        Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
-        Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
-        Strict-Transport-Security: max-age=31536000; includeSubDomains
-      ```
-      **Probar la CSP antes de darla por buena**: si más adelante entra un tercero
-      (analítica, un embed), hay que abrirle hueco ahí o dejará de cargar en silencio.
-      `frame-ancestors 'none'` impide que metan la web dentro de un iframe ajeno, que es
-      cómo se montan las suplantaciones.
+- [x] **Cabeceras de seguridad** en `public/_headers`, añadidas junto a las que ya había
+      para el cacheado: `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`,
+      `Content-Security-Policy` y `Strict-Transport-Security`. `frame-ancestors 'none'`
+      impide que metan la web dentro de un iframe ajeno, que es cómo se montan las
+      suplantaciones.
+      **Probada de verdad, no solo escrita**: se sirvió `dist/` en local con esas mismas
+      cabeceras y se recorrió con Playwright una plantilla de cada tipo (portada, listado
+      y ficha de bolso, niños, archivo, `/pedido` con el formulario e interacción de
+      método de envío, legales, 404, y el carrito abierto desde la portada), mirando la
+      consola por errores de CSP. Salieron dos problemas reales que solo aparecen al
+      probar, no leyendo el código: los `<script type="application/ld+json">` de los
+      datos estructurados (la ficha de la marca en todas las páginas) los bloqueaba
+      `script-src 'self'` —son datos, no código ejecutable, pero el navegador aplica CSP
+      igual a cualquier `<script>` sin mirar el `type`—, y una fuente traía una variante
+      de reserva incrustada como `data:` que chocaba con `font-src 'self'`.
+      **Solución para el primero, sin abrir `'unsafe-inline'`:** como el contenido de
+      esos scripts cambia por página (nombre y precio de cada pieza), no se puede escribir
+      a mano un hash fijo. `scripts/generar-cabeceras.mjs` corre después de `astro build`
+      (encadenado en `npm run build`), calcula el hash sha256 de cada `<script>` inline
+      que quedó en el HTML construido y rellena con ellos el marcador
+      `__LD_JSON_HASHES__` que deja `public/_headers` en `script-src`. Un hash exacto por
+      contenido es tan seguro como servirlo desde un archivo propio, sin renunciar a que
+      `script-src` siga sin admitir `'unsafe-inline'`. Para el segundo, `font-src` pasa a
+      admitir `data:` —una fuente no puede ejecutar código, así que no hay riesgo real—.
 - [ ] **Nunca meter claves en el repositorio.** Cuando llegue Stripe, las claves van en las
       variables de entorno de Cloudflare. El número de WhatsApp sí es público a propósito:
       es un contacto de negocio.
