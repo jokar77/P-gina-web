@@ -301,6 +301,21 @@ Cosas que decidí yo y pueden estar mal.
 
 ## 7. Decisiones tomadas, y por qué
 
+- **Código QR para enviar el pedido desde un ordenador sin WhatsApp Web vinculado.**
+  El botón «Enviar por WhatsApp» abre `wa.me`, que en móvil lleva directo a la app pero
+  en ordenador solo funciona bien si WhatsApp Web ya está vinculado — si no, mucha
+  gente se queda atascada en la pantalla del código QR de WhatsApp sin saber qué hacer.
+  Solución sin depender de ningún servicio externo (coherente con el resto de la web):
+  en ordenador —detectado por `(hover: hover) and (pointer: fine)`, no por ancho de
+  pantalla, para no confundir una tablet táctil ancha con un ordenador de verdad— se
+  enseña además un código QR generado en el propio navegador (librería
+  `qrcode-generator`, sin llamadas a ningún servidor) que codifica ese mismo enlace de
+  WhatsApp con el pedido ya escrito. Al escanearlo con la cámara del móvil se abre la
+  app ahí directamente, sin pasar por WhatsApp Web para nada. Probado que el código
+  decodifica exactamente al mismo enlace del botón, con acentos y el símbolo € intactos
+  (la librería, por defecto, trunca los caracteres que no son ASCII; se sobrescribió su
+  codificación para usar UTF-8 de verdad, tal y como su propia documentación indica que
+  se puede hacer).
 - **El apartado «Redes» enseña fotos y vídeos subidos, no las redes en directo.** Sakina
   pidió algo parecido a un feed en vivo (una ventana por red, con una publicación al
   azar, foto o vídeo). Conectar de verdad con Instagram o TikTok pide la API oficial de
