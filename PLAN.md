@@ -301,6 +301,21 @@ Cosas que decidí yo y pueden estar mal.
 
 ## 7. Decisiones tomadas, y por qué
 
+- **Los datos de envío pasan a ser una página propia, `/pedido`, en vez de un segundo
+  paso dentro del cajón del carrito.** Antes «Comprar» cambiaba de pantalla dentro del
+  mismo `<dialog>` de 28rem de ancho; rellenar nombre, método de envío y dirección ahí,
+  encima de la página que se estaba mirando, se sentía apretado. Ahora `Carrito.astro`
+  se queda solo con el resumen de piezas (lista, subtotal, «Comprar», «Seguir mirando»,
+  «Vaciar el pedido»), y «Comprar» es un enlace normal a `src/pages/pedido.astro`, una
+  página nueva con el resto: resumen de piezas, método de envío, campos según el
+  método, totales, el aviso legal, el botón de WhatsApp y su código QR. Todo ese bloque
+  —el mensaje, el QR, el intercambio de campos según el método— se movió tal cual, sin
+  cambiar su lógica, solo de sitio. Como el pedido vive en `localStorage`, la página
+  parte vacía en el HTML servido y se rellena con JavaScript al cargar; si alguien
+  llega sin nada en el pedido (un enlace guardado, el pedido vaciado en otra pestaña),
+  se le dice en vez de enseñar un formulario en blanco. El estilo pasa de oscuro
+  (`--color-deep`, propio de un cajón superpuesto) a claro, como el resto de páginas de
+  la web: ya no es un panel flotante, es una página más.
 - **Código QR para enviar el pedido desde un ordenador sin WhatsApp Web vinculado.**
   El botón «Enviar por WhatsApp» abre `wa.me`, que en móvil lleva directo a la app pero
   en ordenador solo funciona bien si WhatsApp Web ya está vinculado — si no, mucha
