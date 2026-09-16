@@ -370,6 +370,39 @@ const finDelNombre = pct(1.9);
       font-size: clamp(1.6rem, 7vw, 2.1rem);
       color: var(--color-deep);
     }
+
+    /*
+     * Cada portón entra con un pequeño fundido y un leve ascenso, no de golpe. Con
+     * IntersectionObserver, no con `animation-timeline`: esa función es muy reciente
+     * —llegó a Safari en 2025— y en los teléfonos que todavía no la tienen se quedaba
+     * sin animar nada. IntersectionObserver funciona en cualquier navegador desde hace
+     * años, así que aquí es la técnica principal, no una reserva de segunda.
+     *
+     * `[data-revela]` lo pone el script de más abajo: sin JavaScript el portón se
+     * queda tal cual, visible desde el principio, en vez de escondido para siempre.
+     */
+    .porton[data-revela] {
+      opacity: 0;
+      transform: translateY(2rem);
+      transition:
+        opacity 550ms var(--ease-salida),
+        transform 550ms var(--ease-salida);
+    }
+    .porton[data-revela][data-visible] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /*
+   * Con menos animación pedida se conserva el fundido —dice que algo ha aparecido— y
+   * se quita el ascenso.
+   */
+  @media (max-width: 1023.98px) and (prefers-reduced-motion: reduce) {
+    .porton[data-revela] {
+      transform: none;
+      transition: opacity 350ms ease;
+    }
   }
 
   @supports (animation-timeline: view()) {
@@ -696,3 +729,43 @@ const finDelNombre = pct(1.9);
     }
   }
 </style>
+
+<script>
+  /**
+   * Cada portón de móvil aparece con un pequeño fundido y ascenso según se baja, en
+   * vez de aparecer de golpe. Con IntersectionObserver, no con `animation-timeline`:
+   * esa función llegó a Safari en 2025, y atarse a ella dejaba sin animación a quien
+   * tuviera un teléfono algo más viejo (ver el CSS de más arriba). Cada uno se anima
+   * solo la primera vez que asoma; no tiene sentido volver a jugar con él cada vez
+   * que se sube y se baja.
+   */
+  const mql = window.matchMedia('(max-width: 1023.98px)');
+  let activada = false;
+
+  function activar() {
+    if (activada || !mql.matches) return;
+    activada = true;
+
+    const portones = document.querySelectorAll<HTMLElement>('.porton');
+    if (!portones.length) return;
+
+    const obs = new IntersectionObserver(
+      (entradas, o) => {
+        for (const entrada of entradas) {
+          if (!entrada.isIntersecting) continue;
+          (entrada.target as HTMLElement).dataset.visible = '';
+          o.unobserve(entrada.target);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    for (const porton of portones) {
+      porton.dataset.revela = '';
+      obs.observe(porton);
+    }
+  }
+
+  activar();
+  mql.addEventListener('change', activar);
+</script>
