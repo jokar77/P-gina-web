@@ -1,0 +1,460 @@
+---
+/**
+ * Comprar es una decisión que merece su propia pantalla, no un paso más dentro de un
+ * cajón de 28rem de ancho encima de la página que se estaba mirando. Antes vivía como
+ * segundo paso de `Carrito.astro`; ahora es esta página, y el cajón se queda solo con
+ * el resumen de piezas y el botón «Comprar», que trae aquí.
+ *
+ * El pedido en sí sigue viviendo en `localStorage` (ver `lib/carrito.ts`), así que
+ * esta página parte vacía en el HTML servido y se rellena con JavaScript en cuanto
+ * carga: no hay forma de saber en el servidor qué hay en el pedido de quien la visita.
+ * Si llega aquí sin nada en el pedido —un enlace guardado, el pedido vaciado en otra
+ * pestaña—, se le dice y se le ofrece volver a mirar, en vez de enseñar un formulario
+ * vacío sin sentido.
+ */
+import Layout from '../layouts/Layout.astro';
+import { METODOS } from '../lib/envio';
+import { precio } from '../lib/formato';
+import site from '../data/site.json';
+---
+
+<Layout
+  titulo="Datos de envío — Sakina Platero"
+  descripcion="Revisa tu pedido, elige cómo lo recibes y envíalo por WhatsApp."
+>
+  <section class="px-5 py-section sm:px-8">
+    <div class="mx-auto max-w-md">
+      <a href="/" class="text-[15px] underline">← Seguir mirando</a>
+
+      <h1 class="mt-5 font-display text-[clamp(2rem,6vw,2.75rem)]" data-titulo>
+        Datos de envío
+      </h1>
+
+      <p class="mt-6 text-[15px] text-ink-soft" data-vacio hidden>
+        Todavía no has añadido nada al pedido.{' '}
+        <a href="/" class="underline">Vuelve a la colección</a> para elegir una pieza.
+      </p>
+
+      <form data-form hidden>
+        <ul class="mt-7 grid gap-3" data-resumen></ul>
+
+        <div class="filete mt-7 pt-6" data-bloque-envio hidden>
+          <fieldset>
+            <legend class="text-[15px] text-ink-soft">Cómo lo recibes</legend>
+            <div class="mt-3 grid gap-2">
+              {
+                METODOS.map((m, i) => (
+                  <label class="opcion-envio">
+                    <input
+                      type="radio"
+                      name="envio"
+                      value={m.id}
+                      checked={i === 0}
+                      class="sr-only"
+                      data-metodo
+                    />
+                    <span class="marca-radio" aria-hidden="true" />
+                    <span class="flex-1">{m.nombre}</span>
+                    <span class="text-ink-soft" data-precio-metodo={m.id}>
+                      {precio(m.precio)}
+                    </span>
+                  </label>
+                ))
+              }
+            </div>
+            <p class="mt-2 text-[14px] text-ink-soft">
+              Gratis a partir de {precio(site.envios.gratisDesde)}. {site.envios.zona}.
+            </p>
+          </fieldset>
+
+          <fieldset class="filete mt-7 pt-6">
+            <legend class="text-[15px] text-ink-soft">Dónde te lo mandamos</legend>
+            <p class="mt-1 mb-4 text-[14px] text-ink-soft" data-envio-nota></p>
+            <div class="grid gap-3">
+              <label class="campo">
+                <span>Nombre y apellidos</span>
+                <input type="text" name="nombre" autocomplete="name" data-dato />
+              </label>
+
+              {/*
+                No hay buscador de oficinas en directo: Correos no ofrece uno público
+                para insertar en cualquier web sin cuenta de empresa, y montarlo con
+                datos propios (miles de oficinas) no encaja aquí. En vez de eso, se
+                enlaza a su localizador oficial y quien compra escribe cuál eligió,
+                igual que ya hace con la dirección: nada se valida solo, todo se
+                confirma hablando.
+              */}
+              <div class="grid gap-3" data-campos-recogida hidden>
+                <a
+                  href="https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle"
+                  target="_blank"
+                  rel="noopener"
+                  class="text-[14px] underline"
+                >
+                  Buscar mi oficina más cercana ↗
+                </a>
+                <label class="campo">
+                  <span>Oficina de recogida</span>
+                  <input
+                    type="text"
+                    name="oficina"
+                    placeholder="Nombre o dirección de la oficina"
+                    data-dato
+                  />
+                </label>
+              </div>
+
+              <div class="grid gap-3" data-campos-domicilio>
+                <label class="campo">
+                  <span>Dirección</span>
+                  <input
+                    type="text"
+                    name="direccion"
+                    autocomplete="street-address"
+                    placeholder="Calle, número, piso"
+                    data-dato
+                  />
+                </label>
+                <div class="grid grid-cols-[7rem_1fr] gap-3">
+                  <label class="campo">
+                    <span>Código postal</span>
+                    <input
+                      type="text"
+                      name="cp"
+                      inputmode="numeric"
+                      autocomplete="postal-code"
+                      data-dato
+                    />
+                  </label>
+                  <label class="campo">
+                    <span>Población</span>
+                    <input type="text" name="poblacion" autocomplete="address-level2" data-dato />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <dl class="filete mt-7 grid grid-cols-[1fr_auto] gap-y-1 pt-6 text-[15px]">
+          <dt class="text-ink-soft">Piezas</dt>
+          <dd class="text-right" data-subtotal></dd>
+          <dt class="text-ink-soft">Envío</dt>
+          <dd class="text-right" data-coste-envio></dd>
+          <dt class="mt-1 self-baseline">Total</dt>
+          <dd class="mt-1 text-right font-display text-2xl" data-total></dd>
+        </dl>
+
+        {/* Cuando en el pedido solo hay preguntas, no hay cuentas que echar todavía. */}
+        <p class="text-[15px] text-ink-soft" data-solo-pregunta hidden>
+          Aquí solo hay preguntas: no hay precio ni envío que calcular hasta que lo habléis.
+        </p>
+
+        <p class="mt-1 text-[13px] text-ink-soft" data-aviso hidden>
+          Orientativo: las piezas por encargo se cierran hablando.
+        </p>
+
+        <p class="mt-4 text-[14px] text-ink-soft">
+          Aquí no se paga nada. Al pulsar se abre WhatsApp con este pedido escrito, y el pago
+          lo acordáis por Bizum o transferencia. No se envía a Canarias, Ceuta ni Melilla.
+        </p>
+
+        <a class="boton mt-6 w-full" data-enviar href="#">Enviar por WhatsApp</a>
+
+        {/*
+          Solo en ordenador (detectado por si hay ratón de verdad, no por ancho de
+          pantalla: una tablet táctil ancha no lo es). En móvil el botón de arriba ya
+          abre la app directamente; aquí, sin la app vinculada, se queda en la pantalla
+          del código de WhatsApp Web, que para quien no sabe qué es eso es un callejón
+          sin salida. El QR evita ese paso entero: se escanea con la cámara del móvil y
+          abre la app ahí, con el pedido ya escrito, sin pasar por WhatsApp Web ni el
+          ordenador para nada.
+        */}
+        <div class="qr-escritorio mt-6 grid justify-items-center gap-3 text-center" data-qr-escritorio>
+          <p class="max-w-[26ch] text-[13px] text-ink-soft">
+            ¿No tienes WhatsApp Web en el ordenador? Usa este código con el móvil: te
+            lleva directo a esta conversación con Sakina, con el pedido ya escrito.
+          </p>
+          <div class="qr-caja" data-qr-caja></div>
+        </div>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .opcion-envio {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    cursor: pointer;
+    padding: 10px 12px;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .opcion-envio:has(input:checked) {
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+  .opcion-envio:has(input:focus-visible) {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .marca-radio {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .opcion-envio:has(input:checked) .marca-radio {
+    box-shadow:
+      inset 0 0 0 1px var(--color-ink),
+      inset 0 0 0 5px var(--color-paper),
+      inset 0 0 0 16px var(--color-ink);
+  }
+
+  .campo {
+    display: grid;
+    gap: 5px;
+  }
+  .campo > span {
+    font-size: 14px;
+    color: var(--color-ink-soft);
+  }
+  .campo input {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .campo input::placeholder {
+    color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  }
+  .campo input:hover {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 45%, transparent);
+  }
+  .campo input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+
+  /*
+   * Oculto por defecto y solo visible con puntero fino y hover de verdad —un ratón—,
+   * no por ancho de pantalla: eso deja fuera tablets táctiles anchas, donde el botón de
+   * WhatsApp de arriba ya funciona solo y un QR no tiene sentido (no hay cómo
+   * escanearlo con la misma pantalla que lo enseña).
+   */
+  .qr-escritorio {
+    display: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .qr-escritorio {
+      display: grid;
+    }
+  }
+  .qr-caja {
+    width: 9.5rem;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+  /*
+   * El SVG lo inserta el script con `innerHTML`, así que nunca lleva el atributo
+   * `data-astro-cid-*` de este bloque: sin `:global()` esta regla no le llegaría.
+   */
+  .qr-caja :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>
+
+<script>
+  import { hayOrientativos, leer, soloConsultas, suscribir, total } from '../lib/carrito';
+  import type { Linea } from '../lib/carrito';
+  import { costeEnvio, METODOS, nombreMetodo, type Metodo } from '../lib/envio';
+  import { precio } from '../lib/formato';
+  import site from '../data/site.json';
+  import qrcode from 'qrcode-generator';
+
+  // Por defecto solo codifica el byte bajo de cada carácter, así que un acento o el
+  // símbolo € se leerían mal. El mensaje va en UTF-8, así que se codifica en UTF-8.
+  qrcode.stringToBytes = (s: string) => Array.from(new TextEncoder().encode(s));
+
+  const titulo = document.querySelector<HTMLElement>('[data-titulo]');
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]');
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  const resumen = document.querySelector<HTMLUListElement>('[data-resumen]');
+  const bloqueEnvio = document.querySelector<HTMLElement>('[data-bloque-envio]');
+  const camposRecogida = document.querySelector<HTMLElement>('[data-campos-recogida]');
+  const camposDomicilio = document.querySelector<HTMLElement>('[data-campos-domicilio]');
+  const notaEnvio = document.querySelector<HTMLElement>('[data-envio-nota]');
+  const marcaSubtotal = document.querySelector<HTMLElement>('[data-subtotal]');
+  const marcaEnvio = document.querySelector<HTMLElement>('[data-coste-envio]');
+  const marcaTotal = document.querySelector<HTMLElement>('[data-total]');
+  const soloPregunta = document.querySelector<HTMLElement>('[data-solo-pregunta]');
+  const aviso = document.querySelector<HTMLElement>('[data-aviso]');
+  const enviar = document.querySelector<HTMLAnchorElement>('[data-enviar]');
+  const qrCaja = document.querySelector<HTMLElement>('[data-qr-caja]');
+
+  const metodoElegido = (): Metodo =>
+    (document.querySelector<HTMLInputElement>('[data-metodo]:checked')?.value as Metodo) ??
+    'recogida';
+
+  const dato = (nombre: string) =>
+    document.querySelector<HTMLInputElement>(`[data-dato][name="${nombre}"]`)?.value.trim() ?? '';
+
+  /** Las piezas de catálogo se compran tal cual; las de encargo o del archivo son una
+   *  consulta que se cierra hablando. Solo a las primeras les hacen falta ya los datos
+   *  de envío. */
+  const requiereDatos = (lineas: Linea[]) => lineas.some((l) => !l.orientativo && !l.consultar);
+
+  function mensaje(lineas: Linea[]) {
+    const piezas = total();
+    const metodo = metodoElegido();
+    const envioCoste = costeEnvio(piezas, metodo);
+    const preguntando = soloConsultas();
+
+    const cuerpo = lineas
+      .map((l) => {
+        const valor = l.consultar
+          ? 'a consultar'
+          : `${precio(l.precio)}${l.orientativo ? ' (orientativo)' : ''}`;
+        const cabeza = `· ${l.nombre} — ${valor}`;
+        return l.detalle ? `${cabeza}\n  ${l.detalle}` : cabeza;
+      })
+      .join('\n');
+
+    const partes = preguntando
+      ? ['Hola Sakina, quería preguntarte por:', '', cuerpo]
+      : [
+          'Hola Sakina, me gustaría encargar:',
+          '',
+          cuerpo,
+          '',
+          `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
+          `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
+        ];
+
+    // Los datos de envío solo se añaden si se han escrito, y cambian según el método:
+    // con recogida no hace falta calle ni código postal, solo qué oficina se eligió.
+    const datos =
+      metodo === 'recogida'
+        ? [dato('nombre'), dato('oficina') && `Oficina de recogida: ${dato('oficina')}`].filter(
+            Boolean
+          )
+        : [
+            dato('nombre'),
+            dato('direccion'),
+            [dato('cp'), dato('poblacion')].filter(Boolean).join(' '),
+          ].filter(Boolean);
+
+    if (datos.length) partes.push('', 'Mis datos:', ...datos);
+
+    return partes.join('\n');
+  }
+
+  function pintar(lineas: Linea[]) {
+    const hay = lineas.length > 0;
+    if (vacio) vacio.hidden = hay;
+    if (form) form.hidden = !hay;
+    if (!hay || !resumen || !enviar) return;
+
+    const preguntando = soloConsultas();
+    if (titulo) titulo.textContent = preguntando ? 'Enviar tu pregunta' : 'Datos de envío';
+
+    resumen.replaceChildren(
+      ...lineas.map((l) => {
+        const li = document.createElement('li');
+        li.className = 'flex gap-4 border-b border-(--color-line) pb-3 last:border-0';
+
+        const texto = document.createElement('div');
+        texto.className = 'flex-1';
+        const nombre = document.createElement('p');
+        nombre.className = 'font-display text-lg';
+        nombre.textContent = l.nombre;
+        texto.append(nombre);
+        if (l.detalle) {
+          const det = document.createElement('p');
+          det.className = 'mt-0.5 text-[14px] text-ink-soft';
+          det.textContent = l.detalle;
+          texto.append(det);
+        }
+
+        const valor = document.createElement('span');
+        valor.className = 'whitespace-nowrap';
+        valor.textContent = l.consultar ? 'A consultar' : precio(l.precio) + (l.orientativo ? ' *' : '');
+
+        li.append(texto, valor);
+        return li;
+      })
+    );
+
+    if (bloqueEnvio) bloqueEnvio.hidden = preguntando;
+    if (soloPregunta) soloPregunta.hidden = !preguntando;
+
+    const necesitaDatos = requiereDatos(lineas);
+    const metodo = metodoElegido();
+    if (camposRecogida) camposRecogida.hidden = metodo !== 'recogida';
+    if (camposDomicilio) camposDomicilio.hidden = metodo !== 'domicilio';
+
+    const CAMPOS_POR_METODO: Record<Metodo, string[]> = {
+      recogida: ['nombre', 'oficina'],
+      domicilio: ['nombre', 'direccion', 'cp', 'poblacion'],
+    };
+    for (const campo of new Set([...CAMPOS_POR_METODO.recogida, ...CAMPOS_POR_METODO.domicilio])) {
+      const input = document.querySelector<HTMLInputElement>(`[data-dato][name="${campo}"]`);
+      if (input) input.required = necesitaDatos && CAMPOS_POR_METODO[metodo].includes(campo);
+    }
+    if (notaEnvio) {
+      notaEnvio.textContent = necesitaDatos
+        ? 'Estas piezas se compran tal cual, así que rellena estos datos: así Sakina prepara el envío sin tener que preguntártelos por WhatsApp.'
+        : 'Esto es una consulta —el precio y los detalles se cierran hablando—, así que puedes dejarlo en blanco y lo acordáis por WhatsApp.';
+    }
+
+    const piezas = total();
+    const envioCoste = costeEnvio(piezas, metodo);
+
+    // Con el pedido ya por encima del mínimo, el envío es gratis elijas lo que elijas,
+    // así que el precio junto a cada opción sobra —y «5 €» junto a un envío que en
+    // realidad no se cobra es directamente engañoso—.
+    const envioSiempreGratis = piezas >= site.envios.gratisDesde;
+    for (const el of document.querySelectorAll<HTMLElement>('[data-precio-metodo]')) {
+      const id = el.dataset.precioMetodo as Metodo;
+      const precioMetodo = METODOS.find((m) => m.id === id)?.precio ?? 0;
+      el.textContent = envioSiempreGratis ? '' : precio(precioMetodo);
+    }
+
+    if (marcaSubtotal) marcaSubtotal.textContent = precio(piezas);
+    if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
+    if (marcaTotal) marcaTotal.textContent = precio(piezas + envioCoste);
+    if (aviso) aviso.hidden = !hayOrientativos() || preguntando;
+    enviar.textContent = preguntando ? 'Preguntar' : 'Enviar por WhatsApp';
+
+    enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
+
+    // El QR solo se ve en ordenador (ver CSS), pero se genera igual en cualquier
+    // pantalla: no cuesta nada y así no hace falta repetir aquí la misma comprobación
+    // de puntero que ya hace la hoja de estilos.
+    if (qrCaja) {
+      const qr = qrcode(0, 'M');
+      qr.addData(enviar.href);
+      qr.make();
+      qrCaja.innerHTML = qr.createSvgTag({ scalable: true });
+    }
+  }
+
+  suscribir(pintar);
+
+  // Cambiar de método de envío o escribir un dato rehace el mensaje y el total.
+  form?.addEventListener('change', () => pintar(leer()));
+  form?.addEventListener('input', () => pintar(leer()));
+  // Con un único campo de texto, Enter dispara el envío nativo del <form>: lo evitamos,
+  // que aquí «enviar» significa abrir WhatsApp, no recargar la página.
+  form?.addEventListener('submit', (e) => e.preventDefault());
+
+  enviar?.addEventListener('click', (e) => {
+    if (form && !form.reportValidity()) e.preventDefault();
+  });
+</script>
