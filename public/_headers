@@ -12,3 +12,25 @@
 
 /
   Cache-Control: public, max-age=0, must-revalidate
+
+# Cabeceras de seguridad, en todo el sitio. No hay backend, formularios que envíen a
+# ningún sitio (WhatsApp se abre por JS, no por action=) ni recursos externos (fuentes,
+# imágenes y scripts van todos servidos desde aquí), así que se puede ir estricto sin
+# tener que abrir huecos: nada de 'unsafe-inline' en script-src, nada de dominios ajenos.
+# El día que entre un tercero (analítica, un embed), esta lista es la primera que hay
+# que tocar o dejará de cargar en silencio.
+#
+# El hueco que hay más abajo en script-src lo rellena scripts/generar-cabeceras.mjs
+# después de `astro build`, con el hash sha256 de cada script de datos estructurados
+# (application/ld+json) que haya quedado en el HTML construido. Son datos, no código,
+# así que no hace falta 'unsafe-inline' para dejarlos pasar por CSP: un hash exacto por
+# contenido basta, y como el contenido depende de cada pieza (nombre, precio…) no se
+# puede escribir a mano de una vez —se recalcula en cada build—. font-src lleva "data:"
+# por lo mismo: alguna fuente trae una variante de reserva incrustada como data URI, no
+# cargada de fuera.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' __LD_JSON_HASHES__; font-src 'self' data:; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
