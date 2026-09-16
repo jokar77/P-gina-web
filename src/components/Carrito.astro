@@ -188,6 +188,23 @@ import { precio } from '../lib/formato';
 
       <div data-pie-datos hidden>
         <a class="boton boton-claro w-full" data-carrito-enviar href="#">Enviar por WhatsApp</a>
+
+        {/*
+          Solo en ordenador (detectado por si hay ratón de verdad, no por ancho de
+          pantalla: una tablet táctil ancha no lo es). En móvil el botón de arriba ya
+          abre la app directamente; aquí, sin la app vinculada, se queda en la pantalla
+          del código de WhatsApp Web, que para quien no sabe qué es eso es un callejón
+          sin salida. El QR evita ese paso entero: se escanea con la cámara del móvil y
+          abre la app ahí, con el pedido ya escrito, sin pasar por WhatsApp Web ni el
+          ordenador para nada.
+        */}
+        <div class="qr-escritorio mt-5 grid justify-items-center gap-3 text-center" data-qr-escritorio>
+          <p class="max-w-[26ch] text-[13px] text-paper/70">
+            ¿No tienes WhatsApp Web en el ordenador? Usa este código con el móvil: te
+            lleva directo a esta conversación con Sakina, con el pedido ya escrito.
+          </p>
+          <div class="qr-caja" data-qr-caja></div>
+        </div>
       </div>
     </div>
   </div>
@@ -322,6 +339,35 @@ import { precio } from '../lib/formato';
     outline: none;
     box-shadow: inset 0 0 0 1px var(--color-paper);
   }
+
+  /*
+   * Oculto por defecto y solo visible con puntero fino y hover de verdad —un ratón—,
+   * no por ancho de pantalla: eso deja fuera tablets táctiles anchas, donde el botón de
+   * WhatsApp de arriba ya funciona solo y un QR no tiene sentido (no hay cómo
+   * escanearlo con la misma pantalla que lo enseña).
+   */
+  .qr-escritorio {
+    display: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .qr-escritorio {
+      display: grid;
+    }
+  }
+  .qr-caja {
+    width: 9.5rem;
+  }
+  /*
+   * El SVG lo inserta el script con `innerHTML`, así que nunca lleva el atributo
+   * `data-astro-cid-*` de este bloque: sin `:global()` esta regla no le llegaría, igual
+   * que ya pasa con `.linea-pedido` más arriba.
+   */
+  .qr-caja :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
 </style>
 
 <script>
@@ -340,6 +386,11 @@ import { precio } from '../lib/formato';
   import { costeEnvio, nombreMetodo, type Metodo } from '../lib/envio';
   import { precio } from '../lib/formato';
   import site from '../data/site.json';
+  import qrcode from 'qrcode-generator';
+
+  // Por defecto solo codifica el byte bajo de cada carácter, así que un acento o el
+  // símbolo € se leerían mal. El mensaje va en UTF-8, así que se codifica en UTF-8.
+  qrcode.stringToBytes = (s: string) => Array.from(new TextEncoder().encode(s));
 
   type Paso = 'lista' | 'datos';
 
@@ -367,6 +418,7 @@ import { precio } from '../lib/formato';
   const notaEnvio = document.querySelector<HTMLElement>('[data-envio-nota]');
   const irDatos = document.querySelector<HTMLAnchorElement>('[data-ir-datos]');
   const enviar = document.querySelector<HTMLAnchorElement>('[data-carrito-enviar]');
+  const qrCaja = document.querySelector<HTMLElement>('[data-qr-caja]');
 
   let paso: Paso = 'lista';
 
@@ -551,6 +603,16 @@ import { precio } from '../lib/formato';
     if (titulo && paso === 'datos') titulo.textContent = tituloPaso('datos');
 
     enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
+
+    // El QR solo se ve en ordenador (ver CSS), pero se genera igual en cualquier
+    // pantalla: no cuesta nada y así no hace falta repetir aquí la misma comprobación
+    // de puntero que ya hace la hoja de estilos.
+    if (qrCaja) {
+      const qr = qrcode(0, 'M');
+      qr.addData(enviar.href);
+      qr.make();
+      qrCaja.innerHTML = qr.createSvgTag({ scalable: true });
+    }
   }
 
   suscribir(pintar);
