@@ -2,50 +2,50 @@
   "formas": [
     {
       "id": "tote",
-      "nombre": "Tote de mano",
-      "precio": 55
+      "nombre": "Asa grande",
+      "precio": 30
     },
     {
       "id": "hombro",
       "nombre": "De hombro",
-      "precio": 60
+      "precio": 30
     },
     {
       "id": "sin-asa",
-      "nombre": "De mano sin asa",
-      "precio": 45
+      "nombre": "Asa de mano",
+      "precio": 25
     }
   ],
   "extras": [
     {
       "id": "flor",
       "nombre": "Flor",
-      "precio": 6
+      "precio": 4
     },
     {
       "id": "lazos",
       "nombre": "Lazos",
-      "precio": 4
+      "precio": 3
     },
     {
       "id": "flecos",
       "nombre": "Flecos",
-      "precio": 5
+      "precio": 7
     },
     {
       "id": "monedero",
       "nombre": "Monedero a juego",
-      "precio": 12
+      "precio": 7
     },
     {
       "id": "forro",
       "nombre": "Forro interior",
-      "precio": 8
+      "precio": 10
     },
     {
       "id": "Bolsillo",
       "nombre": "Bolsillo interior",
-      "precio": 6
+      "precio": 4
     }
   ]
 }

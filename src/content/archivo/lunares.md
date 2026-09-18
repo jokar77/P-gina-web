@@ -1,6 +1,9 @@
 ---
-nombre: Lunares
-tipo: Vestido de flamenca
+nombre: NeoSur
+tipo: "Vestido de inspiración flamenca "
+material: Algodón y gasa con lunar flocado en terciopelo
+nota: Vestido confeccionado para desfile sostenible en la Pasarela Flamenca de
+  Jerez para el programa Innova Flamenca.
 ano: 2026
 foto: ../../assets/piezas/lunares/01.jpg
 fotos:

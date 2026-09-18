@@ -27,7 +27,7 @@ import Simbolo from './Simbolo.astro';
   <nav class="mx-auto flex max-w-7xl items-center py-4 pr-5 sm:pr-8" aria-label="Principal">
     <button
       type="button"
-      class="ml-auto flex items-center gap-2 text-[15px]"
+      class="boton-pedido ml-auto flex items-center gap-2 text-[15px]"
       data-abrir-carrito
       aria-haspopup="dialog"
     >
@@ -55,6 +55,29 @@ import Simbolo from './Simbolo.astro';
     left: 56px;
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  /*
+   * El relleno y el margen negativo dejan sitio para el resaltado sin mover nada a su
+   * alrededor: el botón ocupa visualmente el mismo hueco que antes, solo que ahora
+   * puede crecer un fondo por debajo del texto sin empujar el borde de la página.
+   *
+   * Solo en los ejes vertical y derecho, nunca en el izquierdo: el botón también lleva
+   * `ml-auto` de Tailwind para pegarse a la derecha, y un `margin` en corto aquí lo
+   * habría pisado —se sobreescribe el `margin-left: auto` con el valor negativo de
+   * esta regla, y el botón se iba junto al logo en vez de quedarse a la derecha—.
+   */
+  .boton-pedido {
+    padding: 0.5rem 0.75rem;
+    margin-block: -0.5rem;
+    margin-right: -0.75rem;
+    border-radius: 9999px;
+    transition: background-color 200ms var(--ease-salida);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .boton-pedido:hover {
+      background-color: var(--color-panel);
+    }
   }
 </style>
 

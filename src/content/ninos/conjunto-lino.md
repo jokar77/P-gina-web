@@ -1,5 +1,5 @@
 ---
-nombre: Conjunto de lino crudo
+nombre: Conjunto de lino
 precioDesde: 40
 tallas: 1 a 6 años
 material: Lino lavado, camisa y pantalón

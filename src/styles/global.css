@@ -2,16 +2,15 @@
 
 @theme {
   /*
-   * El fondo de toda la web pasa a ser el gris que antes solo llevaba «Otros trabajos»
-   * (`--color-panel`, más oscuro): de ahí que aquí tenga el valor que antes tenía panel,
-   * y panel el que antes tenía paper. Así ningún sitio que usara panel para distinguirse
-   * del fondo se queda igualado con él —sigue destacando, solo que ahora más claro sobre
-   * un fondo más oscuro, en vez de al revés—, y `text-paper` (la letra clara sobre fondos
-   * oscuros, pie de página incluido) sigue leyéndose igual de bien: los dos grises son
-   * casi el mismo tono, ninguno dejar de ser «casi blanco» sobre el oscuro.
+   * Un paso más que lo de la portada (commit anterior): el fondo pasa del tono de la
+   * manta al de «Otros trabajos» —que era justo el gris con el que destacaba esa
+   * sección, `--color-panel`—, así que los dos valores se intercambian en vez de
+   * cambiar solo uno. Panel se queda con el tono de la manta que tenía paper: sigue
+   * siendo el que usan la miniatura de foto antes de cargar o el resalte del botón
+   * «Pedido» para notarse sobre el fondo, solo que ahora más claro en vez de más oscuro.
    */
-  --color-paper: #d3d8d4;
-  --color-panel: #e6e8e5;
+  --color-paper: #c2c2ba;
+  --color-panel: #d5d2cb;
   --color-deep: #22282a;
   --color-ink: #1f1d1b;
   --color-ink-soft: #5f5e58;

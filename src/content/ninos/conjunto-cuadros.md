@@ -1,5 +1,5 @@
 ---
-nombre: Conjunto de cuadros
+nombre: Conjunto de algodón
 precioDesde: 40
 tallas: 1 a 6 años
 material: Algodón de cuadros, camisa y pantalón
