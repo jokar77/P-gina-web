@@ -1,8 +1,17 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-paper: #e6e8e5;
-  --color-panel: #d3d8d4;
+  /*
+   * El fondo de toda la web pasa a ser el gris que antes solo llevaba «Otros trabajos»
+   * (`--color-panel`, más oscuro): de ahí que aquí tenga el valor que antes tenía panel,
+   * y panel el que antes tenía paper. Así ningún sitio que usara panel para distinguirse
+   * del fondo se queda igualado con él —sigue destacando, solo que ahora más claro sobre
+   * un fondo más oscuro, en vez de al revés—, y `text-paper` (la letra clara sobre fondos
+   * oscuros, pie de página incluido) sigue leyéndose igual de bien: los dos grises son
+   * casi el mismo tono, ninguno dejar de ser «casi blanco» sobre el oscuro.
+   */
+  --color-paper: #d3d8d4;
+  --color-panel: #e6e8e5;
   --color-deep: #22282a;
   --color-ink: #1f1d1b;
   --color-ink-soft: #5f5e58;
