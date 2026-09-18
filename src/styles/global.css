@@ -2,15 +2,15 @@
 
 @theme {
   /*
-   * El gris de la portada (ver --color-manta más abajo) puesto como fondo de toda la
-   * web, no solo de la primera pantalla: así no hay ningún punto en el que el fondo
-   * cambie de tono al bajar.
+   * Un paso más que lo de la portada (commit anterior): el fondo pasa del tono de la
+   * manta al de «Otros trabajos» —que era justo el gris con el que destacaba esa
+   * sección, `--color-panel`—, así que los dos valores se intercambian en vez de
+   * cambiar solo uno. Panel se queda con el tono de la manta que tenía paper: sigue
+   * siendo el que usan la miniatura de foto antes de cargar o el resalte del botón
+   * «Pedido» para notarse sobre el fondo, solo que ahora más claro en vez de más oscuro.
    */
-  --color-paper: #d5d2cb;
-  /* Se mueve con --color-paper para conservar el mismo paso de un tono que había entre
-     los dos: si no, con el papel ya gris quedaban casi iguales y el panel (la miniatura
-     de foto antes de cargar, el resalte del botón «Pedido») dejaba de notarse. */
-  --color-panel: #c2c2ba;
+  --color-paper: #c2c2ba;
+  --color-panel: #d5d2cb;
   --color-deep: #22282a;
   --color-ink: #1f1d1b;
   --color-ink-soft: #5f5e58;
