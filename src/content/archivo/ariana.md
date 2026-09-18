@@ -1,6 +1,8 @@
 ---
 nombre: Ariana
 tipo: Vestido
+nota: otro dia
+ano: 2026
 foto: ../../assets/piezas/ariana/image-3.webp
 fotos:
   - ../../assets/piezas/ariana/image-4.webp
