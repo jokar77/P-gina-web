@@ -2,15 +2,22 @@
 // sin `src` (hoy, solo los de datos estructurados application/ld+json: cualquier otro
 // script del sitio lo empaqueta Astro en un archivo aparte), calcula el hash sha256 de
 // cada uno tal cual queda en el HTML, y añade a dist/_headers una sección por página con
-// una Content-Security-Policy propia que solo lleva los hashes de esa página.
+// su propia Content-Security-Policy completa (no solo los hashes: la política entera).
 //
 // Antes era una única lista global de hashes, metida en el script-src de la CSP de
 // `/*`: con cada pieza nueva del catálogo la línea crecía, y Cloudflare rechaza
 // cualquier línea de _headers de más de 2000 caracteres —justo lo que pasó al llegar a
-// 41 hashes, y volvería a pasar tarde o temprano por mucho que se retrasara-. Por
-// página la línea se queda siempre corta (la ficha de la marca más, como mucho, un
-// producto y unas migas de pan: 2-3 hashes), así que aguanta crecer el catálogo
-// indefinidamente sin volver a tropezar con el límite.
+// 41 hashes—. Por página la línea se queda siempre corta (la ficha de la marca más,
+// como mucho, un producto y unas migas de pan: 2-3 hashes), así que aguanta crecer el
+// catálogo indefinidamente sin volver a tropezar con el límite.
+//
+// Cada página lleva SIEMPRE su sección, aunque no tenga ningún script inline (por eso
+// no se salta cuando `hashes` sale vacío): si `/*` en public/_headers tuviera también
+// una Content-Security-Policy, el navegador recibiría dos cabeceras CSP para la misma
+// página y las exigiría las dos a la vez —la más estricta manda, así que la que no
+// llevara los hashes de esta página bloquearía sus scripts en silencio. Pasó de verdad
+// la primera vez que se hizo esto por página. Por eso `/*` no lleva CSP: esta de aquí,
+// una por página, es la única.
 import { createHash } from 'node:crypto';
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
@@ -52,9 +59,8 @@ for (const archivo of await htmlFiles(DIST)) {
     const hash = createHash('sha256').update(cuerpo, 'utf8').digest('base64');
     hashes.add(`'sha256-${hash}'`);
   }
-  if (hashes.size === 0) continue;
   totalHashes += hashes.size;
-  const csp = baseCsp.replace('{HASHES}', ' ' + [...hashes].join(' '));
+  const csp = baseCsp.replace('{HASHES}', hashes.size ? ' ' + [...hashes].join(' ') : '');
   secciones.push(`${urlPublica(archivo)}\n  Content-Security-Policy: ${csp}\n`);
 }
 
