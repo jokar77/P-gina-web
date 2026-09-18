@@ -30,6 +30,7 @@ media:
   - name: videos
     input: public/videos/redes
     output: /videos/redes
+    categories: [video]
     rename: safe
 
 content:
