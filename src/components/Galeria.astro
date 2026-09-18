@@ -30,7 +30,7 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
 <div class="flex flex-col gap-3 sm:flex-row">
   {/* Todas las fotos se apilan: las que no se ven están a opacidad 0, no ocultas, para
       que el navegador las cargue y el cambio de foto sea instantáneo. */}
-  <div class="relative flex-1 bg-panel" style={`aspect-ratio:${proporcion}`} data-galeria>
+  <div class="relative flex-1 bg-paper" style={`aspect-ratio:${proporcion}`} data-galeria>
     {
       fotos.map((foto, i) => (
         <Image

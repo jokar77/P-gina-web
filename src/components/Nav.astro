@@ -76,7 +76,12 @@ import Simbolo from './Simbolo.astro';
   }
   @media (hover: hover) and (pointer: fine) {
     .boton-pedido:hover {
-      background-color: var(--color-panel);
+      /* Oscurecido calculado sobre el propio fondo, no un segundo gris aparte: así
+         el resalte se nota sobre cualquier fondo que tenga detrás la barra (el
+         papel normal, o la manta transparentada de la portada), sin depender de un
+         tono fijo que podría dejar de contrastar el día que cualquiera de los dos
+         cambie. */
+      background-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
     }
   }
 </style>
