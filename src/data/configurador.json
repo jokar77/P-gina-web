@@ -20,32 +20,32 @@
     {
       "id": "flor",
       "nombre": "Flor",
-      "precio": 6
+      "precio": 4
     },
     {
       "id": "lazos",
       "nombre": "Lazos",
-      "precio": 4
+      "precio": 3
     },
     {
       "id": "flecos",
       "nombre": "Flecos",
-      "precio": 5
+      "precio": 7
     },
     {
       "id": "monedero",
       "nombre": "Monedero a juego",
-      "precio": 12
+      "precio": 7
     },
     {
       "id": "forro",
       "nombre": "Forro interior",
-      "precio": 8
+      "precio": 10
     },
     {
       "id": "Bolsillo",
       "nombre": "Bolsillo interior",
-      "precio": 6
+      "precio": 4
     }
   ]
 }
