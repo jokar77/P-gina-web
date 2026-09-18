@@ -29,20 +29,24 @@
   --color-suelo: #151a1c;
 
   /*
-   * El fondo de la portada: la manta sobre la que están hechas las fotos, aclarada.
+   * El fondo de la portada: la manta sobre la que están hechas las fotos, aclarada —y,
+   * desde que el fondo de toda la web es un único gris (`--color-paper` de arriba), el
+   * mismo tono que ese, para que la portada no sea la única pantalla con una costura.
    *
    * Medido sobre los píxeles que se pintan de verdad, el fondo de las fotos va de
    * #645f53 en una a #cdc6ba en otra: no están hechas con la misma luz, así que ningún
-   * color se funde con las once a la vez. Este queda por encima de la más clara, y así
-   * todas se apoyan igual sobre él, como láminas. Buscando el punto medio, las dos más
-   * claras se recortaban como tarjetas pegadas encima.
-   *
-   * 11,1:1 con la tinta. El día que las fotos tengan una luz común, esto puede acercarse.
+   * color se funde con las once a la vez. Iguales, este queda un pelín por debajo de la
+   * más clara —antes se buscó a propósito que quedara por encima, para que ninguna foto
+   * se recortara como una tarjeta pegada encima—, pero la diferencia es de un 3% de luz,
+   * nada que se note a simple vista, y tener un solo gris en toda la web pesa más que
+   * ese matiz.
    */
-  --color-manta: #d5d2cb;
-  /* La tinta suave se queda en 4,3:1 sobre la manta, por debajo del mínimo. Esta da
-     6,4:1 sobre ella y 7,9:1 sobre el papel: sirve para el tramo en el que el fondo pasa
-     de una a otro sin que el texto cambie de color a mitad. */
+  --color-manta: #c2c2ba;
+  /* La tinta suave se queda en 3,6:1 sobre la manta —ahora igual que sobre el papel,
+     al ser el mismo gris—, por debajo del mínimo. Esta da 5,4:1 sobre los dos: ya no
+     hace falta que aguante un tramo en el que el fondo cambia de tono, porque ya no
+     cambia, pero se queda igual porque sigue siendo la tinta que hace falta para que el
+     texto de la portada pase el contraste mínimo. */
   --color-ink-manta: #474440;
 
   --font-display: 'Gloock', Georgia, 'Times New Roman', serif;
