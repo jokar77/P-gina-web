@@ -1,8 +1,16 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-paper: #e6e8e5;
-  --color-panel: #d3d8d4;
+  /*
+   * El gris de la portada (ver --color-manta más abajo) puesto como fondo de toda la
+   * web, no solo de la primera pantalla: así no hay ningún punto en el que el fondo
+   * cambie de tono al bajar.
+   */
+  --color-paper: #d5d2cb;
+  /* Se mueve con --color-paper para conservar el mismo paso de un tono que había entre
+     los dos: si no, con el papel ya gris quedaban casi iguales y el panel (la miniatura
+     de foto antes de cargar, el resalte del botón «Pedido») dejaba de notarse. */
+  --color-panel: #c2c2ba;
   --color-deep: #22282a;
   --color-ink: #1f1d1b;
   --color-ink-soft: #5f5e58;
