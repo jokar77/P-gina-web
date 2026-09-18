@@ -4,8 +4,8 @@
   "instagram": "https://www.instagram.com/sakinaplatero?stkn=MXFlYXl1NTBza282Ng%3D%3D",
   "tiktok": "https://www.tiktok.com/@sakinaplatero?_r=1&_t=ZN-99kt9gTlSqs",
   "youtube": "https://youtube.com/@sakinaplatero?si=n-q3_SyEZxu5qVBb",
-  "frasePortada": "Bolsos de crochet. Piezas únicas, hechas a mano.",
-  "descripcion": "Bolsos de ganchillo hechos a mano con trapillo, lana, algodón... conjuntos para niño y slow fashion bajo demanda. Piezas únicas.",
+  "frasePortada": "Piezas únicas, hechas a mano.",
+  "descripcion": "Bolsos de ganchillo hechos a mano con trapillo, lana, algodón... conjuntos para niño y slow fashion bajo demanda. Piezas únicas. Vestidos flamenca. Ropa a medida y demanda",
   "secciones": {
     "bolsos": {
       "titulo": "Bolsos",
@@ -17,11 +17,11 @@
     },
     "archivo": {
       "titulo": "Otros trabajos",
-      "intro": "Piezas que ya se hicieron y no están a la venta. Se quedan aquí porque cuentan de lo que sale del taller cuando el encargo no es un bolso. Si te gusta alguna, se puede hablar."
+      "intro": "Piezas del archivo de la diseñadora."
     },
     "disena": {
       "titulo": "Diseña tu bolso",
-      "intro": "Elige la forma, el color y los detalles. El precio que sale es orientativo: se cierra hablando, según el material que lleve y las horas que salgan.",
+      "intro": "Elige la forma, el color y los detalles. ",
       "pregunta": "¿Y si quieres algo que no está en la lista? Otro color, otra medida, un detalle que no aparece: se puede preguntar, y cualquier cosa se habla antes de empezar."
     }
   },
@@ -30,11 +30,11 @@
     "vendido": "Esta ya tiene dueña. Se queda aquí porque es parte del trabajo, y porque se puede tejer otra parecida: nunca sale idéntica. Partiría de {precio}, orientativo hasta que lo habléis.",
     "nino": "El precio es orientativo: depende de la talla y de la tela. Lo cerráis por WhatsApp antes de que empiece a cortar. Al ser una prenda hecha a tu medida, queda fuera del derecho de devolución.",
     "aMedida": "No se paga nada aquí. Lo revisáis por WhatsApp antes de que empiece a tejer.",
-    "archivo": "Esta pieza no está a la venta: ya se hizo para alguien. Se puede hacer algo parecido, pero nunca sale igual. Pregunta y Sakina te dice si se puede y cuánto llevaría."
+    "archivo": "Esta pieza no está a la venta. Se puede hacer algo parecido. Pregunta y Sakina te dice si se puede y cuánto llevaría."
   },
   "taller": {
-    "titulo": "El taller",
-    "texto": "Cada bolso se teje entero de una vez, a mano y sin patrón cerrado: la forma se va decidiendo mientras crece. Entre ocho y doce horas por pieza, según el punto y el material. Por eso no hay dos iguales, y por eso hay pocos.\n\nEl trapillo es algodón; las lanas con lentejuelas se compran por partidas pequeñas, así que cuando se acaba un color, ese color se acaba. Los conjuntos de niño son lino lavado y algodón, cosidos por tallas.",
+    "titulo": "Sobre mí",
+    "texto": "Sakina Platero es un proyecto basado en Sevilla y centrado en la creación de piezas únicas tanto cosidas, como tejidas. Nace de mi infinita curiosidad por el mundo de la moda y toda la creatividad que lo rodea.\n\nCada pieza nace de una idea y pasa por mis manos durante todo el proceso, desde el primer patrón hasta los últimos acabados. \n\nEsta marca es un espacio donde puedo dar vida a estas ideas, crear sin límites y compartir mi forma de entenderlo todo.",
     "pendiente": "Texto provisional: sustituir por el de Sakina."
   },
   "envios": {
