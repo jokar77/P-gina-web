@@ -1,19 +1,19 @@
 {
   "formas": [
     {
-      "id": "tote",
-      "nombre": "Tote de mano",
-      "precio": 55
+      "id": "grande",
+      "nombre": "Asa grande",
+      "precio": 30
     },
     {
       "id": "hombro",
       "nombre": "De hombro",
-      "precio": 60
+      "precio": 30
     },
     {
-      "id": "sin-asa",
-      "nombre": "De mano sin asa",
-      "precio": 45
+      "id": "pequeña",
+      "nombre": "Asa de mano",
+      "precio": 25
     }
   ],
   "extras": [
