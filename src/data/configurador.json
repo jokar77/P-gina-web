@@ -1,7 +1,7 @@
 {
   "formas": [
     {
-      "id": "grande",
+      "id": "tote",
       "nombre": "Asa grande",
       "precio": 30
     },
@@ -11,7 +11,7 @@
       "precio": 30
     },
     {
-      "id": "pequeña",
+      "id": "sin-asa",
       "nombre": "Asa de mano",
       "precio": 25
     }

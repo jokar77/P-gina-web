@@ -488,7 +488,20 @@ content:
         type: object
         list: true
         fields:
-          - { name: id, label: Identificador, type: string }
+          # "select" en vez de texto libre a propósito: cada identificador lleva
+          # enlazada su foto en el código (src/components/Configurador.astro), y un
+          # texto distinto a estos tres deja esa forma sin foto y rompe el build
+          # entero —ya pasó una vez—. El nombre de abajo sí es libre: es lo único
+          # que se ve en la web.
+          - name: id
+            label: Identificador (no se ve en la web, solo enlaza la foto)
+            type: select
+            required: true
+            options:
+              values:
+                - { value: tote, label: 'tote (foto: asa alta, amarilla)' }
+                - { value: hombro, label: 'hombro (foto: bandolera, rosa)' }
+                - { value: sin-asa, label: 'sin-asa (foto: clutch, crudo)' }
           - { name: nombre, label: Nombre, type: string }
           - { name: precio, label: Precio base (euros), type: number, options: { min: 0, step: 1 } }
       - name: extras
