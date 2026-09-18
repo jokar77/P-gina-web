@@ -2,15 +2,21 @@
 
 @theme {
   /*
-   * Un paso más que lo de la portada (commit anterior): el fondo pasa del tono de la
-   * manta al de «Otros trabajos» —que era justo el gris con el que destacaba esa
-   * sección, `--color-panel`—, así que los dos valores se intercambian en vez de
-   * cambiar solo uno. Panel se queda con el tono de la manta que tenía paper: sigue
-   * siendo el que usan la miniatura de foto antes de cargar o el resalte del botón
-   * «Pedido» para notarse sobre el fondo, solo que ahora más claro en vez de más oscuro.
+   * Un solo gris para toda la web, sin ninguna excepción: ni la portada, ni «Otros
+   * trabajos», ni «Conjuntos», ni ninguna otra sección tiene ya un fondo distinto del
+   * resto. Antes existía `--color-panel`, un segundo gris para lo que quisiera
+   * notarse sobre el fondo (esas dos secciones, la miniatura de foto antes de cargar,
+   * el resalte del botón «Pedido»); se quita del todo en vez de dejarlo con el mismo
+   * valor que paper, porque un token de color que nunca se usa distinto de otro es una
+   * trampa a la primera persona (yo incluido, dos veces ya) que lo reintroduzca «para
+   * que se note» sin saber que ese es justo el efecto que no se quiere. Lo que antes
+   * llevaba `--color-panel` para destacar ahora lo hace de otra forma: un borde en el
+   * recuadro del formulario de desistimiento, un oscurecido calculado sobre el propio
+   * fondo en el botón «Pedido». Las miniaturas de foto antes de cargar simplemente
+   * pasan a compartir el fondo de la página, que es lo que se ve de todos modos en
+   * cuanto la foto entra.
    */
   --color-paper: #c2c2ba;
-  --color-panel: #d5d2cb;
   --color-deep: #22282a;
   --color-ink: #1f1d1b;
   --color-ink-soft: #5f5e58;
