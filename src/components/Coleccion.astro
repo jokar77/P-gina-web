@@ -37,7 +37,7 @@ const intro = seccion.intro
           aria-pressed="true"
           title="Todos los colores"
         >
-          Todos <span class="contador" data-contador aria-hidden="true"></span>
+          Todos
         </button>
         {
           filtros.map((c) => (
@@ -50,7 +50,6 @@ const intro = seccion.intro
               title={COLORES[c].nombre}
             >
               <span class="sr-only">{COLORES[c].nombre}</span>
-              <span class="contador contador-punto" data-contador aria-hidden="true"></span>
             </button>
           ))
         }
@@ -120,37 +119,6 @@ const intro = seccion.intro
     box-shadow: inset 0 0 0 1px var(--color-line);
   }
 
-  /*
-   * Cuántas piezas hay de cada color, para que se sepa antes de pulsar y no después de
-   * encontrarse con la rejilla vacía. En «Todos» es una cifra en línea, junto a la
-   * palabra; en cada muestra de color no cabe ese mismo texto dentro de un círculo de
-   * 30px, así que ahí es una burbuja pequeña en la esquina —el mismo dibujo que el
-   * contador del pedido en la cabecera—, siempre en tinta y papel para que se lea igual
-   * sobre cualquier color de fondo.
-   */
-  .muestra-todo .contador {
-    color: var(--color-ink-soft);
-  }
-  .muestra {
-    position: relative;
-  }
-  .contador-punto {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    display: grid;
-    min-width: 15px;
-    height: 15px;
-    place-items: center;
-    border-radius: 9999px;
-    background-color: var(--color-ink);
-    box-shadow: 0 0 0 2px var(--color-paper);
-    padding: 0 3px;
-    font-size: 10px;
-    line-height: 1;
-    color: var(--color-paper);
-  }
-
   .interruptor {
     position: relative;
     width: 40px;
@@ -206,9 +174,10 @@ const intro = seccion.intro
     };
 
     /**
-     * Cuántas piezas quedan por muestra, respetando «Solo disponibles»: así el número
-     * dice lo que de verdad se va a encontrar al pulsar, no el total del catálogo
-     * entero. Se recalcula en cada cambio de ese interruptor, no solo al filtrar por
+     * Cuántas piezas quedan por muestra, respetando «Solo disponibles»: no se enseña en
+     * pantalla, pero sí en el nombre accesible de cada muestra, para quien use lector de
+     * pantalla sepa lo que va a encontrar al pulsar sin tener que abrir la rejilla vacía
+     * primero. Se recalcula en cada cambio de ese interruptor, no solo al filtrar por
      * color, porque es él quien cambia la cuenta.
      */
     const contar = () => {
@@ -221,8 +190,6 @@ const intro = seccion.intro
         ).length;
         const nombreColor = m.querySelector('.sr-only')?.textContent ?? 'Todos los colores';
         m.setAttribute('aria-label', `${nombreColor}, ${n} ${n === 1 ? 'pieza' : 'piezas'}`);
-        const contador = m.querySelector<HTMLElement>('[data-contador]');
-        if (contador) contador.textContent = String(n);
       }
     };
 
