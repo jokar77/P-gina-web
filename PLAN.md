@@ -120,6 +120,28 @@ Pendiente de verdad:
       no genérica), y que el plazo de un mes para responder a los derechos es ampliable dos
       meses más si la petición es complicada (RGPD art. 12.3). **Quedan 23 datos
       pendientes**, todos marcados en el texto como `[PENDIENTE: ...]`.
+- [x] **Las tres páginas legales pasan a Pages CMS** (septiembre 2026): el texto vivía
+      escrito a mano en `src/pages/condiciones.astro`, `desistimiento.astro` y
+      `privacidad.astro`; ahora vive en `src/content/legal/*.md` (colección `legal`
+      en `content.config.ts`) y esas tres páginas solo ponen la plantilla alrededor.
+      El cuerpo admite markdown de verdad —títulos, listas, enlaces, negrita—, y los
+      precios y plazos de envío no se escriben a mano: se dejan los huecos
+      `{precioRecogida}`, `{precioDomicilio}`, `{precioGratis}`, `{zonaEnvio}` y
+      `{plazoDias}`, que `src/lib/legal.ts` sustituye al construir por lo que haya en
+      `site.json` → envíos, así que una tarifa nueva no hay que cambiarla en cuatro
+      sitios. El formulario modelo de desistimiento (cita literal del anexo B del
+      TRLGDCU) se queda fijo en el código a propósito, fuera del markdown editable:
+      es la única parte de estas tres páginas que no conviene que se pueda tocar sin
+      darse cuenta de que se está editando un texto de la ley.
+      **Verificado desde aquí**: build y `astro check` limpios, capturas de las tres
+      páginas iguales pixel a pixel a como estaban, sin enlaces rotos ni bloqueos de
+      CSP. **Sin verificar**: la pantalla real de pagescms.org. El campo del cuerpo
+      usa `type: rich-text`, que por convención de Pages CMS es el tipo para el
+      markdown de un archivo (frontmatter aparte); no se pudo confirmar contra la
+      documentación en vivo (pagescms.org está fuera del proxy de este entorno), así
+      que la primera vez que Sakina entre a editar una de estas tres páginas hay que
+      comprobar que el campo se ve y guarda bien, delante de ella, igual que ya está
+      pendiente para el resto del CMS (ver Fase 4 más abajo).
 - [ ] Registro de actividades de tratamiento (versión simplificada para actividad pequeña).
 
 > Nada de esto es asesoramiento legal. Son los puntos a llevar a la gestoría para que ella

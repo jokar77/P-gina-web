@@ -522,3 +522,110 @@ content:
           - { name: id, label: Identificador, type: string }
           - { name: nombre, label: Nombre, type: string }
           - { name: precio, label: Suma al precio (euros), type: number, options: { min: 0, step: 1 } }
+
+  # Las tres páginas legales. Un `type: file` cada una, no una colección: solo pueden
+  # existir estas tres, cada una con su propia página ya escrita en src/pages, así que
+  # aquí no se puede ni añadir una cuarta ni borrar ninguna, solo editar el texto.
+  #
+  # Los precios y plazos de envío NO se escriben en estas páginas: se escriben una sola
+  # vez en «Envíos» (más arriba, dentro de «Textos y datos de la web») y aquí se ponen
+  # solos donde se ha dejado el hueco {precioRecogida}, {precioDomicilio},
+  # {precioGratis}, {zonaEnvio} o {plazoDias}. Escribir un precio a mano en el cuerpo
+  # del texto, en vez de dejar el hueco, es la forma más fácil de que esta página y la
+  # de «Envíos» acaben diciendo cifras distintas.
+  #
+  # Los huecos «[PENDIENTE: ...]» son datos que de verdad faltan (el NIF, el domicilio,
+  # un correo de contacto…), no un adorno: se rellenan con el dato real en cuanto se
+  # tenga, nunca con algo inventado ni borrándolos sin más. Ver PLAN.md §4.
+  - name: condicionesVenta
+    label: Condiciones de venta
+    type: file
+    path: src/content/legal/condiciones.md
+    description: >-
+      Texto legal, con citas de artículos de ley concretos (TRLGDCU): al tocarlo,
+      procura no cambiar lo que dice cada frase, solo pulir cómo lo dice. Cada
+      apartado empieza con un título de nivel 2 (una línea que empieza por «## »).
+    fields:
+      - { name: titulo, label: Título, type: string, required: true }
+      - name: descripcion
+        label: Descripción para buscadores
+        type: text
+        required: true
+        description: Lo que se lee en Google y al compartir el enlace de esta página.
+      - name: intro
+        label: Primer párrafo
+        type: text
+        options: { rows: 3 }
+        required: true
+      - name: actualizado
+        label: Última actualización
+        type: string
+        required: true
+        description: >-
+          La fecha en la que se publica esta versión del texto. Mientras no haya
+          fecha real, deja el aviso «[PENDIENTE: ...]» tal cual, no lo borres.
+      - name: body
+        label: Cuerpo del texto
+        type: rich-text
+        required: true
+
+  - name: desistimiento
+    label: Derecho de desistimiento
+    type: file
+    path: src/content/legal/desistimiento.md
+    description: >-
+      Texto legal, con citas de artículos de ley concretos (TRLGDCU). El formulario
+      modelo de la parte de abajo de esta página no está aquí: va fijo en el código
+      porque cita literalmente el anexo B de la ley, y no debe editarse.
+    fields:
+      - { name: titulo, label: Título, type: string, required: true }
+      - name: descripcion
+        label: Descripción para buscadores
+        type: text
+        required: true
+      - name: intro
+        label: Primer párrafo
+        type: text
+        options: { rows: 3 }
+        required: true
+      - name: actualizado
+        label: Última actualización
+        type: string
+        required: true
+        description: >-
+          La fecha en la que se publica esta versión del texto. Mientras no haya
+          fecha real, deja el aviso «[PENDIENTE: ...]» tal cual, no lo borres.
+      - name: body
+        label: Cuerpo del texto
+        type: rich-text
+        required: true
+
+  - name: privacidad
+    label: Política de privacidad
+    type: file
+    path: src/content/legal/privacidad.md
+    description: >-
+      Texto legal, con citas de artículos de ley concretos (RGPD, LSSI-CE): al
+      tocarlo, procura no cambiar lo que dice cada frase, solo pulir cómo lo dice.
+    fields:
+      - { name: titulo, label: Título, type: string, required: true }
+      - name: descripcion
+        label: Descripción para buscadores
+        type: text
+        required: true
+      - name: intro
+        label: Primer párrafo
+        type: text
+        options: { rows: 3 }
+        required: true
+      - name: actualizado
+        label: Última actualización
+        type: string
+        required: true
+        description: >-
+          La fecha en la que se publica esta versión del texto. Mientras no haya
+          fecha real, deja el aviso «[PENDIENTE: ...]» tal cual, no lo borres.
+      - name: body
+        label: Cuerpo del texto
+        type: rich-text
+        required: true
