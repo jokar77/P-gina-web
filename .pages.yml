@@ -30,6 +30,12 @@ media:
   - name: videos
     input: public/videos/redes
     output: /videos/redes
+    # Pages CMS convierte esto en una lista de extensiones al cargar la
+    # configuración (se ve en su propio código, lib/config.ts). El campo "video" de
+    # cada red, más abajo, lleva ahora la misma categoría puesta directamente en el
+    # campo —es lo que de verdad decide qué deja subir o elegir el selector de
+    # archivos (fields/core/file/edit-component.tsx)—, por si acaso esto de aquí no
+    # bastaba solo.
     categories: [video]
     rename: safe
 
@@ -278,6 +284,7 @@ content:
             type: file
             required: true
             media: videos
+            categories: [video]
             description: Formato vertical, como un Reel. Nada de audio importante, no se oye.
           - name: enlace
             label: Enlace a esta publicación
@@ -306,6 +313,7 @@ content:
             type: file
             required: true
             media: videos
+            categories: [video]
             description: Formato vertical. Nada de audio importante, no se oye.
           - name: enlace
             label: Enlace a esta publicación
@@ -334,6 +342,7 @@ content:
             type: file
             required: true
             media: videos
+            categories: [video]
             description: Nada de audio importante, no se oye.
           - name: enlace
             label: Enlace a este vídeo
