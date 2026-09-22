@@ -1,0 +1,67 @@
+---
+/**
+ * El cuerpo de las tres páginas legales (condiciones, desistimiento, privacidad):
+ * el párrafo de entrada, la fecha de última actualización y el texto en sí, que
+ * llega ya convertido de markdown a HTML (con los marcadores de precio ya
+ * sustituidos, ver src/pages/condiciones.astro y las otras dos).
+ *
+ * `set:html` porque el texto viene compilado de antemano, no como children de
+ * este componente; el estilo de los títulos, listas y negrita, que en el resto
+ * de la web sale directo de clases de Tailwind en cada etiqueta, aquí tiene que
+ * ir en un bloque `:global()` aparte porque esas etiquetas las genera el
+ * compilador de markdown, sin ninguna clase, y esas clases no se pueden escribir
+ * a mano dentro del texto que edita Sakina.
+ */
+interface Props {
+  intro: string;
+  actualizado: string;
+  html: string;
+}
+
+const { intro, actualizado, html } = Astro.props;
+---
+
+<p class="mt-6 text-lg text-ink-soft">{intro}</p>
+
+<p class="mt-6 text-[15px] text-ink-soft">Última actualización: {actualizado}</p>
+
+<div class="legal-cuerpo" set:html={html} />
+
+<style>
+  /*
+   * `list-style: none` en ul/ol ya lo pone el preflight de Tailwind para toda la
+   * web; aquí solo hace falta lo que sea distinto de eso, igual que ya pasaba en
+   * las versiones a mano de estas páginas (el `ol` de «Cómo desistir» era el
+   * único que reactivaba la numeración).
+   */
+  .legal-cuerpo :global(h2) {
+    border-top: 1px solid var(--color-line);
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    letter-spacing: normal;
+  }
+  .legal-cuerpo :global(p) {
+    margin-top: 1rem;
+  }
+  .legal-cuerpo :global(ul) {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .legal-cuerpo :global(ol) {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.75rem;
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+  /* Las etiquetas en negrita de esta web se leen en el mismo peso que el resto
+     del texto, no en negrita de verdad: es la letra pequeña de siempre, solo
+     marcada para quien usa lector de pantalla. */
+  .legal-cuerpo :global(strong) {
+    font-weight: 400;
+  }
+</style>

@@ -121,4 +121,30 @@ const redes = defineCollection({
   },
 });
 
-export const collections = { bolsos, ninos, archivo, portada, redes };
+/**
+ * Las tres páginas legales: condiciones de venta, desistimiento y privacidad.
+ *
+ * Solo tres entradas posibles, con nombre de archivo fijo (condiciones.md,
+ * desistimiento.md, privacidad.md): cada una tiene su propia página en
+ * src/pages, así que no puede haber una cuarta sin escribir esa página también.
+ * `type: file` en .pages.yml refleja lo mismo del lado del CMS: ahí no se puede
+ * añadir ni borrar, solo editar las tres que ya existen.
+ *
+ * El cuerpo (el markdown que va debajo del frontmatter) admite títulos de nivel
+ * 2, enlaces, listas y negrita —lo normal para un texto legal—, y también los
+ * marcadores {precioRecogida}, {precioDomicilio}, {precioGratis}, {zonaEnvio} y
+ * {plazoDias}: se sustituyen al construir por lo que haya en site.json → envíos
+ * (ver src/pages/condiciones.astro y las otras dos), así que una tarifa nueva no
+ * hay que tocarla en tres sitios.
+ */
+const legal = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/legal' }),
+  schema: z.object({
+    titulo: z.string(),
+    descripcion: z.string(),
+    intro: z.string(),
+    actualizado: z.string(),
+  }),
+});
+
+export const collections = { bolsos, ninos, archivo, portada, redes, legal };
