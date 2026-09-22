@@ -48,7 +48,7 @@ final antes de pagar nada.
 
 Por Bizum o transferencia, acordado por WhatsApp.
 
-En esta web no se paga. No hay pasarela de pago y no se piden datos de tarjeta en
+**En esta web no se paga.** No hay pasarela de pago y no se piden datos de tarjeta en
 ningún momento, ni en la web ni en la conversación. Si alguien te pide una tarjeta
 diciendo que es de parte de esta tienda, no lo es.
 
@@ -72,7 +72,7 @@ avisa cuanto antes: mientras el paquete no haya salido, se corrige sin problema.
 
 ## Devoluciones y desistimiento
 
-Tienes catorce días naturales para devolver una pieza de colección sin tener que dar
+Tienes **catorce días naturales** para devolver una pieza de colección sin tener que dar
 explicaciones. Las piezas por encargo, al estar hechas a tu medida y a tu gusto, quedan
 fuera de ese derecho (TRLGDCU art. 103.c).
 

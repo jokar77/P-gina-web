@@ -58,10 +58,13 @@ const { intro, actualizado, html } = Astro.props;
     list-style: decimal;
     padding-left: 1.25rem;
   }
-  /* Las etiquetas en negrita de esta web se leen en el mismo peso que el resto
-     del texto, no en negrita de verdad: es la letra pequeña de siempre, solo
-     marcada para quien usa lector de pantalla. */
+  /* Lo marcado en negrita en el markdown (los plazos, el aviso de que aquí no se
+     paga, los pasos de «Cómo desistir»...) es justo lo que alguien necesita ver
+     al pasar la vista rápido por la página, así que se lee de verdad más fuerte
+     y un pelín más grande que el resto del texto, no solo marcado para lector
+     de pantalla. */
   .legal-cuerpo :global(strong) {
-    font-weight: 400;
+    font-weight: 600;
+    font-size: 1.05em;
   }
 </style>

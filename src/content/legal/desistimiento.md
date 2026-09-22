@@ -12,7 +12,7 @@ actualizado: '[PENDIENTE: fecha en la que se publica esta versión]'
 
 ## Cuánto tiempo tienes
 
-Catorce días naturales desde que recibes el paquete, tú o la persona que lo reciba por
+**Catorce días naturales** desde que recibes el paquete, tú o la persona que lo reciba por
 ti. Si el pedido son varias piezas y llegan por separado, cuentan desde la última.
 
 Basta con avisar dentro de esos catorce días. Después tienes otros catorce para
