@@ -1,9 +1,9 @@
 ---
-nombre: Regalo
-precio: 0
+nombre: Amapola
+precio: 25
 estado: vendido
 color: amarillo
-material: Trapillo algodon
+material: Lana, dos arandelas, botón magnético y forro con bolsillo interior.
 ancho: 25
 alto: 25
 orden: 100
