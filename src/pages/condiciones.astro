@@ -2,6 +2,11 @@
 /**
  * Condiciones de venta.
  *
+ * El texto en sí vive en src/content/legal/condiciones.md, editable desde Pages
+ * CMS (ver .pages.yml). Esta página solo pone la plantilla alrededor: el título,
+ * el enlace a las otras dos páginas legales, y la sustitución de los marcadores
+ * de precio y plazo (ver src/lib/legal.ts).
+ *
  * Quien vende es una persona física, no una sociedad, y no está dada de alta como
  * autónoma (ver PLAN.md §4). Eso no la saca de esta ley: el TRLGDCU (art. 4) considera
  * «empresario» a quien vende de forma habitual y con ánimo de lucro, sea sociedad,
@@ -32,181 +37,21 @@
  * publicar, que lo revise una gestoría, como ya dice PLAN.md.
  */
 import Layout from '../layouts/Layout.astro';
-import site from '../data/site.json';
-import { precio } from '../lib/formato';
+import CuerpoLegal from '../components/CuerpoLegal.astro';
+import { getEntry } from 'astro:content';
+import { cuerpoLegal } from '../lib/legal';
 
-const { envios } = site;
+const entry = await getEntry('legal', 'condiciones');
+const { titulo, descripcion, intro, actualizado } = entry!.data;
+const html = cuerpoLegal(entry!);
 ---
 
-<Layout
-  titulo="Condiciones de venta — Sakina Platero"
-  descripcion="Cómo se compra, cómo se paga, cómo se envía y qué pasa si algo no sale bien."
->
+<Layout titulo={`${titulo} — Sakina Platero`} descripcion={descripcion}>
   <section class="px-5 py-section sm:px-8">
     <div class="mx-auto max-w-[68ch]">
-      <h1 class="font-display text-[clamp(2.25rem,7vw,4rem)]">Condiciones de venta</h1>
+      <h1 class="font-display text-[clamp(2.25rem,7vw,4rem)]">{titulo}</h1>
 
-      <p class="mt-6 text-lg text-ink-soft">
-        Estas condiciones se aplican a los pedidos que salen de esta web y se cierran hablando
-        por WhatsApp. Están escritas para que se entiendan a la primera; si algo no queda
-        claro, pregunta antes de pagar.
-      </p>
-
-      <p class="mt-6 text-[15px] text-ink-soft">
-        Última actualización: [PENDIENTE: fecha en la que se publica esta versión]
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Quién vende</h2>
-      <p class="mt-4">
-        Quien vende es una persona, no una sociedad: no hay razón social ni CIF, sino el
-        nombre y el NIF de quien teje cada pieza. Eso no cambia nada de lo que sigue en esta
-        página. La ley considera «empresario» a quien vende de forma habitual y con ánimo de
-        lucro, sea una sociedad, un autónomo o una persona particular que vende así
-        (TRLGDCU art. 4), así que los derechos que se explican aquí —desistimiento,
-        garantía, información antes de comprar— son los mismos que si compraras en una
-        tienda.
-      </p>
-      <ul class="mt-4 grid gap-2">
-        <li>Nombre y apellidos: [PENDIENTE: nombre y apellidos de quien vende]</li>
-        <li>NIF: [PENDIENTE: NIF de quien vende]</li>
-        <li>
-          Domicilio a efectos de notificaciones: [PENDIENTE: una dirección postal donde se
-          te pueda localizar; no hace falta que sea el domicilio particular, vale un
-          apartado de correos]
-        </li>
-        <li>Correo de contacto: [PENDIENTE: dirección de correo electrónico de contacto]</li>
-      </ul>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Qué se vende</h2>
-      <p class="mt-4">
-        Piezas hechas a mano, de una en una. Hay dos clases y no funcionan igual:
-      </p>
-      <ul class="mt-4 grid gap-3">
-        <li>
-          <strong class="font-normal">Piezas de colección.</strong> Son las que ves en la web, ya
-          hechas. Cada una es única: no hay dos iguales y, cuando se vende una, no se repite
-          exactamente. La foto es la pieza que recibes.
-        </li>
-        <li>
-          <strong class="font-normal">Piezas por encargo.</strong> Los bolsos de «Diseña tu bolso»
-          y los conjuntos de niño, que se cosen por talla. Se hacen para ti, con la forma, el
-          color y los detalles que elijas. Al ser personalizadas, no tienen derecho de
-          desistimiento; está explicado en la
-          <a href="/desistimiento">página del desistimiento</a>.
-        </li>
-      </ul>
-      <p class="mt-4">
-        Al ser trabajo a mano, cada pieza tiene sus irregularidades: un punto que no cae
-        exactamente igual, una diferencia mínima de tono entre partidas de lana, medidas con
-        un pequeño margen. Eso no es un defecto, es la pieza.
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Cómo se hace un pedido</h2>
-      <p class="mt-4">
-        En la web reúnes lo que te gusta y le das a enviar por WhatsApp. Eso abre una
-        conversación con el pedido escrito: todavía no has comprado nada y no has pagado nada.
-      </p>
-      <p class="mt-4">
-        La compra queda cerrada cuando Sakina te confirma que la pieza sigue disponible y el
-        precio final. Es importante: no hay control de existencias automático, las piezas son
-        únicas y dos personas pueden preguntar por la misma el mismo día. Si te la han quitado
-        por delante, te lo dice y te propone alternativas.
-      </p>
-      <p class="mt-4">El contrato se cierra en español.</p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Precios</h2>
-      <p class="mt-4">
-        Los precios están en euros. [PENDIENTE: confirmar con la gestoría si los precios llevan
-        IVA incluido y cómo hay que indicarlo].
-      </p>
-      <p class="mt-4">
-        En los encargos, el precio que sale en la web es orientativo: se cierra hablando,
-        según el material que lleve la pieza y las horas que salgan. Siempre sabrás el precio
-        final antes de pagar nada.
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Pago</h2>
-      <p class="mt-4">
-        Por Bizum o transferencia, acordado por WhatsApp.
-      </p>
-      <p class="mt-4">
-        En esta web no se paga. No hay pasarela de pago y no se piden datos de tarjeta en
-        ningún momento, ni en la web ni en la conversación. Si alguien te pide una tarjeta
-        diciendo que es de parte de esta tienda, no lo es.
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Envíos</h2>
-      <ul class="mt-4 grid gap-2">
-        <li>Zona de envío: {envios.zona}.</li>
-        <li>A punto de recogida: {precio(envios.puntoRecogida)}.</li>
-        <li>A domicilio: {precio(envios.domicilio)}.</li>
-        <li>Gratis a partir de {precio(envios.gratisDesde)} en piezas.</li>
-        <li>Siempre con seguimiento.</li>
-      </ul>
-      <p class="mt-4">
-        Canarias, Ceuta y Melilla se quedan fuera de momento, por el papeleo de aduana.
-      </p>
-      <p class="mt-4">
-        Las piezas de colección salen del taller en {envios.plazoDias} desde que se confirma
-        el pago. Los encargos hay que tejerlos o coserlos antes: el plazo depende de la cola
-        que haya en ese momento y se te dice al confirmar el pedido. Una vez sale el paquete,
-        la entrega depende del transporte [PENDIENTE: plazo de entrega estimado que da la
-        empresa de transporte].
-      </p>
-      <p class="mt-4">
-        La dirección la das tú, en el panel del pedido o hablando. Si te equivocas en algo,
-        avisa cuanto antes: mientras el paquete no haya salido, se corrige sin problema.
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Devoluciones y desistimiento</h2>
-      <p class="mt-4">
-        Tienes catorce días naturales para devolver una pieza de colección sin tener que dar
-        explicaciones. Las piezas por encargo, al estar hechas a tu medida y a tu gusto, quedan
-        fuera de ese derecho (TRLGDCU art. 103.c).
-      </p>
-      <p class="mt-4">
-        Cómo se hace, quién paga qué y el formulario para pedirlo están en la
-        <a href="/desistimiento">página del derecho de desistimiento</a>.
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Si la pieza llega mal</h2>
-      <p class="mt-4">
-        Eso no es una devolución por arrepentimiento: es la garantía legal, y cubre también a
-        los encargos. Las piezas tienen la garantía de conformidad de tres años que marca la
-        ley (TRLGDCU art. 120); si el defecto aparece dentro de los dos primeros años, se
-        entiende que ya estaba ahí cuando llegó, salvo que se demuestre lo contrario (TRLGDCU
-        art. 121). Si llega rota, con un defecto o no es lo que se había acordado, escríbele
-        con una foto y se arregla: se repara, se rehace o se te devuelve el dinero, y el
-        coste del envío de vuelta no lo pagas tú.
-      </p>
-      <p class="mt-4">
-        Si el paquete llega visiblemente dañado, dilo cuanto antes; cuanto antes se avise al
-        transporte, más fácil es reclamarlo.
-      </p>
-
-      <h2 class="filete mt-14 pt-8 font-sans text-xl tracking-normal">Reclamaciones</h2>
-      <p class="mt-4">
-        Lo primero, escribir: por WhatsApp o a [PENDIENTE: dirección de correo electrónico para
-        reclamaciones]. Se contesta.
-      </p>
-      <p class="mt-4">
-        Si no llegáis a un acuerdo, puedes acudir a la Oficina Municipal de Información al
-        Consumidor (OMIC) de [PENDIENTE: municipio] o a la Dirección General de Consumo de tu
-        comunidad autónoma. También existe el arbitraje de consumo, gratuito y que no exige
-        abogado, pero es voluntario para las dos partes: [PENDIENTE: confirmar si este
-        negocio está adherido a alguna Junta Arbitral de Consumo; si no lo está, decir «no
-        está adherido» en vez de omitirlo].
-      </p>
-      <p class="mt-4">
-        La plataforma europea de resolución de litigios en línea dejó de funcionar el 20 de
-        julio de 2025, así que ya no es una vía disponible aunque la menciones en otras
-        tiendas. Si vives en otro país de la Unión Europea, la Red de Centros Europeos del
-        Consumidor sigue ayudando con conflictos entre países.
-      </p>
-      <p class="mt-4">
-        Se aplica la ley española. Si compras como consumidor, conservas los derechos que te
-        dé la ley del país de la Unión Europea en el que vivas.
-      </p>
+      <CuerpoLegal intro={intro} actualizado={actualizado} html={html} />
 
       <ul class="filete mt-14 grid gap-3 pt-8">
         <li><a href="/desistimiento" class="text-lg">Derecho de desistimiento</a></li>
