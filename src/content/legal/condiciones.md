@@ -1,41 +1,26 @@
 ---
 titulo: Condiciones de venta
 descripcion: Cómo se compra, cómo se paga, cómo se envía y qué pasa si algo no sale bien.
-intro: >-
-  Estas condiciones se aplican a los pedidos que salen de esta web y se cierran hablando
-  por WhatsApp. Están escritas para que se entiendan a la primera; si algo no queda
-  claro, pregunta antes de pagar.
-actualizado: '[PENDIENTE: fecha en la que se publica esta versión]'
+intro: Estas condiciones se aplican a los pedidos que salen de esta web y se
+  cierran hablando por WhatsApp. Cualquier duda pregunta antes de pagar.
+actualizado: "[PENDIENTE: fecha en la que se publica esta versión]"
 ---
-
 ## Quién vende
 
-Quien vende es una persona, no una sociedad: no hay razón social ni CIF, sino el
-nombre y el NIF de quien teje cada pieza. Eso no cambia nada de lo que sigue en esta
-página. La ley considera «empresario» a quien vende de forma habitual y con ánimo de
-lucro, sea una sociedad, un autónomo o una persona particular que vende así
-(TRLGDCU art. 4), así que los derechos que se explican aquí —desistimiento,
-garantía, información antes de comprar— son los mismos que si compraras en una
-tienda.
 
-- Nombre y apellidos: [PENDIENTE: nombre y apellidos de quien vende]
-- NIF: [PENDIENTE: NIF de quien vende]
-- Domicilio a efectos de notificaciones: [PENDIENTE: una dirección postal donde se
-  te pueda localizar; no hace falta que sea el domicilio particular, vale un
-  apartado de correos]
-- Correo de contacto: [PENDIENTE: dirección de correo electrónico de contacto]
+
+- Nombre y apellidos: Sakina Platero
+- Correo de contacto: sakinaplateroben@gmail.com
 
 ## Qué se vende
 
 Piezas hechas a mano, de una en una. Hay dos clases y no funcionan igual:
 
 - **Piezas de colección.** Son las que ves en la web, ya hechas. Cada una es única: no
-  hay dos iguales y, cuando se vende una, no se repite exactamente. La foto es la
-  pieza que recibes.
-- **Piezas por encargo.** Los bolsos de «Diseña tu bolso» y los conjuntos de niño, que
-  se cosen por talla. Se hacen para ti, con la forma, el color y los detalles que
-  elijas. Al ser personalizadas, no tienen derecho de desistimiento; está explicado
-  en la [página del desistimiento](/desistimiento).
+hay dos iguales y, cuando se vende una, no se repite exactamente. La foto es la
+pieza que recibes.
+- **Piezas por encargo.** Los bolsos de «Diseña tu bolso» , los conjuntos de niño, incluso los vestidos.             Se hacen para ti, con la forma, el color y los detalles que elijas.                                                                         Al ser personalizadas, no tienen derecho de desistimiento; está explicado  
+en la [página del desistimiento](/desistimiento).
 
 Al ser trabajo a mano, cada pieza tiene sus irregularidades: un punto que no cae
 exactamente igual, una diferencia mínima de tono entre partidas de lana, medidas con
@@ -55,11 +40,8 @@ El contrato se cierra en español.
 
 ## Precios
 
-Los precios están en euros. [PENDIENTE: confirmar con la gestoría si los precios
-llevan IVA incluido y cómo hay que indicarlo].
-
-En los encargos, el precio que sale en la web es orientativo: se cierra hablando,
-según el material que lleve la pieza y las horas que salgan. Siempre sabrás el precio
+Los precios están en euros. En los encargos, el precio que sale en la web es orientativo: se cierra hablando,  
+según el material que lleve la pieza y las horas que salgan. Siempre sabrás el precio  
 final antes de pagar nada.
 
 ## Pago
@@ -78,13 +60,12 @@ diciendo que es de parte de esta tienda, no lo es.
 - Gratis a partir de {precioGratis} en piezas.
 - Siempre con seguimiento.
 
-Canarias, Ceuta y Melilla se quedan fuera de momento, por el papeleo de aduana.
+Canarias, Ceuta y Melilla excluidos.
 
-Las piezas de colección salen del taller en {plazoDias} desde que se confirma
-el pago. Los encargos hay que tejerlos o coserlos antes: el plazo depende de la cola
-que haya en ese momento y se te dice al confirmar el pedido. Una vez sale el paquete,
-la entrega depende del transporte [PENDIENTE: plazo de entrega estimado que da la
-empresa de transporte].
+Las piezas de colección salen del taller en {plazoDias} desde que se confirma  
+el pago. Los encargos hay que tejerlos o coserlos antes: el plazo depende de la cola  
+que haya en ese momento y se te dice al confirmar el pedido. Una vez sale el paquete,  
+la entrega depende del transporte.
 
 La dirección la das tú, en el panel del pedido o hablando. Si te equivocas en algo,
 avisa cuanto antes: mientras el paquete no haya salido, se corrige sin problema.
@@ -113,20 +94,6 @@ transporte, más fácil es reclamarlo.
 
 ## Reclamaciones
 
-Lo primero, escribir: por WhatsApp o a [PENDIENTE: dirección de correo electrónico para
-reclamaciones]. Se contesta.
+Lo primero, escribir: por WhatsApp o a [sakinaplateroben@gmail.com](mailto:sakinaplateroben@gmail.com) . 
 
-Si no llegáis a un acuerdo, puedes acudir a la Oficina Municipal de Información al
-Consumidor (OMIC) de [PENDIENTE: municipio] o a la Dirección General de Consumo de tu
-comunidad autónoma. También existe el arbitraje de consumo, gratuito y que no exige
-abogado, pero es voluntario para las dos partes: [PENDIENTE: confirmar si este
-negocio está adherido a alguna Junta Arbitral de Consumo; si no lo está, decir «no
-está adherido» en vez de omitirlo].
-
-La plataforma europea de resolución de litigios en línea dejó de funcionar el 20 de
-julio de 2025, así que ya no es una vía disponible aunque la menciones en otras
-tiendas. Si vives en otro país de la Unión Europea, la Red de Centros Europeos del
-Consumidor sigue ayudando con conflictos entre países.
-
-Se aplica la ley española. Si compras como consumidor, conservas los derechos que te
-dé la ley del país de la Unión Europea en el que vivas.
+Indicar el problema y buscaremos una solucion.
