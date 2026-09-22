@@ -31,19 +31,24 @@ const etiquetaPrecio =
         alt={alt}
         widths={[320, 480, 768]}
         sizes="(min-width: 1024px) 22rem, (min-width: 640px) 30vw, 45vw"
-        class:list={[
-          'aspect-[3/4] w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]',
-          estado === 'vendido' && 'grayscale-[60%]',
-        ]}
+        class="aspect-[3/4] w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
         loading={cargaDiferida ? 'lazy' : 'eager'}
       />
       {/*
-        Solo aquí, en la rejilla: es donde hay que distinguir de un vistazo qué sigue
-        disponible sin tener que leer el precio de cada una. En la ficha de la propia
-        pieza no hace falta —ya sabes que estás mirando la que está vendida—, así que
-        esta capa no vive en Galeria.astro ni en las páginas de ficha.
+        Una etiqueta, no un velo: la foto sigue viéndose tan bien como cualquier otra
+        —es trabajo suyo, no hay motivo para deslucirla—, y lo que cambia es que ya no
+        se puede comprar, no cómo se ve. Solo aquí, en la rejilla, que es donde hace
+        falta distinguir de un vistazo qué sigue disponible sin leer el precio de cada
+        una; en la ficha de la propia pieza no hace falta, así que esta etiqueta no
+        vive en Galeria.astro ni en las páginas de ficha.
       */}
-      {estado === 'vendido' && <div class="absolute inset-0 bg-ink/20" aria-hidden="true" />}
+      {
+        estado === 'vendido' && (
+          <span class="absolute top-3 left-3 bg-deep px-2.5 py-1 text-[12px] tracking-wide text-paper">
+            Vendido
+          </span>
+        )
+      }
     </div>
     <div class="mt-3 flex items-baseline justify-between gap-3">
       <h3 class="font-display text-xl">{nombre}</h3>

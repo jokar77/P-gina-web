@@ -1,39 +1,28 @@
 ---
 titulo: Política de privacidad
-descripcion: >-
-  Qué datos se tratan y cuáles no. Esta web no pone cookies, no carga scripts de
-  terceros y no envía nada a ningún servidor.
-intro: >-
-  Esta página es corta porque hay poco que contar. La web no pone ni una cookie, no
-  carga nada de otras empresas y no manda tus datos a ningún servidor. Lo único que
-  guarda en tu navegador es el pedido que vas montando. Aquí está el detalle.
-actualizado: '[PENDIENTE: fecha en la que se publica esta versión]'
+descripcion: Qué datos se tratan y cuáles no. Esta web no pone cookies, no carga
+  scripts de terceros y no envía nada a ningún servidor.
+intro: La web no pone ni una cookie, no carga nada de otras empresas y no manda
+  tus datos a ningún servidor. Lo único que guarda en tu navegador es el pedido
+  que vas montando. Aquí está el detalle.
+actualizado: "[PENDIENTE: fecha en la que se publica esta versión]"
 ---
-
 ## Quién responde de tus datos
 
-La web no recoge nada por su cuenta. De los datos que le das a Sakina para
-prepararte un pedido responde ella, como persona física: no hay razón social ni
-CIF, sino su nombre y su NIF.
+La web no recoge nada por su cuenta. De los datos que le das a Sakina para  
+prepararte un pedido responde ella, como persona física: no hay razón social ni  
+CIF.
 
-- Nombre y apellidos: [PENDIENTE: nombre y apellidos de quien vende]
-- NIF: [PENDIENTE: NIF de quien vende]
-- Domicilio a efectos de notificaciones: [PENDIENTE: una dirección postal donde se
-  te pueda localizar; no hace falta que sea el domicilio particular, vale un
-  apartado de correos]
-- Correo de contacto: [PENDIENTE: dirección de correo electrónico de contacto]
+- Nombre y apellidos: Sakina Platero
+- Correo de contacto: sakinaplateroben@gmail.com
 
 Para esto y para todo lo demás, lo más rápido es WhatsApp: contesta ella misma.
 
-No hace falta un delegado de protección de datos (RGPD art. 37): ese cargo es
-obligatorio para administraciones públicas o para quien trata datos a gran escala
-o de forma sistemática, y esto es una tienda pequeña que vende hablando.
-
 ## Qué guarda la web en tu navegador
 
-Solo el pedido. Cuando añades una pieza, se guarda en el almacenamiento local de tu
-navegador, en una clave llamada `sakina.carrito.v1`. Dentro hay el nombre,
-el precio y el detalle de las piezas que has añadido, y nada más: ningún
+Solo el pedido. Cuando añades una pieza, se guarda en el almacenamiento local de tu  
+navegador. Dentro hay el nombre,  
+el precio y el detalle de las piezas que has añadido, y nada más: ningún  
 identificador tuyo, ningún número que te siga de una web a otra.
 
 Eso se queda en tu dispositivo. No viaja a ningún servidor y no lo lee nadie. Sirve
@@ -68,17 +57,15 @@ Sakina trata lo que le cuentes —nombre, teléfono, dirección de envío y lo q
 falta para la pieza, como una talla— con estos fines:
 
 - **Preparar y enviarte el pedido.** Base jurídica: la
-  ejecución del contrato de compra (RGPD art. 6.1.b).
+ejecución del contrato de compra (RGPD art. 6.1.b).
 - **Cumplir con las obligaciones fiscales y contables.**
-  Base jurídica: obligación legal (RGPD art. 6.1.c).
+Base jurídica: obligación legal (RGPD art. 6.1.c).
 - **Contestar a lo que preguntes** aunque al final no
-  compres nada. Base jurídica: son medidas precontractuales que pides tú (RGPD
-  art. 6.1.b).
+compres nada. Base jurídica: son medidas precontractuales que pides tú (RGPD
+art. 6.1.b).
 
 Cuánto tiempo se conserva: la conversación, mientras haga falta para el pedido y para
-poder responder de él. La documentación de facturación, el plazo que marque la ley
-[PENDIENTE: confirmar con la gestoría el plazo de conservación de facturas y
-documentación fiscal]. No se usa tu número para mandarte publicidad, y no se toman
+poder responder de él. No se usa tu número para mandarte publicidad, y no se toman
 decisiones automatizadas ni se elaboran perfiles con tus datos.
 
 Meta, la empresa detrás de WhatsApp, tiene sede en Estados Unidos: al escribir por
@@ -91,11 +78,8 @@ completa en
 
 ## Quién más ve tus datos
 
-- La empresa de transporte, para poder entregarte el paquete: [PENDIENTE: nombre de la
-  empresa de transporte con la que se envía].
+- La empresa de transporte, para poder entregarte el paquete.
 - WhatsApp (Meta), como canal por el que va la conversación.
-- [PENDIENTE: confirmar si la gestoría o asesoría accede a documentación con datos de
-  clientes y con qué contrato de encargo de tratamiento].
 
 Nadie más. Tus datos no se venden, no se ceden y no se usan para publicidad.
 
@@ -108,14 +92,11 @@ hay ninguna herramienta de analítica instalada.
 
 ## Tus derechos
 
-Puedes pedir acceso a tus datos, que se corrijan, que se borren, oponerte a que se
-traten, pedir que se limite su uso o que te los den en un archivo para llevártelos.
-Escribe a [PENDIENTE: dirección de correo electrónico para ejercer los derechos] o por
-WhatsApp, diciendo qué quieres. Se te contesta en un mes como mucho, ampliable a
+Puedes pedir acceso a tus datos, que se corrijan, que se borren, oponerte a que se  
+traten, pedir que se limite su uso.  
+Escribe a sakinaplateroben@gmail.com o por  
+WhatsApp, diciendo qué quieres. Se te contesta en un mes como mucho, ampliable a  
 dos meses más si la petición es complicada, avisándote del motivo (RGPD art. 12.3).
-
-Si crees que no se ha hecho bien, puedes reclamar ante la Agencia Española de
-Protección de Datos, en [aepd.es](https://www.aepd.es).
 
 ## Menores
 

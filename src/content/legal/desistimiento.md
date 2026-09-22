@@ -1,15 +1,13 @@
 ---
 titulo: Derecho de desistimiento
-descripcion: >-
-  Catorce días para devolver una pieza de colección, cómo se hace y el formulario
-  modelo. Las piezas por encargo quedan fuera por estar personalizadas.
-intro: >-
-  Si compras una pieza de colección y al tenerla delante no te convence, tienes catorce
-  días para devolverla sin dar ninguna explicación. Las piezas por encargo son otra cosa,
-  y está explicado más abajo.
-actualizado: '[PENDIENTE: fecha en la que se publica esta versión]'
+descripcion: Catorce días para devolver una pieza de colección, cómo se hace y
+  el formulario modelo. Las piezas por encargo quedan fuera por estar
+  personalizadas.
+intro: Si compras una pieza de colección y al tenerla delante no te convence,
+  tienes catorce días para devolverla sin dar ninguna explicación. Las piezas
+  por encargo son otra cosa, y está explicado más abajo.
+actualizado: "[PENDIENTE: fecha en la que se publica esta versión]"
 ---
-
 ## Cuánto tiempo tienes
 
 **Catorce días naturales** desde que recibes el paquete, tú o la persona que lo reciba por
@@ -26,9 +24,8 @@ color, los detalles y la medida que has elegido. La ley lo dice así para los bi
 confeccionados conforme a las especificaciones del consumidor o claramente
 personalizados (TRLGDCU art. 103.c).
 
-El motivo es sencillo: esa pieza se teje o se cose entera para una sola persona, son
-entre ocho y doce horas de mano, y no se puede ofrecer a otra. Por eso, en los
-encargos, antes de empezar se acuerda todo por escrito en la conversación: forma,
+El motivo es sencillo: esa pieza se teje o se cose entera para una sola persona. Por eso, en los  
+encargos, antes de empezar se acuerda todo por escrito en la conversación: forma,  
 color, medidas, plazo y precio final. Si algo no encaja, ese es el momento de decirlo.
 
 Que un encargo no se pueda devolver por arrepentimiento no quita nada de la garantía:
@@ -37,14 +34,11 @@ si llega con un defecto o no es lo acordado, se arregla. Eso está en las
 
 ## Cómo desistir
 
-1. **Avisa dentro de los catorce días.** Por WhatsApp, en la misma conversación del
-   pedido, o por correo a [PENDIENTE: dirección de correo electrónico para comunicar
-   el desistimiento]. Vale cualquier declaración clara; puedes usar el formulario de
-   abajo, pero no es obligatorio.
-2. **Manda la pieza de vuelta** en los catorce días siguientes a ese aviso, a
-   [PENDIENTE: dirección postal donde se pueda recibir el paquete devuelto; no hace
-   falta que sea el domicilio particular, pero tiene que admitir paquetería, no solo
-   cartas]. Guarda el resguardo del envío: es la prueba de que la mandaste a tiempo.
+**Avisa dentro de los catorce días.** Por WhatsApp, en la misma conversación del
+
+pedido, o por correo a sakinaplateroben@gmail.com. Vale cualquier declaración clara; puedes usar el formulario de abajo, pero no es obligatorio.
+
+**Manda la pieza de vuelta** en los catorce días siguientes a ese aviso, a la dirección que se te indicará. Guarda el resguardo del envío: es la prueba de que la mandaste a tiempo.
 
 ## En qué estado tiene que volver
 
