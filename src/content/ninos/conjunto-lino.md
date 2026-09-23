@@ -7,5 +7,5 @@ estado: encargo
 orden: 1
 foto: ../../assets/piezas/conjunto-lino/03.jpg
 fotos:
-  - ../../assets/piezas/conjunto-lino/02.jpg
+  - ../../assets/piezas/conjunto-cuadros/06.jpg
 ---
