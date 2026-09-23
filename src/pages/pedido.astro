@@ -12,10 +12,40 @@
  * pestaña—, se le dice y se le ofrece volver a mirar, en vez de enseñar un formulario
  * vacío sin sentido.
  */
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import { METODOS } from '../lib/envio';
 import { precio } from '../lib/formato';
 import site from '../data/site.json';
+import logoCorreos from '../assets/transportistas/correos.png';
+import logoInpost from '../assets/transportistas/inpost.png';
+
+/**
+ * Los dos transportistas entre los que se puede elegir al recoger en un punto, cada
+ * uno con su propio localizador oficial: no hay buscador propio (ver el comentario
+ * junto al campo de la oficina, más abajo). El primero de la lista es el que sale
+ * marcado por defecto.
+ */
+const TRANSPORTISTAS = [
+  {
+    id: 'correos',
+    nombreOpcion: 'Oficina de Correos',
+    logo: logoCorreos,
+    enlace: 'https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle',
+    textoEnlace: 'Buscar mi oficina más cercana',
+    etiquetaCampo: 'Oficina de recogida',
+    placeholder: 'Nombre o dirección de la oficina',
+  },
+  {
+    id: 'inpost',
+    nombreOpcion: 'Punto InPost',
+    logo: logoInpost,
+    enlace: 'https://www.inpost.es/buscar-el-punto-pack-mas-cercano/',
+    textoEnlace: 'Buscar mi punto más cercano',
+    etiquetaCampo: 'Punto de recogida',
+    placeholder: 'Nombre o dirección del punto InPost',
+  },
+];
 ---
 
 <Layout
@@ -84,29 +114,51 @@ import site from '../data/site.json';
                 </label>
 
                 {/*
-                  No hay buscador de oficinas en directo: Correos no ofrece uno público
-                  para insertar en cualquier web sin cuenta de empresa, y montarlo con
-                  datos propios (miles de oficinas) no encaja aquí. En vez de eso, se
-                  enlaza a su localizador oficial y quien compra escribe cuál eligió,
-                  igual que ya hace con la dirección: nada se valida solo, todo se
+                  No hay buscador de puntos en directo: ni Correos ni InPost ofrecen uno
+                  público para insertar en cualquier web sin cuenta de empresa, y montarlo
+                  con datos propios (miles de oficinas y lockers) no encaja aquí. En vez de
+                  eso, se enlaza al localizador oficial de quien elijas y escribes cuál
+                  elegiste, igual que ya hace con la dirección: nada se valida solo, todo se
                   confirma hablando.
                 */}
                 <div class="grid gap-3" data-campos-recogida hidden>
+                  <div class="grid gap-2">
+                    {
+                      TRANSPORTISTAS.map((t, i) => (
+                        <label class="opcion-transportista">
+                          <input
+                            type="radio"
+                            name="transportista"
+                            value={t.id}
+                            checked={i === 0}
+                            class="sr-only"
+                            data-transportista
+                          />
+                          <span class="marca-radio" aria-hidden="true" />
+                          <Image src={t.logo} alt="" height={28} class="logo-transportista" />
+                          <span class="flex-1">{t.nombreOpcion}</span>
+                        </label>
+                      ))
+                    }
+                  </div>
+
                   <a
-                    href="https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle"
+                    href={TRANSPORTISTAS[0].enlace}
                     target="_blank"
                     rel="noopener"
                     class="text-[14px] underline lg:text-[16px]"
+                    data-enlace-transportista
                   >
-                    Buscar mi oficina más cercana ↗
+                    {TRANSPORTISTAS[0].textoEnlace} ↗
                   </a>
                   <label class="campo">
-                    <span>Oficina de recogida</span>
+                    <span data-etiqueta-oficina>{TRANSPORTISTAS[0].etiquetaCampo}</span>
                     <input
                       type="text"
                       name="oficina"
-                      placeholder="Nombre o dirección de la oficina"
+                      placeholder={TRANSPORTISTAS[0].placeholder}
                       data-dato
+                      data-input-oficina
                     />
                   </label>
                 </div>
@@ -205,7 +257,8 @@ import site from '../data/site.json';
 </Layout>
 
 <style>
-  .opcion-envio {
+  .opcion-envio,
+  .opcion-transportista {
     display: flex;
     align-items: center;
     gap: 0.7rem;
@@ -214,10 +267,12 @@ import site from '../data/site.json';
     box-shadow: inset 0 0 0 1px var(--color-line);
     transition: box-shadow 180ms var(--ease-salida);
   }
-  .opcion-envio:has(input:checked) {
+  .opcion-envio:has(input:checked),
+  .opcion-transportista:has(input:checked) {
     box-shadow: inset 0 0 0 1px var(--color-ink);
   }
-  .opcion-envio:has(input:focus-visible) {
+  .opcion-envio:has(input:focus-visible),
+  .opcion-transportista:has(input:focus-visible) {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
@@ -229,11 +284,21 @@ import site from '../data/site.json';
     box-shadow: inset 0 0 0 1px var(--color-line);
     transition: box-shadow 180ms var(--ease-salida);
   }
-  .opcion-envio:has(input:checked) .marca-radio {
+  .opcion-envio:has(input:checked) .marca-radio,
+  .opcion-transportista:has(input:checked) .marca-radio {
     box-shadow:
       inset 0 0 0 1px var(--color-ink),
       inset 0 0 0 5px var(--color-paper),
       inset 0 0 0 16px var(--color-ink);
+  }
+  /* El logo de cada transportista, entre el punto del radio y su nombre: ayuda a
+     reconocer de un vistazo cuál es cuál sin tener que leer, que es justo lo que un
+     logo aporta que el texto solo no da. */
+  .logo-transportista {
+    flex: none;
+    height: 28px;
+    width: auto;
+    max-width: 3.5rem;
   }
 
   .campo {
@@ -334,10 +399,39 @@ import site from '../data/site.json';
   const aviso = document.querySelector<HTMLElement>('[data-aviso]');
   const enviar = document.querySelector<HTMLAnchorElement>('[data-enviar]');
   const qrCaja = document.querySelector<HTMLElement>('[data-qr-caja]');
+  const enlaceTransportista = document.querySelector<HTMLAnchorElement>('[data-enlace-transportista]');
+  const etiquetaOficina = document.querySelector<HTMLElement>('[data-etiqueta-oficina]');
+  const inputOficina = document.querySelector<HTMLInputElement>('[data-input-oficina]');
+
+  type Transportista = 'correos' | 'inpost';
+
+  // Mismo contenido que TRANSPORTISTAS en el frontmatter (ver ahí el porqué de cada
+  // campo): se repite aquí porque el frontmatter no llega al script del cliente, y es
+  // solo texto, así que duplicarlo pesa menos que traerlo de otra forma.
+  const TRANSPORTISTA: Record<Transportista, { enlace: string; textoEnlace: string; etiquetaCampo: string; placeholder: string; nombreMensaje: string }> = {
+    correos: {
+      enlace: 'https://www.correos.es/es/es/herramientas/oficinas-buzones-citypaq/detalle',
+      textoEnlace: 'Buscar mi oficina más cercana',
+      etiquetaCampo: 'Oficina de recogida',
+      placeholder: 'Nombre o dirección de la oficina',
+      nombreMensaje: 'Oficina de Correos',
+    },
+    inpost: {
+      enlace: 'https://www.inpost.es/buscar-el-punto-pack-mas-cercano/',
+      textoEnlace: 'Buscar mi punto más cercano',
+      etiquetaCampo: 'Punto de recogida',
+      placeholder: 'Nombre o dirección del punto InPost',
+      nombreMensaje: 'Punto InPost',
+    },
+  };
 
   const metodoElegido = (): Metodo =>
     (document.querySelector<HTMLInputElement>('[data-metodo]:checked')?.value as Metodo) ??
     'recogida';
+
+  const transportistaElegido = (): Transportista =>
+    (document.querySelector<HTMLInputElement>('[data-transportista]:checked')?.value as Transportista) ??
+    'correos';
 
   const dato = (nombre: string) =>
     document.querySelector<HTMLInputElement>(`[data-dato][name="${nombre}"]`)?.value.trim() ?? '';
@@ -375,12 +469,15 @@ import site from '../data/site.json';
         ];
 
     // Los datos de envío solo se añaden si se han escrito, y cambian según el método:
-    // con recogida no hace falta calle ni código postal, solo qué oficina se eligió.
+    // con recogida no hace falta calle ni código postal, solo el transportista y qué
+    // oficina o punto se eligió.
     const datos =
       metodo === 'recogida'
-        ? [dato('nombre'), dato('oficina') && `Oficina de recogida: ${dato('oficina')}`].filter(
-            Boolean
-          )
+        ? [
+            dato('nombre'),
+            dato('oficina') &&
+              `${TRANSPORTISTA[transportistaElegido()].nombreMensaje}: ${dato('oficina')}`,
+          ].filter(Boolean)
         : [
             dato('nombre'),
             dato('direccion'),
@@ -435,6 +532,17 @@ import site from '../data/site.json';
     const metodo = metodoElegido();
     if (camposRecogida) camposRecogida.hidden = metodo !== 'recogida';
     if (camposDomicilio) camposDomicilio.hidden = metodo !== 'domicilio';
+
+    // El localizador, la etiqueta del campo y su placeholder cambian con el
+    // transportista elegido: cada uno tiene su propia herramienta para buscar dónde
+    // recoger, y Correos y InPost no llaman igual al sitio (oficina / punto).
+    const t = TRANSPORTISTA[transportistaElegido()];
+    if (enlaceTransportista) {
+      enlaceTransportista.href = t.enlace;
+      enlaceTransportista.textContent = `${t.textoEnlace} ↗`;
+    }
+    if (etiquetaOficina) etiquetaOficina.textContent = t.etiquetaCampo;
+    if (inputOficina) inputOficina.placeholder = t.placeholder;
 
     const CAMPOS_POR_METODO: Record<Metodo, string[]> = {
       recogida: ['nombre', 'oficina'],

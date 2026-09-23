@@ -2,7 +2,7 @@
 nombre: Camisa Lino
 tipo: Camisa
 material: Lino
-nota: abdafa
+nota: "Camisa de hombre "
 ano: 2026
 foto: ../../assets/piezas/camisa hombre/f0c1a6a1-cb50-4d12-8d44-5bb81b2cd323.jpg
 fotos:
