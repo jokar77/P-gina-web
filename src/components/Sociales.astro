@@ -60,6 +60,16 @@ const plataformas = [
     medios: mezclar(entrada?.data.youtube ?? [], entrada?.data.youtubeVideos ?? []),
   },
 ].filter((p) => p.href && p.medios.length > 0);
+
+/*
+ * La rejilla es de 3 columnas en pantallas anchas, pensada para cuando salen las
+ * tres redes. Si alguna se queda sin enlace o sin medios (como TikTok, tras
+ * mover su vídeo a YouTube), `plataformas` tiene menos de 3 elementos: con la
+ * rejilla fija se veía un hueco vacío donde iba esa ventana. Aquí se ajusta el
+ * número de columnas al número de ventanas que realmente hay.
+ */
+const columnasSm =
+  { 1: 'sm:grid-cols-1', 2: 'sm:grid-cols-2' }[plataformas.length] ?? 'sm:grid-cols-3';
 ---
 
 {
@@ -73,7 +83,7 @@ const plataformas = [
           </p>
         </div>
 
-        <ul class="mt-10 grid grid-cols-1 gap-7 sm:grid-cols-3">
+        <ul class={`mt-10 grid grid-cols-1 gap-7 ${columnasSm}`}>
           {plataformas.map((p) => (
             <li>
               <a
