@@ -4,11 +4,12 @@ precio: 20
 estado: disponible
 color: blanco
 material: Trapillo blanco, bolso de mano con asa incorporada.
-ancho: 32
-alto: 20
+ancho: 28
+alto: 15
 orden: 9
-foto: ../../assets/piezas/duna/01.jpg
+foto: ../../assets/piezas/bolsos nueva/image000041711zon.jpeg
 fotos:
-  - ../../assets/piezas/duna/02.jpg
-  - ../../assets/piezas/duna/03.jpg
+  - ../../assets/piezas/bolsos nueva/image000031611zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000021511zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000011411zon.jpeg
 ---
