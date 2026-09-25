@@ -4,8 +4,8 @@ precio: 30
 estado: disponible
 color: azul
 material: Lana acrílica más hilo con lentejuelas, efecto encantador y tarjetero a juego.
-ancho: 28
-alto: 22
+ancho: 29
+alto: 15
 orden: 1
 foto: ../../assets/piezas/escarcha/01.jpg
 fotos:
