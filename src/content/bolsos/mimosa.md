@@ -7,8 +7,8 @@ material: Trapillo amarillo, asa de mano resistente.
 ancho: 30
 alto: 15
 orden: 7
-foto: ../../assets/piezas/mimosa/01.jpg
+foto: ../../assets/piezas/bolsos nueva/image000443611zon.jpeg
 fotos:
-  - ../../assets/piezas/mimosa/02.jpg
-  - ../../assets/piezas/mimosa/03.jpg
+  - ../../assets/piezas/bolsos nueva/image000433511zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000423411zon.jpeg
 ---
