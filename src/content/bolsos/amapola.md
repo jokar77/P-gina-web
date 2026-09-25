@@ -5,8 +5,8 @@ estado: disponible
 color: rojo
 material: Lana acrílica junto a hilo con lentejuelas, tres hibiscos cosidos a
   mano y tarjetero a juego
-ancho: 27
-alto: 24
+ancho: 25
+alto: 17
 orden: 3
 foto: ../../assets/piezas/amapola/01.jpg
 fotos:
