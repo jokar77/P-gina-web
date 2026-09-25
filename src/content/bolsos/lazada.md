@@ -4,8 +4,8 @@ precio: 30
 estado: disponible
 color: rosa
 material: Trapillo rosa, asa de hombro con arandelas y lazos.
-ancho: 28
-alto: 22
+ancho: 27
+alto: 18
 orden: 6
 foto: ../../assets/piezas/lazada/02.jpg
 fotos:
