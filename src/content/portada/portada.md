@@ -1,8 +1,8 @@
 ---
 bolsos: ../../assets/piezas/bolsos nueva/image00017911zon.jpeg
-bolsosAlt: Varios bolsos de ganchillo, en distintos colores.
+bolsosAlt: Bolso con monedero.
 ninos: ../../assets/piezas/conjunto-cuadros/01.jpg
 ninosAlt: Conjunto de cuadros para niño, camisa y pantalón.
 archivo: ../../assets/piezas/lunares/01.jpg
-archivoAlt: pijama rayas, conjunto.
+archivoAlt: Vestido de flamenca morado.
 ---
