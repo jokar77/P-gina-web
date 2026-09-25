@@ -5,7 +5,7 @@ estado: disponible
 color: amarillo
 material: Trapillo amarillo, asa de mano resistente.
 ancho: 30
-alto: 24
+alto: 15
 orden: 7
 foto: ../../assets/piezas/mimosa/01.jpg
 fotos:
