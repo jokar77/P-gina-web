@@ -1,7 +1,7 @@
 ---
 instagramVideos:
   - video: /videos/redes/instagram/instagram.mp4
-    enlace: https://www.instagram.com/reel/DdmJgVtAYM0/?stkn=MWJ3NnJ1ZTkxeDBkeQ==
+    enlace: https://www.instagram.com/reel/DdmJgVtAYM0/
 tiktokVideos:
   - video: /videos/redes/tiktok/tiktok.mp4
     enlace: https://vm.tiktok.com/ZN8M9VMLD/
