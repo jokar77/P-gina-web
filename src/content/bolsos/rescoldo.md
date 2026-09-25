@@ -7,8 +7,8 @@ material: Lana acrílica con brillo incluido, bolso de mano con tarjetero a jueg
 ancho: 28
 alto: 15
 orden: 5
-foto: ../../assets/piezas/rescoldo/01.jpg
+foto: ../../assets/piezas/bolsos nueva/image000302211zon.jpeg
 fotos:
-  - ../../assets/piezas/rescoldo/02.jpg
-  - ../../assets/piezas/rescoldo/03.jpg
+  - ../../assets/piezas/bolsos nueva/image000292111zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000282011zon.jpeg
 ---
