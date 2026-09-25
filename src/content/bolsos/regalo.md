@@ -4,8 +4,8 @@ precio: 25
 estado: vendido
 color: amarillo
 material: Lana, dos arandelas, botón magnético y forro con bolsillo interior.
-ancho: 25
-alto: 25
+ancho: 30
+alto: 16
 orden: 100
 foto: ../../assets/piezas/amarillo souad/img8544.jpg
 fotos:
