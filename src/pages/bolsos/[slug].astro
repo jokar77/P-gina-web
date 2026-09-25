@@ -104,6 +104,8 @@ const jsonLd = [
             {vendido ? 'Vendido' : precio(d.precio)}
           </p>
 
+          {d.nota && <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">{d.nota}</p>}
+
           <dl class="filete mt-8 grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 pt-6 text-[15px]">
             <dt class="text-ink-soft">Material</dt>
             <dd>{d.material}</dd>

@@ -13,6 +13,7 @@ const bolsos = defineCollection({
       color: z.enum(COLOR_IDS as [string, ...string[]]),
       precio: z.number(),
       estado,
+      nota: z.string().optional(),
       material: z.string(),
       ancho: z.number(),
       alto: z.number(),

@@ -69,6 +69,13 @@ content:
             - { value: vendido, label: Vendido (se queda expuesto) }
             - { value: encargo, label: Solo por encargo }
         description: Nunca se pone solo. Lo cambias tú cuando la pieza encuentra dueña.
+      - name: nota
+        label: Nota bajo el precio
+        type: text
+        options: { rows: 3 }
+        description: >-
+          Opcional. Sale en la ficha de la pieza, justo debajo del precio. Si lo dejas en
+          blanco, no aparece nada ahí.
       - name: color
         label: Color
         type: select
