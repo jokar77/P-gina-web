@@ -8,9 +8,8 @@ material: Trapillo gris oscuro, es un bolso plano pero espacioso y los acabados
 ancho: 35
 alto: 22
 orden: 11
-foto: ../../assets/piezas/cacao/01.jpg
+foto: ../../assets/piezas/bolsos nueva/image00009111zon.jpeg
 fotos:
-  - ../../assets/piezas/cacao/02.jpg
-  - ../../assets/piezas/cacao/03.jpg
-  - ../../assets/piezas/cacao/04.jpg
+  - ../../assets/piezas/bolsos nueva/image00012411zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image00011311zon.jpeg
 ---
