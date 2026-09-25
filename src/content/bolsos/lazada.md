@@ -7,10 +7,9 @@ material: Trapillo rosa, asa de hombro con arandelas y lazos.
 ancho: 27
 alto: 18
 orden: 6
-foto: ../../assets/piezas/lazada/02.jpg
+foto: ../../assets/piezas/bolsos nueva/image000241611zon.jpeg
 fotos:
-  - ../../assets/piezas/lazada/01.jpg
-  - ../../assets/piezas/lazada/03.jpg
-  - ../../assets/piezas/lazada/04.jpg
-  - ../../assets/piezas/lazada/05.jpg
+  - ../../assets/piezas/bolsos nueva/image000231511zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000211311zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000221411zon.jpeg
 ---
