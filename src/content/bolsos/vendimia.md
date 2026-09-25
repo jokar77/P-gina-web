@@ -7,8 +7,8 @@ material: Doble trapillo, bicolor, asa resistente y flor añadida a mano.
 ancho: 25
 alto: 16
 orden: 4
-foto: ../../assets/piezas/vendimia/01.jpg
+foto: ../../assets/piezas/bolsos nueva/image000332511zon.jpeg
 fotos:
-  - ../../assets/piezas/vendimia/02.jpg
-  - ../../assets/piezas/vendimia/03.jpg
+  - ../../assets/piezas/bolsos nueva/image000322411zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000312311zon.jpeg
 ---
