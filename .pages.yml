@@ -523,6 +523,11 @@ content:
     type: file
     path: src/data/configurador.json
     fields:
+      - name: dosColores
+        label: Suma por elegir dos colores (euros)
+        type: number
+        options: { min: 0, step: 1 }
+        description: Se suma al precio cuando en «El color» se elige «Dos colores».
       - name: formas
         label: Formas
         type: object
