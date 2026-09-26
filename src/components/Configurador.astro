@@ -11,7 +11,12 @@ import sinAsa from '../assets/piezas/duna/01.jpg';
 
 // Cada forma se enseña con una pieza real ya hecha, no con un dibujo.
 const fotos: Record<string, ImageMetadata> = { tote, hombro, 'sin-asa': sinAsa };
-const colores = Object.entries(COLORES) as [ColorId, (typeof COLORES)[ColorId]][];
+// «Bicolor» es un color del catálogo (sirve para filtrar piezas ya hechas), pero aquí no:
+// en un encargo se eligen los dos colores de verdad con «Dos colores».
+const colores = (Object.entries(COLORES) as [ColorId, (typeof COLORES)[ColorId]][]).filter(
+  ([id]) => id !== 'bicolor'
+);
+const SEGUNDO_POR_DEFECTO: ColorId = 'crudo';
 const seccion = site.secciones.disena;
 ---
 
@@ -49,7 +54,19 @@ const seccion = site.secciones.disena;
 
         <fieldset>
           <legend class="font-display text-2xl">El color</legend>
-          <div class="mt-5 flex flex-wrap gap-2.5">
+          <div class="modos mt-5">
+            <label class="modo">
+              <input type="radio" name="modo" value="uno" checked class="sr-only" />
+              <span>Un color</span>
+            </label>
+            <label class="modo">
+              <input type="radio" name="modo" value="dos" class="sr-only" />
+              <span>Dos colores</span>
+            </label>
+          </div>
+
+          <p class="mt-6 text-[15px] text-paper/70" data-rotulo-principal hidden>Color principal</p>
+          <div class="mt-4 flex flex-wrap gap-2.5">
             {
               colores.map(([id, c], i) => (
                 <label class="opcion-color" title={c.nombre}>
@@ -59,6 +76,31 @@ const seccion = site.secciones.disena;
                 </label>
               ))
             }
+          </div>
+
+          <div data-segundo hidden>
+            <p class="mt-6 text-[15px] text-paper/70">Segundo color</p>
+            <div class="mt-3 flex flex-wrap gap-2.5">
+              {
+                colores.map(([id, c]) => (
+                  <label class="opcion-color" title={c.nombre}>
+                    <input
+                      type="radio"
+                      name="color2"
+                      value={id}
+                      checked={id === SEGUNDO_POR_DEFECTO}
+                      class="sr-only"
+                    />
+                    <span class="punto" style={`--muestra:${c.muestra}`} aria-hidden="true" />
+                    <span class="sr-only">{c.nombre}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <p class="mt-3 max-w-[46ch] text-[14px] text-paper/60">
+              En el dibujo va en franjas y en el remate, el asa y los detalles. Cómo se reparten
+              de verdad lo habláis por WhatsApp.
+            </p>
           </div>
           <p class="mt-3 text-[15px] text-paper/60" data-color-elegido></p>
         </fieldset>
@@ -103,9 +145,15 @@ const seccion = site.secciones.disena;
         </p>
       </div>
 
-      <aside class="lg:sticky lg:top-24 lg:self-start">
-        <Maqueta />
-        <div class="border-t border-paper/25 pt-6">
+      {/*
+        En pantalla ancha, dibujo y resumen van juntos a la derecha, fijos al bajar. En el
+        móvil el panel se deshace (`display: contents`): el dibujo sube arriba del todo y
+        se queda pegado mientras se eligen las opciones —si no, quedaba debajo de todas y
+        no se veía cambiar— y el resumen con el precio y el botón queda al final.
+      */}
+      <aside class="panel lg:sticky lg:top-24 lg:self-start">
+        <div class="panel-maqueta"><Maqueta /></div>
+        <div class="panel-resumen border-t border-paper/25 pt-6">
           <p class="text-[15px] text-paper/70">Tu bolso</p>
           <p class="mt-2 font-display text-2xl" data-resumen-forma></p>
           <p class="mt-1 text-paper/70" data-resumen-detalles></p>
@@ -145,8 +193,62 @@ const seccion = site.secciones.disena;
     outline-style: dashed;
   }
 
+  .panel-maqueta {
+    margin-bottom: 1.75rem;
+  }
+  @media (max-width: 1023.98px) {
+    .panel {
+      display: contents;
+    }
+    .panel-maqueta {
+      order: -1;
+      position: sticky;
+      top: 3.6rem;
+      z-index: 10;
+      margin: 0 -1.25rem;
+      padding: 0.5rem 1.25rem 0.75rem;
+      background: var(--color-deep);
+      box-shadow: 0 1rem 1rem -1rem rgb(0 0 0 / 0.5);
+    }
+    .panel-maqueta :global(.maqueta) {
+      width: auto;
+      height: min(32svh, 15rem);
+    }
+  }
+
+  .modos {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
+  }
+  .modo span {
+    display: block;
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    font-size: 15px;
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-salida),
+      color 200ms var(--ease-salida);
+  }
+  .modo:has(input:checked) span {
+    background-color: var(--color-paper);
+    color: var(--color-deep);
+  }
+  .modo:has(input:focus-visible) span {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 2px;
+  }
+
   .opcion-color {
     cursor: pointer;
+  }
+  /* En el segundo color no se puede repetir el primero: se apaga y no se deja elegir. */
+  .opcion-color:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.22;
   }
   .punto {
     display: block;
@@ -160,7 +262,7 @@ const seccion = site.secciones.disena;
       box-shadow 200ms var(--ease-salida);
   }
   @media (hover: hover) and (pointer: fine) {
-    .opcion-color:hover .punto {
+    .opcion-color:not(:has(input:disabled)):hover .punto {
       transform: scale(1.1);
     }
   }
@@ -210,42 +312,48 @@ const seccion = site.secciones.disena;
     const colorElegido = form.querySelector<HTMLElement>('[data-color-elegido]')!;
     const boton = form.querySelector<HTMLButtonElement>('[data-anadir-medida]')!;
     const maqueta = form.querySelector<SVGElement>('[data-maqueta]');
+    const segundo = form.querySelector<HTMLElement>('[data-segundo]')!;
+    const rotuloPrincipal = form.querySelector<HTMLElement>('[data-rotulo-principal]')!;
+    const opcionesSegundo = [...form.querySelectorAll<HTMLInputElement>('input[name="color2"]')];
+
+    /**
+     * Con «Dos colores» aparece la segunda paleta. En ella se apaga el color que ya está
+     * elegido como principal, para que los dos sean distintos; si justo era el marcado,
+     * se pasa al siguiente que quede libre.
+     */
+    const ajustarSegundo = () => {
+      const datos = new FormData(form);
+      const dos = datos.get('modo') === 'dos';
+      segundo.hidden = !dos;
+      rotuloPrincipal.hidden = !dos;
+      const principal = datos.get('color');
+      for (const o of opcionesSegundo) o.disabled = o.value === principal;
+      if (opcionesSegundo.find((o) => o.checked)?.disabled) opcionesSegundo.find((o) => !o.disabled)!.checked = true;
+    };
 
     const estado = () => {
       const datos = new FormData(form);
       const forma = config.formas.find((f) => f.id === datos.get('forma'))!;
-      const colorId = datos.get('color') as ColorId;
+      const a = COLORES[datos.get('color') as ColorId];
+      const b = datos.get('modo') === 'dos' ? COLORES[datos.get('color2') as ColorId] : undefined;
+      const nombreColor = b ? `${a.nombre} y ${b.nombre.toLowerCase()}` : a.nombre;
       const extras = config.extras.filter((e) => datos.getAll('extra').includes(e.id));
       const total = forma.precio + extras.reduce((s, e) => s + e.precio, 0);
-      return { forma, color: COLORES[colorId], extras, total };
-    };
-
-    /**
-     * Los dos tonos con los que el dibujo tiñe la lana.
-     *
-     * Casi todos los colores son un solo hex y devuelven el mismo dos veces, que es lo
-     * que deja el bolso de un color liso. El bicolor es un degradado CSS con dos: se
-     * cogen el primero y el último, y el dibujo parte el bolso en diagonal igual que
-     * está partida su muestra.
-     */
-    const tonos = (muestra: string) => {
-      const hex = muestra.match(/#[0-9a-f]{3,8}/gi) ?? ['#B6B2AE'];
-      return [hex[0]!, hex[hex.length - 1]!];
+      return { forma, a, b, nombreColor, extras, total };
     };
 
     const pintar = () => {
-      const { forma, color, extras, total } = estado();
-      resumenForma.textContent = `${forma.nombre}, ${color.nombre.toLowerCase()}`;
+      ajustarSegundo();
+      const { forma, a, b, nombreColor, extras, total } = estado();
+      resumenForma.textContent = `${forma.nombre}, ${nombreColor.toLowerCase()}`;
       resumenDetalles.textContent = extras.length
         ? extras.map((e) => e.nombre.toLowerCase()).join(', ')
         : 'Sin detalles añadidos';
       resumenTotal.textContent = precio(total);
-      colorElegido.textContent = color.nombre;
+      colorElegido.textContent = nombreColor;
 
       if (maqueta) {
-        const [a, b] = tonos(color.muestra);
-        maqueta.style.setProperty('--tono-a', a!);
-        maqueta.style.setProperty('--tono-b', b!);
+        maqueta.dataset.tonos = b ? `${a.muestra} ${b.muestra}` : a.muestra;
         maqueta.dataset.forma = forma.id;
         // En minúsculas porque un identificador del formulario viene con mayúscula y el
         // dibujo los busca siempre en minúscula.
@@ -273,9 +381,9 @@ const seccion = site.secciones.disena;
     };
 
     boton.addEventListener('click', () => {
-      const { forma, color, extras, total } = estado();
+      const { forma, nombreColor, extras, total } = estado();
       const detalle = [
-        color.nombre.toLowerCase(),
+        nombreColor.toLowerCase(),
         ...extras.map((e) => e.nombre.toLowerCase()),
       ].join(', ');
       const nombre = `${forma.nombre} a medida`;
