@@ -10,7 +10,10 @@
  * del ancho, y en un móvil eso se lo quita a lo único que importa mirar.
  *
  * La foto grande se puede ampliar: al pulsarla (o el icono de lupa) se abre a pantalla
- * completa, con las mismas flechas para seguir pasando fotos sin cerrarla.
+ * completa, con las mismas flechas para seguir pasando fotos sin cerrarla. Y ya abierta,
+ * otro clic la acerca justo en el punto pulsado, para ver el punto del tejido de cerca;
+ * un clic más la aleja. Acercada, con el ratón la foto se mueve siguiendo el cursor, y en
+ * el móvil se arrastra con el dedo.
  */
 import { Image } from 'astro:assets';
 
@@ -104,17 +107,22 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
         <Image
           src={foto}
           alt={i === 0 ? `${tipo} ${nombre}, visto de frente.` : `${tipo} ${nombre}, detalle ${i}.`}
-          widths={[768, 1100, 1600]}
+          widths={[768, 1100, 1600, 2400]}
           sizes="100vw"
           class:list={[
-            'absolute inset-0 m-auto h-auto w-auto max-h-full max-w-full object-contain transition-opacity duration-200',
+            'foto-ampliada absolute inset-0 m-auto h-auto w-auto max-h-full max-w-full object-contain',
             i > 0 && 'pointer-events-none opacity-0',
           ]}
           data-foto-zoom={i}
+          draggable="false"
           loading="lazy"
         />
       ))
     }
+    <p class="aviso-zoom" aria-hidden="true">
+      <span class="aviso-lejos">Pulsa la foto para acercarla</span>
+      <span class="aviso-cerca">Pulsa otra vez para alejarla</span>
+    </p>
     <button type="button" class="cerrar-zoom" data-zoom-cerrar aria-label="Cerrar foto ampliada">
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 6l12 12M18 6 6 18" />
@@ -200,6 +208,47 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
     background-color: color-mix(in srgb, var(--color-paper) 20%, transparent);
   }
 
+  .foto-ampliada {
+    cursor: zoom-in;
+    /* El arrastre con el dedo lo lleva el script: sin esto, el navegador lo usaría para
+       desplazar o hacer su propio zoom y la foto no se movería. */
+    touch-action: none;
+    user-select: none;
+    transform-origin: center;
+    transition:
+      opacity 200ms ease,
+      transform 380ms var(--ease-salida);
+  }
+  [data-acercada] .foto-ampliada {
+    cursor: zoom-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .foto-ampliada {
+      transition: opacity 200ms ease;
+    }
+  }
+
+  .aviso-zoom {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.35rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 13px;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--color-paper) 85%, transparent);
+    background-color: color-mix(in srgb, var(--color-deep) 70%, transparent);
+    pointer-events: none;
+  }
+  .aviso-cerca,
+  [data-acercada] .aviso-lejos {
+    display: none;
+  }
+  [data-acercada] .aviso-cerca {
+    display: inline;
+  }
+
   .miniatura img {
     outline: 1px solid var(--color-line);
     outline-offset: -1px;
@@ -223,8 +272,11 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
     const flechasZoom = zoom ? [...zoom.querySelectorAll<HTMLButtonElement>('[data-flecha-zoom]')] : [];
 
     const actual = () => fotos.findIndex((foto) => !foto.classList.contains('opacity-0'));
+    // Al pasar de foto, la acercada vuelve a verse entera (lo pone el bloque del zoom).
+    let alCambiarFoto = () => {};
 
     const activar = (i: number) => {
+      alCambiarFoto();
       for (const foto of fotos) {
         const activa = Number(foto.dataset.foto) === i;
         foto.classList.toggle('opacity-0', !activa);
@@ -256,13 +308,165 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
     }
 
     if (zoom) {
-      const abrir = () => zoom.showModal();
+      const fondo = zoom.querySelector<HTMLElement>('[data-zoom-fondo]')!;
+      const ESCALA = 2.5;
+      let escala = 1;
+      let tx = 0;
+      let ty = 0;
+
+      const activa = () => fotosZoom.find((f) => !f.classList.contains('opacity-0')) ?? fotosZoom[0]!;
+
+      /**
+       * Lo que puede moverse la foto acercada sin dejar hueco: si ya es más grande que la
+       * pantalla, hasta que su borde toque el de la pantalla; si no, se queda centrada.
+       */
+      const limitar = (img: HTMLElement) => {
+        const w = img.offsetWidth;
+        const h = img.offsetHeight;
+        const cx = img.offsetLeft + w / 2;
+        const cy = img.offsetTop + h / 2;
+        const W = fondo.clientWidth;
+        const H = fondo.clientHeight;
+        const rango = (lado: number, total: number, centro: number, t: number) =>
+          lado * escala <= total
+            ? total / 2 - centro
+            : Math.min((lado * escala) / 2 - centro, Math.max(total - centro - (lado * escala) / 2, t));
+        tx = rango(w, W, cx, tx);
+        ty = rango(h, H, cy, ty);
+      };
+
+      const pintar = (img: HTMLElement, suave: boolean) => {
+        img.style.transition = suave ? '' : 'opacity 200ms ease';
+        img.style.transform = escala > 1 ? `translate(${tx}px, ${ty}px) scale(${escala})` : '';
+        zoom.toggleAttribute('data-acercada', escala > 1);
+      };
+
+      /** Acerca dejando quieto bajo el dedo (o el cursor) el punto que se ha pulsado. */
+      const acercar = (img: HTMLElement, x: number, y: number) => {
+        const r = fondo.getBoundingClientRect();
+        const cx = img.offsetLeft + img.offsetWidth / 2;
+        const cy = img.offsetTop + img.offsetHeight / 2;
+        escala = ESCALA;
+        tx = (1 - ESCALA) * (x - r.left - cx);
+        ty = (1 - ESCALA) * (y - r.top - cy);
+        limitar(img);
+        // Que el navegador pida la versión grande de la foto: a 2,5 aumentos, la que
+        // llenaba la pantalla se vería borrosa.
+        img.setAttribute('sizes', `${ESCALA * 100}vw`);
+        pintar(img, true);
+      };
+
+      const alejar = (suave = true) => {
+        escala = 1;
+        tx = 0;
+        ty = 0;
+        for (const f of fotosZoom) pintar(f, suave);
+      };
+
+      for (const img of fotosZoom) {
+        let inicio: { x: number; y: number; tx: number; ty: number } | null = null;
+        let arrastrado = false;
+
+        img.addEventListener('pointerdown', (e) => {
+          inicio = { x: e.clientX, y: e.clientY, tx, ty };
+          arrastrado = false;
+          try {
+            img.setPointerCapture(e.pointerId);
+          } catch {
+            // Sin captura el arrastre funciona igual mientras el dedo siga encima.
+          }
+        });
+
+        img.addEventListener('pointermove', (e) => {
+          if (escala === 1) return;
+          if (e.pointerType === 'mouse' && !inicio) {
+            // Con ratón no hace falta arrastrar: la foto va enseñando la zona hacia la
+            // que se mueve el cursor, de borde a borde.
+            const r = fondo.getBoundingClientRect();
+            const u = (e.clientX - r.left) / r.width;
+            const v = (e.clientY - r.top) / r.height;
+            tx = Number.POSITIVE_INFINITY;
+            ty = Number.POSITIVE_INFINITY;
+            limitar(img);
+            const maxX = tx;
+            const maxY = ty;
+            tx = Number.NEGATIVE_INFINITY;
+            ty = Number.NEGATIVE_INFINITY;
+            limitar(img);
+            tx = maxX + (tx - maxX) * u;
+            ty = maxY + (ty - maxY) * v;
+            img.style.transition = 'opacity 200ms ease, transform 120ms linear';
+            img.style.transform = `translate(${tx}px, ${ty}px) scale(${escala})`;
+            return;
+          }
+          if (!inicio) return;
+          const dx = e.clientX - inicio.x;
+          const dy = e.clientY - inicio.y;
+          if (Math.abs(dx) + Math.abs(dy) > 6) arrastrado = true;
+          if (!arrastrado) return;
+          tx = inicio.tx + dx;
+          ty = inicio.ty + dy;
+          limitar(img);
+          pintar(img, false);
+        });
+
+        img.addEventListener('pointerup', (e) => {
+          const empezado = inicio;
+          inicio = null;
+          if (!empezado || arrastrado) return;
+          if (escala > 1) alejar();
+          else acercar(img, e.clientX, e.clientY);
+        });
+
+        img.addEventListener('pointercancel', () => {
+          inicio = null;
+        });
+      }
+
+      // Con teclado: + y − acercan y alejan desde el centro, y las flechas pasan de foto.
+      zoom.addEventListener('keydown', (e) => {
+        const img = activa();
+        if ((e.key === '+' || e.key === '=') && escala === 1) {
+          const r = fondo.getBoundingClientRect();
+          acercar(img, r.left + r.width / 2, r.top + r.height / 2);
+        } else if (e.key === '-' && escala > 1) alejar();
+        else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && fotos.length > 1) {
+          activar((actual() + (e.key === 'ArrowLeft' ? -1 : 1) + fotos.length) % fotos.length);
+        } else return;
+        e.preventDefault();
+      });
+
+      zoom.addEventListener('close', () => alejar(false));
+      window.addEventListener('resize', () => {
+        if (escala > 1) {
+          const img = activa();
+          limitar(img);
+          pintar(img, false);
+        }
+      });
+      alCambiarFoto = () => alejar(false);
+
+      /**
+       * Las fotos ampliadas son `loading="lazy"` y, dentro de un diálogo cerrado, no se
+       * cargan hasta abrirlo: mientras tanto no ocupan sitio, y un clic rápido caía en el
+       * fondo y cerraba en vez de acercar. Se piden en cuanto hay intención de abrir
+       * —el cursor encima de la foto, o el propio clic—, no antes.
+       */
+      const precargar = () => {
+        for (const f of fotosZoom) f.setAttribute('loading', 'eager');
+      };
+      galeria.addEventListener('pointerenter', precargar, { once: true });
+      galeria.addEventListener('focusin', precargar, { once: true });
+
+      const abrir = () => {
+        precargar();
+        zoom.showModal();
+      };
       for (const foto of fotos) foto.addEventListener('click', abrir);
       galeria.querySelector('[data-zoom-abrir]')?.addEventListener('click', abrir);
       zoom.querySelector('[data-zoom-cerrar]')?.addEventListener('click', () => zoom.close());
       // El fondo alrededor de la foto también cierra al pulsarlo. La foto llena la caja
       // con object-contain, así que casi siempre queda margen visible donde pulsar.
-      const fondo = zoom.querySelector('[data-zoom-fondo]');
       zoom.addEventListener('click', (e) => {
         if (e.target === zoom || e.target === fondo) zoom.close();
       });
