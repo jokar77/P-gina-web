@@ -20,12 +20,13 @@ const parrafos = site.taller.texto.split('\n\n');
  * del texto de al lado, que es el que manda. Si el hueco sale casi cuadrado (pantallas
  * medianas), las fotos encogen un poco para no taparse unas a otras.
  */
-const HUECOS = [
+const HUECOS: { x: number; y: number; alto: number; giro: number; encima?: boolean }[] = [
   { x: 15, y: 25, alto: 36, giro: -6 },
   { x: 87, y: 69, alto: 35, giro: -4 },
   { x: 86, y: 27, alto: 36, giro: 6 },
   { x: 13, y: 70, alto: 36, giro: 5 },
-  { x: 33, y: 17, alto: 31, giro: 4 },
+  // Este, arriba a la izquierda del centro, va montado por encima de la foto grande.
+  { x: 33, y: 17, alto: 31, giro: 4, encima: true },
   { x: 69, y: 84, alto: 32, giro: 4 },
   { x: 67, y: 16, alto: 33, giro: -3 },
   { x: 31, y: 84, alto: 31, giro: -5 },
@@ -85,7 +86,7 @@ const collage = elegidas.map((c) => {
           {collage.map((c, i) => (
             <li
               class="polaroid"
-              style={`--x:${c.x}%;--y:${c.y}%;--alto:${c.alto};--giro:${c.giro}deg;--capa:${i + 1}`}
+              style={`--x:${c.x}%;--y:${c.y}%;--alto:${c.alto};--giro:${c.giro}deg;--capa:${'encima' in c && c.encima ? collage.length + 1 : i + 1}`}
             >
               <a href={c.href}>
                 <Image
