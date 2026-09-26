@@ -3,8 +3,9 @@
  * Una cadeneta del dibujo del bolso (ver Maqueta.astro): el asa, el remate de la boca,
  * el borde de la ranura, la solapa del monedero. Todas son lo mismo —una tira de granos
  * de trapillo sobre una línea—, pintadas en capas: contorno, fondo del color de la lana,
- * un oscurecido encima que hace de hueco entre grano y grano, y los granos con su sombra
- * y su brillo. El script de la maqueta las redibuja buscándolas por `data-cad`.
+ * un oscurecido encima que hace de hueco entre grano y grano, y los granos con su sombra,
+ * la hebra del segundo color retorcida dentro y su brillo. El script de la maqueta las
+ * redibuja buscándolas por `data-cad`.
  */
 import type { Cadeneta } from '../lib/maqueta';
 
@@ -12,21 +13,20 @@ interface Props {
   nombre: string;
   cad: Cadeneta;
   grosor: number;
-  /** De qué lana: la principal (a) o la del remate y los adornos (b). */
-  tono?: 'a' | 'b';
   /** Un filo claro por fuera, para que se vea sobre el panel oscuro lo que va al aire. */
   halo?: boolean;
 }
 
-const { nombre, cad, grosor, tono = 'b', halo = false } = Astro.props;
+const { nombre, cad, grosor, halo = false } = Astro.props;
 ---
 
 {halo && <path class="halo" data-cad={nombre} data-parte="halo" d={cad.linea} stroke-width={grosor + 4.5} />}
 <path class="borde" data-cad={nombre} data-parte="borde" d={cad.linea} stroke-width={grosor + 2.6} />
-<path class={`base base-${tono}`} data-cad={nombre} data-parte="base" d={cad.linea} stroke-width={grosor} />
+<path class="base" data-cad={nombre} data-parte="base" d={cad.linea} stroke-width={grosor} />
 <path class="hondo" data-cad={nombre} data-parte="hondo" d={cad.linea} stroke-width={grosor} />
 <path class="sombra" data-cad={nombre} data-parte="sombra" d={cad.sombra} />
-<path class={`grano grano-${tono}`} data-cad={nombre} data-parte="lana" d={cad.lana} />
+<path class="grano" data-cad={nombre} data-parte="lana" d={cad.lana} />
+<path class="hebra" data-cad={nombre} data-parte="hebra" d={cad.hebra} />
 <path class="luz" data-cad={nombre} data-parte="luz" d={cad.luz} />
 
 <style>
@@ -44,11 +44,8 @@ const { nombre, cad, grosor, tono = 'b', halo = false } = Astro.props;
   .borde {
     stroke: rgb(0 0 0 / 0.38);
   }
-  .base-a {
+  .base {
     stroke: url(#lana-a);
-  }
-  .base-b {
-    stroke: url(#lana-b);
   }
   .hondo {
     stroke: rgb(0 0 0 / 0.24);
@@ -56,10 +53,10 @@ const { nombre, cad, grosor, tono = 'b', halo = false } = Astro.props;
   .sombra {
     fill: rgb(0 0 0 / 0.3);
   }
-  .grano-a {
+  .grano {
     fill: url(#lana-a);
   }
-  .grano-b {
+  .hebra {
     fill: url(#lana-b);
   }
   .luz {

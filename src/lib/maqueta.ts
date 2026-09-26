@@ -290,8 +290,37 @@ export interface Tejido {
   lana: string;
   /** El brillo de arriba de cada grano. */
   luz: string;
+  /** La segunda hebra retorcida dentro de cada grano (ver `hebra`). */
+  hebra: string;
   /** La raya entre vuelta y vuelta. */
   surcos: string;
+}
+
+/**
+ * La segunda hebra de un grano: cuando se tejen dos hilos juntos, cada grano lleva los
+ * dos retorcidos, así que se ve una tira del otro color que cruza de un lado al otro del
+ * grano —arriba por un costado, abajo por el otro—. Cuánto asoma cambia de grano a grano,
+ * que es lo que da el jaspeado irregular de las piezas de verdad. Con un solo color va
+ * del mismo tono que el grano y no se nota: por eso no hace falta quitarla.
+ */
+function hebra(cx: number, cy: number, largo: number, ancho: number, grados: number, r: number) {
+  const a = (grados * Math.PI) / 180;
+  const ax = Math.cos(a);
+  const ay = Math.sin(a);
+  const lado = r > 0.5 ? 1 : -1;
+  const q = (r * 7.31) % 1;
+  // De vez en cuando la hebra de fuera tapa el grano entero: en el tejido de verdad hay
+  // puntos que quedan casi todos de un color, y es lo que hace que se lea jaspeado.
+  if (q < 0.16) return elipse(cx, cy, largo * 0.97, ancho * 0.95, grados);
+  const grueso = ancho * (0.34 + 0.3 * q);
+  const aparte = ancho - grueso * 1.05;
+  let d = '';
+  for (const mitad of [-1, 1]) {
+    const x = cx + ax * largo * 0.44 * mitad - ay * aparte * lado * mitad;
+    const y = cy + ay * largo * 0.44 * mitad + ax * aparte * lado * mitad;
+    d += elipse(x, y, largo * 0.52, grueso, grados - lado * mitad * 10);
+  }
+  return d;
 }
 
 /**
@@ -303,6 +332,7 @@ export function tejido(c: Caja, zonaArriba = 7, semilla = 1): Tejido {
   let sombra = '';
   let lana = '';
   let luz = '';
+  let hebras = '';
   let surcos = '';
   for (let k = 0; ; k++) {
     const yb = c.yB - k * FILA;
@@ -329,11 +359,12 @@ export function tejido(c: Caja, zonaArriba = 7, semilla = 1): Tejido {
         const giro = 90 + lado * (26 + (r - 0.5) * 8);
         sombra += elipse(cx + 0.2, cy + 0.9, largoGrano * 1.08, ancho * 1.3, giro);
         lana += elipse(cx, cy, largoGrano, ancho, giro);
+        hebras += hebra(cx, cy, largoGrano, ancho, giro, azar(k, j * 2 + lado, semilla + 3));
         luz += elipse(cx - lado * 0.5, cy - 2, largoGrano * 0.46, ancho * 0.45, giro);
       }
     }
   }
-  return { sombra, lana, luz, surcos };
+  return { sombra, lana, luz, hebra: hebras, surcos };
 }
 
 export interface Cadeneta {
@@ -342,6 +373,7 @@ export interface Cadeneta {
   sombra: string;
   lana: string;
   luz: string;
+  hebra: string;
 }
 
 const polilinea = (pts: Punto[]) => 'M' + pts.map(([x, y]) => `${f(x)} ${f(y)}`).join('L');
@@ -379,7 +411,8 @@ export function cadeneta(pts: Punto[], grosor: number, cerrada = false): Cadenet
   let sombra = '';
   let lana = '';
   let luz = '';
-  if (grosor < 1 || largo < 4) return { linea, sombra, lana, luz };
+  let hebras = '';
+  if (grosor < 1 || largo < 4) return { linea, sombra, lana, luz, hebra: hebras };
   // Un número entero de granos, para que en una cadeneta cerrada no quede un salto.
   const paso = largo / Math.max(1, Math.round(largo / (grosor * 0.6)));
   let m = 1;
@@ -399,9 +432,10 @@ export function cadeneta(pts: Punto[], grosor: number, cerrada = false): Cadenet
     const ry = grosor * 0.3;
     sombra += elipse(cx + 0.3, cy + 1.1, rx * 1.05, ry * 1.12, giro);
     lana += elipse(cx, cy, rx, ry, giro);
+    hebras += hebra(cx, cy, rx, ry, giro, azar(i, Math.round(grosor * 10), 11));
     luz += elipse(cx - 0.4, cy - ry * 0.45, rx * 0.5, ry * 0.42, giro);
   }
-  return { linea, sombra, lana, luz };
+  return { linea, sombra, lana, luz, hebra: hebras };
 }
 
 /** Los puntos de un arco de elipse, entre dos ángulos. */
@@ -426,30 +460,14 @@ export function rectanguloRedondo(x: number, y: number, w: number, h: number, r:
 // El color.
 
 /**
- * Las franjas de color del cuerpo, como paradas de un degradado vertical sin fundido.
- * Con un color es una sola franja; con dos, alternan cada dos vueltas desde la base,
- * que es como se cambia de hilo en ganchillo. `hasta` es la vuelta a la que ha llegado
- * el tejido nuevo: por debajo va el color nuevo, por encima sigue el anterior.
+ * El color de la lana como un degradado vertical sin fundido: por encima de `hasta`
+ * sigue el color de antes y por debajo va el nuevo. Así se «teje» el color nuevo vuelta
+ * a vuelta desde la base, moviendo solo ese punto. Con `hasta` a 0, todo es el nuevo.
  */
-export function franjas(nuevos: string[], viejos: string[], ySuelo: number, hasta: number): string {
-  const tramos = (tonos: string[]) => {
-    const a = tonos[0]!;
-    const b = tonos[1] ?? a;
-    const r: [number, number, string][] = [[ySuelo, LIENZO.alto, a]];
-    for (let k = 0; ySuelo - k * FILA > -FILA * 2; k += 2) {
-      r.push([ySuelo - (k + 2) * FILA, ySuelo - k * FILA, (k / 2) % 2 ? b : a]);
-    }
-    return r;
-  };
-  const recortar = (r: [number, number, string][], y0: number, y1: number) =>
-    r
-      .map(([a, b, c]) => [Math.max(a, y0), Math.min(b, y1), c] as [number, number, string])
-      .filter(([a, b]) => b > a);
-  const todos = [...recortar(tramos(viejos), 0, hasta), ...recortar(tramos(nuevos), hasta, LIENZO.alto)].sort(
-    (x, y) => x[0] - y[0]
+export function relevo(nuevo: string, viejo: string, hasta: number): string {
+  const o = Math.min(1, Math.max(0, hasta / LIENZO.alto)).toFixed(4);
+  return (
+    `<stop offset="0" stop-color="${viejo}"/><stop offset="${o}" stop-color="${viejo}"/>` +
+    `<stop offset="${o}" stop-color="${nuevo}"/><stop offset="1" stop-color="${nuevo}"/>`
   );
-  const off = (y: number) => Math.min(1, Math.max(0, y / LIENZO.alto)).toFixed(4);
-  return todos
-    .map(([a, b, c]) => `<stop offset="${off(a)}" stop-color="${c}"/><stop offset="${off(b)}" stop-color="${c}"/>`)
-    .join('');
 }

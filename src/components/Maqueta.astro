@@ -20,6 +20,10 @@
  *   rebote, y el asa crece o se recoge. No hay dos dibujos que se cruzan: es el mismo.
  * - Al cambiar de color, el color nuevo sube vuelta a vuelta desde abajo, como si se
  *   volviera a tejer; luego se tiñen el remate, el asa y los detalles.
+ *
+ * Con dos colores no se pintan franjas: los dos hilos van tejidos juntos, como en el
+ * bolso granate de la flor, y en cada grano se ve una hebra del segundo color retorcida
+ * con el primero. Lo mismo en el asa, el remate, los cordones, la flor y el monedero.
  * - Cada detalle entra a su manera: la flor abre los pétalos, los flecos caen y se
  *   balancean, el lazo se anuda y suelta las colas, el monedero llega y se posa.
  *
@@ -37,13 +41,12 @@ import {
   caja,
   cadeneta,
   cuerpo,
-  franjas,
   muestrearCubica,
   ranura,
   rectanguloRedondo,
   remate,
+  relevo,
   sombra,
-  suelo,
   tejido,
   trenza,
 } from '../lib/maqueta';
@@ -61,7 +64,7 @@ const r = ranura(p, c);
 const cRanura = cadeneta(rectanguloRedondo(r.x, r.y, r.ancho, r.alto, r.radio), GROSOR.ranura, true);
 const s = sombra(p);
 const a = anclas(p, c);
-const paradas = franjas([GRIS], [GRIS], suelo(p), 0);
+const paradas = relevo(GRIS, GRIS, 0);
 
 // Los detalles se dibujan una vez, en coordenadas propias alrededor de su punto de anclaje.
 const PETALO = 'M0 -2.6C-8.3 -4.9-11.2 -19 0 -21.8C11.2 -19 8.3 -4.9 0 -2.6Z';
@@ -104,9 +107,13 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
   aria-hidden="true"
 >
   <defs>
-    {/* El color del cuerpo: franjas en vertical, para poder «tejer» el color nuevo. */}
+    {/*
+      Los dos hilos del cuerpo —el principal y la hebra del segundo—, como degradados en
+      vertical: así el color nuevo se puede «tejer» de abajo arriba (ver `relevo`).
+    */}
     <linearGradient id="lana" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="310" set:html={paradas} />
-    {/* El color principal y el del remate, el asa y los adornos; iguales con un solo color. */}
+    <linearGradient id="hebra" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="310" set:html={paradas} />
+    {/* Los mismos dos hilos para el asa, el remate y los adornos; iguales con un solo color. */}
     <linearGradient id="lana-a"><stop class="tono" data-tono="a" offset="0" stop-color={GRIS}></stop></linearGradient>
     <linearGradient id="lana-b"><stop class="tono" data-tono="b" offset="0" stop-color={GRIS}></stop></linearGradient>
 
@@ -157,7 +164,8 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
           <g data-ancla-fleco transform={`translate(${a.flecos[i]![0]} ${a.flecos[i]![1]})`}>
             <g class="an" data-an>
               <path class="cordon-borde" d={fl.d}></path>
-              <path class="cordon cordon-a" d={fl.d}></path>
+              <path class="cordon" d={fl.d}></path>
+              <path class="cordon-hebra" d={fl.d}></path>
               <circle class="cuenta-borde" cx={fl.cuenta[0]} cy={fl.cuenta[1]} r="3.2"></circle>
               <circle cx={fl.cuenta[0]} cy={fl.cuenta[1]} r="2.7" fill={fl.color}></circle>
               <circle class="cuenta-luz" cx={fl.cuenta[0] - 0.9} cy={fl.cuenta[1] - 0.9} r="0.9"></circle>
@@ -189,6 +197,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
       <g data-tejido>
         <path class="g-sombra" data-t="sombra" d={t.sombra}></path>
         <path class="g-lana" data-t="lana" d={t.lana}></path>
+        <path class="g-hebra" data-t="hebra" d={t.hebra}></path>
         <path class="g-luz" data-t="luz" d={t.luz}></path>
         <path class="surcos" data-t="surcos" d={t.surcos}></path>
       </g>
@@ -249,6 +258,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
           [0, 1, 2, 3, 4].map((k) => (
             <g class="an" data-petalo>
               <path class="petalo" d={PETALO} transform={`rotate(${k * 72 + 18})`}></path>
+              <path class="petalo-hebra" d={PETALO} transform={`rotate(${k * 72 + 18 + (k % 2 ? 7 : -7)}) scale(.42 .9)`}></path>
               <path class="petalo-luz" d={PETALO} transform={`rotate(${k * 72 + 18}) scale(.62)`}></path>
               <path class="petalo-vena" d="M0 -6V-17" transform={`rotate(${k * 72 + 18})`}></path>
             </g>
@@ -268,14 +278,15 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
           COLAS.map((d) => (
             <>
               <path class="cordon-borde cola" d={d} pathLength="1"></path>
-              <path class="cordon cordon-b cola" d={d} pathLength="1"></path>
+              <path class="cordon cola" d={d} pathLength="1"></path>
             </>
           ))
         }
         {NUDITOS.map(([x, y]) => <circle class="nudito" data-nudito cx={x} cy={y} r="2.2"></circle>)}
         <g class="an" data-bucles>
           <path class="cordon-borde" d={BUCLES}></path>
-          <path class="cordon cordon-b" d={BUCLES}></path>
+          <path class="cordon" d={BUCLES}></path>
+          <path class="cordon-hebra" d={BUCLES}></path>
           <path class="cordon-luz" d={BUCLES}></path>
           <ellipse class="nudo" rx="3.8" ry="4.4"></ellipse>
         </g>
@@ -292,13 +303,14 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
           <g clip-path="url(#recorte-monedero)">
             <path class="g-sombra" d={tMonedero.sombra}></path>
             <path class="g-lana-a" d={tMonedero.lana}></path>
+            <path class="g-lana-b" d={tMonedero.hebra}></path>
             <path class="g-luz" d={tMonedero.luz}></path>
             <path class="volumen" d={dMonedero}></path>
           </g>
           <path class="borde-bolas" d={dMonedero}></path>
           <path class="solapa" d={dSolapa}></path>
           <path class="solapa-luz" d={dSolapa}></path>
-          <Cadeneta nombre="solapa" cad={cSolapa} grosor={GROSOR.solapa} tono="a" />
+          <Cadeneta nombre="solapa" cad={cSolapa} grosor={GROSOR.solapa} />
           <circle class="broche" cx="0" cy="4.6" r="2.9"></circle>
           <circle class="broche-luz" cx="-0.8" cy="3.8" r="0.9"></circle>
         </g>
@@ -341,6 +353,9 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
   }
   .g-lana-b {
     fill: url(#lana-b);
+  }
+  .g-hebra {
+    fill: url(#hebra);
   }
   /*
    * El punto, las sombras y los contornos son negros y blancos translúcidos, nunca un
@@ -456,9 +471,12 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
   }
 
   .petalo {
-    fill: url(#lana-b);
+    fill: url(#lana-a);
     stroke: rgb(0 0 0 / 0.34);
     stroke-width: 1.3;
+  }
+  .petalo-hebra {
+    fill: url(#lana-b);
   }
   .petalo-luz {
     fill: rgb(255 255 255 / 0.16);
@@ -469,6 +487,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
     stroke-width: 1.3;
     stroke-linecap: round;
   }
+  /* El centro de la flor, al revés que los pétalos: del segundo hilo, para que se lea. */
   .centro {
     fill: url(#lana-b);
   }
@@ -487,19 +506,21 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
 
   .cordon,
   .cordon-borde,
+  .cordon-hebra,
   .cordon-luz {
     fill: none;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
   .cordon {
+    stroke: url(#lana-a);
     stroke-width: 3.4;
   }
-  .cordon-a {
-    stroke: url(#lana-a);
-  }
-  .cordon-b {
+  /* El segundo hilo, enroscado en el cordón a tramos. */
+  .cordon-hebra {
     stroke: url(#lana-b);
+    stroke-width: 2.4;
+    stroke-dasharray: 2.4 2.6;
   }
   .cordon-borde {
     stroke: rgb(0 0 0 / 0.38);
@@ -512,12 +533,12 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
     stroke-dasharray: 1.6 3;
   }
   .nudo {
-    fill: url(#lana-b);
+    fill: url(#lana-a);
     stroke: rgb(0 0 0 / 0.38);
     stroke-width: 1.3;
   }
   .nudito {
-    fill: url(#lana-b);
+    fill: url(#lana-a);
     stroke: rgb(0 0 0 / 0.38);
     stroke-width: 1;
   }
@@ -581,13 +602,12 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
     caja,
     cadeneta,
     cuerpo,
-    franjas,
     mezclar,
     ranura,
     rectanguloRedondo,
     remate,
+    relevo,
     sombra,
-    suelo,
     tejido,
     trenza,
     type Cadeneta,
@@ -613,6 +633,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
         sombra: uno('[data-t="sombra"]'),
         lana: uno('[data-t="lana"]'),
         luz: uno('[data-t="luz"]'),
+        hebra: uno('[data-t="hebra"]'),
         surcos: uno('[data-t="surcos"]'),
       },
       ranura: todos('[data-ranura]'),
@@ -623,6 +644,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
       sombraContacto: uno('[data-sombra-contacto]'),
       grupoSombra: uno('[data-grupo-sombra]'),
       lana: uno('#lana'),
+      hebra: uno('#hebra'),
       tonos: { a: uno('[data-tono="a"]'), b: uno('[data-tono="b"]') },
       tejer: uno('[data-tejer]'),
       brillo: uno('[data-brillo]'),
@@ -645,7 +667,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
 
     function ponerCadeneta(piezas: (readonly [string, SVGElement])[], c: Cadeneta, grosor: number) {
       for (const [parte, e] of piezas) {
-        if (parte === 'sombra' || parte === 'lana' || parte === 'luz') e.setAttribute('d', c[parte]);
+        if (parte === 'sombra' || parte === 'lana' || parte === 'luz' || parte === 'hebra') e.setAttribute('d', c[parte]);
         else {
           e.setAttribute('d', c.linea);
           e.setAttribute('stroke-width', String(grosor + (EXTRA_TRAZO[parte] ?? 0)));
@@ -708,8 +730,9 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
 
     // ------------------------------------------------------------------ dibujar
 
-    function pintarFranjas() {
-      el.lana.innerHTML = franjas(tonos, tonosViejos, suelo(mostrado), hasta);
+    function pintarLana() {
+      el.lana.innerHTML = relevo(tonos[0]!, tonosViejos[0]!, hasta);
+      el.hebra.innerHTML = relevo(tonos[1] ?? tonos[0]!, tonosViejos[1] ?? tonosViejos[0]!, hasta);
     }
 
     function regenerarTejido(p: Parametros) {
@@ -717,6 +740,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
       el.t.sombra.setAttribute('d', t.sombra);
       el.t.lana.setAttribute('d', t.lana);
       el.t.luz.setAttribute('d', t.luz);
+      el.t.hebra.setAttribute('d', t.hebra);
       el.t.surcos.setAttribute('d', t.surcos);
       el.tejido.removeAttribute('transform');
       tejidoDe = { ...p };
@@ -782,7 +806,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
       for (const e of el.jareta) e.setAttribute('d', `M${-bw / 2 + 1} ${-bh / 2 + 10}h${bw - 2}`);
       el.flecos.forEach((e, i) => e.setAttribute('transform', `translate(${a.flecos[i]![0]} ${a.flecos[i]![1]})`));
 
-      pintarFranjas();
+      pintarLana();
     }
 
     function ponerTono(clave: 'a' | 'b', color: string, suave: boolean) {
@@ -839,7 +863,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
       if (quieto.matches) {
         tonosViejos = nuevos;
         hasta = 0;
-        pintarFranjas();
+        pintarLana();
         ponerTonos(true);
         return;
       }
@@ -853,7 +877,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
           const cc = caja(mostrado);
           const fila = Math.floor(t * vueltas);
           hasta = cc.yB + 4 - fila * FILA;
-          pintarFranjas();
+          pintarLana();
           set(el.brillo, { y: hasta, opacity: 0.2 * (1 - t * 0.5) });
           if (!tenido && t > 0.72) {
             tenido = true;
@@ -863,7 +887,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
         () => {
           hasta = 0;
           tonosViejos = tonos;
-          pintarFranjas();
+          pintarLana();
           el.brillo.setAttribute('opacity', '0');
           if (!tenido) ponerTonos(true);
         }
@@ -1074,7 +1098,7 @@ const tMonedero = tejido(cajaMonedero, 0, 7);
           tonos = e.tonos;
           tonosViejos = e.tonos;
           hasta = 0;
-          pintarFranjas();
+          pintarLana();
           ponerTonos(false);
         }
       }
