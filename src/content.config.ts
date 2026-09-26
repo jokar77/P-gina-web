@@ -148,4 +148,18 @@ const legal = defineCollection({
   }),
 });
 
-export const collections = { bolsos, ninos, archivo, portada, redes, legal };
+/**
+ * El collage de polaroids junto al texto de «Sobre mí» (ver components/Taller.astro).
+ * Una sola entrada: la foto del centro y las de alrededor, que se colocan solas en sus
+ * huecos. Cada foto que sea de una pieza enlaza sola a su ficha.
+ */
+const collage = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/collage' }),
+  schema: ({ image }) =>
+    z.object({
+      central: image(),
+      fotos: z.array(image()).default([]),
+    }),
+});
+
+export const collections = { bolsos, ninos, archivo, portada, redes, legal, collage };

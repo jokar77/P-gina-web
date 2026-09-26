@@ -255,6 +255,29 @@ content:
         type: string
         description: Opcional.
 
+  - name: collage
+    label: Collage de «Sobre mí»
+    type: file
+    path: src/content/collage/collage.md
+    description: >-
+      Las fotos tipo polaroid que salen al lado del texto de «Sobre mí». Si eliges
+      una foto que ya es de una pieza, al pulsarla en la web lleva a esa pieza; si
+      subes una foto nueva, sale igual, pero sin enlace.
+    fields:
+      - name: central
+        label: Foto del centro
+        type: image
+        required: true
+        description: La más grande, encima de todas. Mejor vertical.
+      - name: fotos
+        label: Fotos de alrededor
+        type: image
+        list: true
+        description: >-
+          Hasta 8, colocadas alrededor de la del centro. Si pones menos, se reparten
+          primero por las esquinas; si pones más de 8, las que sobran no salen. Mejor
+          verticales: se recortan en vertical, como una polaroid.
+
   - name: redes
     label: Redes sociales (capturas y vídeos)
     type: file
