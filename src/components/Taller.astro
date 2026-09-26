@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import firma from '../assets/marca/firma.png';
 import site from '../data/site.json';
 
@@ -8,56 +8,59 @@ const parrafos = site.taller.texto.split('\n\n');
 
 /**
  * El collage de polaroids junto al texto: fotos de piezas sueltas sobre la mesa, algo
- * giradas y montadas unas sobre otras, con el vestido de lunares en el maniquí en medio.
+ * giradas y montadas unas sobre otras, con una foto más grande en medio.
  *
- * Cada foto sale de su pieza (colección + id), no de un archivo suelto: si la pieza se
- * borra desde Pages CMS, su polaroid desaparece sin más en vez de romper la web; y si la
- * foto concreta ya no está entre las suyas, se usa la principal de la pieza. `foto` es un
- * trozo del nombre de archivo para elegir cuál de sus fotos.
+ * Las fotos las elige Sakina en Pages CMS («Collage de "Sobre mí"»): una del centro y
+ * hasta ocho alrededor, que van cayendo en estos huecos por orden. El orden de los
+ * huecos está pensado para que con menos fotos también quede equilibrado: primero las
+ * cuatro esquinas, luego los de en medio.
  *
  * `x` e `y` son el centro de la polaroid, en % del hueco; `alto` es el alto de la foto
  * en % del alto del hueco. Así el collage mantiene su composición sea cual sea el alto
  * del texto de al lado, que es el que manda. Si el hueco sale casi cuadrado (pantallas
  * medianas), las fotos encogen un poco para no taparse unas a otras.
  */
-interface Hueco {
-  coleccion: 'bolsos' | 'archivo';
-  id: string;
-  foto: string;
-  x: number;
-  y: number;
-  alto: number;
-  giro: number;
-}
-
-const HUECOS: Hueco[] = [
-  { coleccion: 'bolsos', id: 'regalo', foto: 'img8544', x: 15, y: 25, alto: 36, giro: -6 },
-  { coleccion: 'bolsos', id: 'amapola', foto: 'image00014611', x: 33, y: 17, alto: 31, giro: 4 },
-  { coleccion: 'bolsos', id: 'escarcha', foto: 'image000201211', x: 67, y: 16, alto: 33, giro: -3 },
-  { coleccion: 'bolsos', id: 'lazada', foto: 'image000241611', x: 86, y: 27, alto: 36, giro: 6 },
-  { coleccion: 'bolsos', id: 'marea', foto: 'image000383011', x: 13, y: 70, alto: 36, giro: 5 },
-  { coleccion: 'bolsos', id: 'vendimia', foto: 'image000332511', x: 31, y: 84, alto: 31, giro: -5 },
-  { coleccion: 'bolsos', id: 'domino', foto: 'image000261811', x: 69, y: 84, alto: 32, giro: 4 },
-  { coleccion: 'bolsos', id: 'palito', foto: 'image000403211', x: 87, y: 69, alto: 35, giro: -4 },
-  // El vestido va el último para quedar encima de todo, en el centro y más grande.
-  { coleccion: 'archivo', id: 'lunares', foto: '/05.', x: 50, y: 50, alto: 60, giro: -2 },
+const HUECOS = [
+  { x: 15, y: 25, alto: 36, giro: -6 },
+  { x: 87, y: 69, alto: 35, giro: -4 },
+  { x: 86, y: 27, alto: 36, giro: 6 },
+  { x: 13, y: 70, alto: 36, giro: 5 },
+  { x: 33, y: 17, alto: 31, giro: 4 },
+  { x: 69, y: 84, alto: 32, giro: 4 },
+  { x: 67, y: 16, alto: 33, giro: -3 },
+  { x: 31, y: 84, alto: 31, giro: -5 },
 ];
+const CENTRO = { x: 50, y: 50, alto: 60, giro: -2 };
 
-const collage = (
-  await Promise.all(
-    HUECOS.map(async (h) => {
-      const pieza = h.coleccion === 'bolsos' ? await getEntry('bolsos', h.id) : await getEntry('archivo', h.id);
-      if (!pieza) return null;
-      const fotos = [pieza.data.foto, ...pieza.data.fotos];
-      return {
-        ...h,
-        imagen: fotos.find((f) => f.src.includes(h.foto)) ?? pieza.data.foto,
-        nombre: pieza.data.nombre,
-        href: `/${h.coleccion}/${pieza.id}`,
-      };
-    })
-  )
-).filter((c) => c !== null);
+/**
+ * Si la foto elegida es de una pieza (la misma imagen que usa su ficha), la polaroid
+ * lleva a esa pieza y toma su nombre para el texto alternativo. Una foto subida aparte
+ * sale igual, sin enlace.
+ */
+const piezas = [
+  ...(await getCollection('bolsos')).map((p) => ({ ...p, ruta: 'bolsos' })),
+  ...(await getCollection('ninos')).map((p) => ({ ...p, ruta: 'ninos' })),
+  ...(await getCollection('archivo')).map((p) => ({ ...p, ruta: 'archivo' })),
+];
+const dePieza = (foto: ImageMetadata) =>
+  piezas.find((p) => [p.data.foto, ...p.data.fotos].some((f) => f.src === foto.src));
+
+const datos = (await getCollection('collage'))[0]?.data;
+const elegidas = datos
+  ? [
+      ...datos.fotos.slice(0, HUECOS.length).map((foto, i) => ({ foto, ...HUECOS[i]! })),
+      // El centro va el último para quedar encima de todas.
+      { foto: datos.central, ...CENTRO },
+    ]
+  : [];
+const collage = elegidas.map((c) => {
+  const pieza = dePieza(c.foto);
+  return {
+    ...c,
+    nombre: pieza?.data.nombre ?? 'Una pieza del taller',
+    href: pieza ? `/${pieza.ruta}/${pieza.id}` : undefined,
+  };
+});
 ---
 
 <section id="taller" class="scroll-mt-20 px-5 py-section sm:px-8">
@@ -86,7 +89,7 @@ const collage = (
             >
               <a href={c.href}>
                 <Image
-                  src={c.imagen}
+                  src={c.foto}
                   alt={c.nombre}
                   widths={[240, 480, 720]}
                   sizes={c.alto > 50 ? '(min-width: 1024px) 18rem, 45vw' : '(min-width: 1024px) 10rem, 25vw'}
