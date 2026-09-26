@@ -17,6 +17,10 @@ const colores = (Object.entries(COLORES) as [ColorId, (typeof COLORES)[ColorId]]
   ([id]) => id !== 'bicolor'
 );
 const SEGUNDO_POR_DEFECTO: ColorId = 'crudo';
+// Detalles que solo se pueden pedir junto con otro: el bolsillo interior va cosido al
+// forro, así que sin forro no hay dónde ponerlo. Por identificador, en minúsculas.
+const NECESITA: Record<string, string> = { bolsillo: 'forro' };
+const nombreExtra = (id: string) => config.extras.find((e) => e.id.toLowerCase() === id)?.nombre ?? id;
 const seccion = site.secciones.disena;
 ---
 
@@ -61,7 +65,9 @@ const seccion = site.secciones.disena;
             </label>
             <label class="modo">
               <input type="radio" name="modo" value="dos" class="sr-only" />
-              <span>Dos colores</span>
+              <span>
+                Dos colores{config.dosColores > 0 && <span class="suplemento"> +{config.dosColores} €</span>}
+              </span>
             </label>
           </div>
 
@@ -109,14 +115,24 @@ const seccion = site.secciones.disena;
           <legend class="font-display text-2xl">Los detalles</legend>
           <div class="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
             {
-              config.extras.map((e) => (
-                <label class="flex cursor-pointer items-center gap-3">
-                  <input type="checkbox" name="extra" value={e.id} data-precio={e.precio} class="sr-only" />
-                  <span class="casilla" aria-hidden="true" />
-                  <span class="flex-1">{e.nombre}</span>
-                  <span class="text-paper/60">+{e.precio} €</span>
-                </label>
-              ))
+              config.extras.map((e) => {
+                const necesita = NECESITA[e.id.toLowerCase()];
+                return (
+                  <label class="extra flex cursor-pointer items-center gap-3" data-necesita={necesita}>
+                    <input type="checkbox" name="extra" value={e.id} data-precio={e.precio} class="sr-only" />
+                    <span class="casilla" aria-hidden="true" />
+                    <span class="flex-1">
+                      {e.nombre}
+                      {necesita && (
+                        <span class="block text-[13px] text-paper/60">
+                          Solo con {nombreExtra(necesita).toLowerCase()}
+                        </span>
+                      )}
+                    </span>
+                    <span class="text-paper/60">+{e.precio} €</span>
+                  </label>
+                );
+              })
             }
           </div>
         </fieldset>
@@ -223,7 +239,7 @@ const seccion = site.secciones.disena;
     border-radius: 9999px;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
   }
-  .modo span {
+  .modo > span {
     display: block;
     padding: 0.45rem 1.1rem;
     border-radius: 9999px;
@@ -233,11 +249,14 @@ const seccion = site.secciones.disena;
       background-color 200ms var(--ease-salida),
       color 200ms var(--ease-salida);
   }
-  .modo:has(input:checked) span {
+  .suplemento {
+    opacity: 0.65;
+  }
+  .modo:has(input:checked) > span {
     background-color: var(--color-paper);
     color: var(--color-deep);
   }
-  .modo:has(input:focus-visible) span {
+  .modo:has(input:focus-visible) > span {
     outline: 2px solid var(--color-paper);
     outline-offset: 2px;
   }
@@ -291,6 +310,10 @@ const seccion = site.secciones.disena;
       inset 0 0 0 5px var(--color-deep),
       inset 0 0 0 20px var(--color-paper);
   }
+  .extra:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
   input:focus-visible + .casilla {
     outline: 2px solid var(--color-paper);
     outline-offset: 3px;
@@ -338,12 +361,30 @@ const seccion = site.secciones.disena;
       const b = datos.get('modo') === 'dos' ? COLORES[datos.get('color2') as ColorId] : undefined;
       const nombreColor = b ? `${a.nombre} y ${b.nombre.toLowerCase()}` : a.nombre;
       const extras = config.extras.filter((e) => datos.getAll('extra').includes(e.id));
-      const total = forma.precio + extras.reduce((s, e) => s + e.precio, 0);
+      // Tejer con dos hilos lleva más trabajo y más material: suma lo que diga el formulario.
+      const total = forma.precio + extras.reduce((s, e) => s + e.precio, 0) + (b ? config.dosColores : 0);
       return { forma, a, b, nombreColor, extras, total };
+    };
+
+    /**
+     * Un detalle que necesita otro (el bolsillo, el forro) se apaga mientras el otro no
+     * esté marcado, y si se desmarca el otro, se desmarca también: así nunca llega un
+     * pedido con bolsillo y sin forro.
+     */
+    const casillasExtra = [...form.querySelectorAll<HTMLInputElement>('input[name="extra"]')];
+    const ajustarRequisitos = () => {
+      for (const casilla of casillasExtra) {
+        const necesita = casilla.closest<HTMLElement>('[data-necesita]')?.dataset.necesita;
+        if (!necesita) continue;
+        const puede = casillasExtra.some((o) => o.value.toLowerCase() === necesita && o.checked);
+        casilla.disabled = !puede;
+        if (!puede) casilla.checked = false;
+      }
     };
 
     const pintar = () => {
       ajustarSegundo();
+      ajustarRequisitos();
       const { forma, a, b, nombreColor, extras, total } = estado();
       resumenForma.textContent = `${forma.nombre}, ${nombreColor.toLowerCase()}`;
       resumenDetalles.textContent = extras.length
