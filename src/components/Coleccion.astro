@@ -60,6 +60,7 @@ const intro = seccion.intro
           Ordenar
           <select class="orden" data-orden>
             <option value="destacados">Destacados</option>
+            <option value="novedades">Últimas novedades</option>
             <option value="precio-asc">Precio: de menor a mayor</option>
             <option value="precio-desc">Precio: de mayor a menor</option>
           </select>
@@ -87,6 +88,7 @@ const intro = seccion.intro
             estado={b.data.estado}
             precioNum={b.data.precio}
             color={b.data.color}
+            fecha={b.data.fecha}
             cargaDiferida={i > 2}
           />
         ))
@@ -197,12 +199,17 @@ const intro = seccion.intro
      * filtros de color y «Solo disponibles» siguen valiendo igual, se ordene como se
      * ordene. «Destacados» es el orden que pone Sakina en cada pieza. Por precio, las
      * vendidas van al final: no se pueden comprar, y su precio no sirve para comparar.
-     * A igual precio se respeta el orden de Sakina.
+     * A igual precio se respeta el orden de Sakina. «Últimas novedades» pone primero la
+     * de fecha de alta más reciente; sin fecha, cuenta como la más nueva de todas, y a
+     * igual fecha manda también el orden de Sakina.
      */
     const ordenar = () => {
       const modo = orden?.value ?? 'destacados';
       const lista = piezas.map((pieza, i) => ({ pieza, i }));
-      if (modo !== 'destacados') {
+      if (modo === 'novedades') {
+        const fecha = (p: HTMLElement) => Number(p.dataset.fecha || Number.POSITIVE_INFINITY);
+        lista.sort((a, b) => fecha(b.pieza) - fecha(a.pieza) || a.i - b.i);
+      } else if (modo !== 'destacados') {
         const signo = modo === 'precio-desc' ? -1 : 1;
         lista.sort((a, b) => {
           const va = a.pieza.dataset.estado === 'vendido';

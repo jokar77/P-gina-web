@@ -69,6 +69,13 @@ content:
             - { value: vendido, label: Vendido (se queda expuesto) }
             - { value: encargo, label: Solo por encargo }
         description: Nunca se pone solo. Lo cambias tú cuando la pieza encuentra dueña.
+      - name: fecha
+        label: Fecha de alta
+        type: date
+        required: true
+        description: >-
+          Cuándo la subiste a la web. Sirve para «Ordenar: Últimas novedades», que
+          enseña primero la más reciente. Si dos tienen la misma fecha, manda el orden.
       - name: nota
         label: Nota bajo el precio
         type: text

@@ -2,6 +2,7 @@
 nombre: Bambo
 precio: 25
 estado: disponible
+fecha: 2026-09-10
 color: azul
 material: Trapillo azul y asas de bambú
 ancho: 31

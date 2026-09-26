@@ -2,6 +2,7 @@
 nombre: Britney
 precio: 25
 estado: disponible
+fecha: 2026-09-08
 color: rosa
 material: Lana acrílica con brillo incluido, bolso de mano con tarjetero a juego.
 ancho: 28

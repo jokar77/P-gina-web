@@ -2,6 +2,7 @@
 nombre: Ego
 precio: 30
 estado: disponible
+fecha: 2026-09-08
 color: gris
 material: Trapillo gris oscuro, es un bolso plano pero espacioso y los acabados
   en fibra acrílica blanca brillante al estilo mohair.

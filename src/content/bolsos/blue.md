@@ -2,6 +2,7 @@
 nombre: Blue
 precio: 15
 estado: disponible
+fecha: 2026-09-25
 color: azul
 material: Acrílico azul, 4 arandelas, dos asas
 ancho: 22

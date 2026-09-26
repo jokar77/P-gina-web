@@ -2,6 +2,7 @@
 nombre: Sakura
 precio: 30
 estado: disponible
+fecha: 2026-09-08
 color: rosa
 material: Trapillo rosa, asa de hombro con arandelas y lazos.
 ancho: 27
