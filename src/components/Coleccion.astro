@@ -201,22 +201,24 @@ const intro = seccion.intro
      * vendidas van al final: no se pueden comprar, y su precio no sirve para comparar.
      * A igual precio se respeta el orden de Sakina. «Últimas novedades» pone primero la
      * de fecha de alta más reciente; sin fecha, cuenta como la más nueva de todas, y a
-     * igual fecha manda también el orden de Sakina.
+     * igual fecha manda también el orden de Sakina. Ahí las vendidas también van al
+     * final, aunque sean recientes: una novedad que ya no se puede comprar no lo es.
      */
     const ordenar = () => {
       const modo = orden?.value ?? 'destacados';
       const lista = piezas.map((pieza, i) => ({ pieza, i }));
+      const vendida = (p: HTMLElement) => (p.dataset.estado === 'vendido' ? 1 : 0);
       if (modo === 'novedades') {
         const fecha = (p: HTMLElement) => Number(p.dataset.fecha || Number.POSITIVE_INFINITY);
-        lista.sort((a, b) => fecha(b.pieza) - fecha(a.pieza) || a.i - b.i);
+        lista.sort(
+          (a, b) =>
+            vendida(a.pieza) - vendida(b.pieza) || fecha(b.pieza) - fecha(a.pieza) || a.i - b.i
+        );
       } else if (modo !== 'destacados') {
         const signo = modo === 'precio-desc' ? -1 : 1;
         lista.sort((a, b) => {
-          const va = a.pieza.dataset.estado === 'vendido';
-          const vb = b.pieza.dataset.estado === 'vendido';
-          if (va !== vb) return va ? 1 : -1;
           const dif = Number(a.pieza.dataset.precio) - Number(b.pieza.dataset.precio);
-          return dif ? dif * signo : a.i - b.i;
+          return vendida(a.pieza) - vendida(b.pieza) || dif * signo || a.i - b.i;
         });
       }
       rejilla.append(...lista.map((l) => l.pieza));
