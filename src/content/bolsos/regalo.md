@@ -2,6 +2,7 @@
 nombre: Amapola
 precio: 25
 estado: vendido
+fecha: 2026-09-22
 color: amarillo
 material: Lana, dos arandelas, botón magnético y forro con bolsillo interior.
 ancho: 30

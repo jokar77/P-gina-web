@@ -2,6 +2,7 @@
 nombre: Sayf
 precio: 25
 estado: disponible
+fecha: 2026-09-08
 color: amarillo
 material: Trapillo amarillo, asa de mano resistente.
 ancho: 30

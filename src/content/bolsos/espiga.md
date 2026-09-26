@@ -2,6 +2,7 @@
 nombre: Plata
 precio: 40
 estado: disponible
+fecha: 2026-09-08
 color: gris
 material: Bolos con cierre de trapillo de fibra plateado y forro interior, muy espacioso.
 ancho: 30

@@ -20,6 +20,9 @@ const bolsos = defineCollection({
       foto: image(),
       fotos: z.array(image()).default([]),
       orden: z.number().default(0),
+      /** Cuándo se subió a la web: ordena «Últimas novedades». Sin fecha, cuenta como la
+       *  más nueva, para que una pieza recién creada no se quede al final. */
+      fecha: z.coerce.date().optional(),
     }),
 });
 

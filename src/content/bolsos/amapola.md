@@ -2,6 +2,7 @@
 nombre: Scarlett
 precio: 25
 estado: disponible
+fecha: 2026-09-08
 color: rojo
 material: Lana acrílica junto a hilo con lentejuelas, tres hibiscos cosidos a
   mano y tarjetero a juego

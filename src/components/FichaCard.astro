@@ -10,10 +10,12 @@ interface Props {
   estado: 'disponible' | 'vendido' | 'encargo';
   precioNum: number;
   color?: string;
+  /** Para «Últimas novedades»: cuándo se subió la pieza. */
+  fecha?: Date;
   cargaDiferida?: boolean;
 }
 
-const { href, nombre, foto, alt, estado, precioNum, color, cargaDiferida = true } = Astro.props;
+const { href, nombre, foto, alt, estado, precioNum, color, fecha, cargaDiferida = true } = Astro.props;
 
 const etiquetaPrecio =
   estado === 'vendido'
@@ -23,7 +25,7 @@ const etiquetaPrecio =
       : precio(precioNum);
 ---
 
-<article data-pieza data-color={color} data-estado={estado} data-precio={precioNum}>
+<article data-pieza data-color={color} data-estado={estado} data-precio={precioNum} data-fecha={fecha?.getTime()}>
   <a href={href} class="group block no-underline">
     <div class="relative overflow-hidden bg-paper">
       <Image

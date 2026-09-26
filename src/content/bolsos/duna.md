@@ -2,6 +2,7 @@
 nombre: Duna
 precio: 20
 estado: disponible
+fecha: 2026-09-08
 color: blanco
 material: Trapillo blanco, bolso de mano con asa incorporada.
 ancho: 28

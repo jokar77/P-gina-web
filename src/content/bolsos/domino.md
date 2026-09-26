@@ -2,6 +2,7 @@
 nombre: Gaultier
 precio: 25
 estado: disponible
+fecha: 2026-09-08
 color: bicolor
 material: Trapillo al estampado marinero con lazo, asa de mano estable con cuerpo.
 ancho: 30
