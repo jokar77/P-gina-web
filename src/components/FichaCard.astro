@@ -27,7 +27,7 @@ const etiquetaPrecio =
 
 <article data-pieza data-color={color} data-estado={estado} data-precio={precioNum} data-fecha={fecha?.getTime()}>
   <a href={href} class="group block no-underline">
-    <div class="relative overflow-hidden bg-paper">
+    <div class="relative overflow-hidden rounded-[var(--radio-foto)] bg-paper">
       <Image
         src={foto}
         alt={alt}
@@ -46,7 +46,7 @@ const etiquetaPrecio =
       */}
       {
         estado === 'vendido' && (
-          <span class="absolute top-3 left-3 bg-deep px-2.5 py-1 text-[12px] tracking-wide text-paper">
+          <span class="absolute top-3 left-3 rounded-[5px] bg-deep px-2.5 py-1 text-[12px] tracking-wide text-paper">
             Vendido
           </span>
         )

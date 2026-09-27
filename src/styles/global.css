@@ -60,6 +60,8 @@
 
   --spacing-section: 74px;
 
+  /* Las esquinas de las fotos de las piezas: un poco redondeadas, no en pico. */
+  --radio-foto: 10px;
   --ease-salida: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
