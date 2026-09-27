@@ -146,6 +146,10 @@ const collage = elegidas.map((c) => {
     position: absolute;
     left: var(--x);
     top: var(--y);
+    /* Su ancho es el de su foto, siempre. Sin esto, las que van pegadas al borde derecho
+       solo tenían el hueco que les quedaba hasta él, la foto encogía a lo ancho y el
+       bolso salía cortado por los lados. */
+    width: max-content;
     z-index: var(--capa);
     transform: translate(-50%, -50%) rotate(var(--giro));
     transition: transform 320ms var(--ease-salida);
@@ -163,6 +167,7 @@ const collage = elegidas.map((c) => {
     display: block;
     height: calc(var(--alto) * var(--u));
     width: calc(var(--alto) * 0.75 * var(--u));
+    max-width: none;
     object-fit: cover;
   }
 
