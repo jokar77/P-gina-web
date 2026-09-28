@@ -5,21 +5,19 @@ import tailwindcss from '@tailwindcss/vite';
 /**
  * De dónde sale la URL del sitio, en orden:
  *
- * 1. SITE_URL — se pone a mano el día que haya dominio propio, y manda sobre todo.
- * 2. CF_PAGES_URL — solo existe en Cloudflare Pages, no en Workers.
- * 3. La dirección provisional del Worker, que es donde vive hoy.
+ * 1. SITE_URL — por si algún día hay que construir para otra dirección sin tocar esto.
+ * 2. El dominio propio, sakinaplatero.com (comprado en Cloudflare en septiembre 2026).
  *
- * De aquí salen las URL absolutas de las etiquetas Open Graph. Si apuntan a un dominio
- * que todavía no existe, los enlaces compartidos por WhatsApp llegan sin miniatura.
+ * De aquí salen las URL absolutas de las etiquetas Open Graph, la canonical, el sitemap
+ * y el robots.txt. Y decide si la web se deja indexar: en una dirección provisional de
+ * Cloudflare (.workers.dev, .pages.dev) lleva "noindex" (ver src/lib/sitio.ts); en el
+ * dominio de verdad, no.
  *
- * Ojo con el tercer punto: la web acabó desplegada como Worker, no como Pages, así que
- * `CF_PAGES_URL` nunca se rellena y sin este valor el sitio se creería que vive en
- * sakinaplatero.com, un dominio que aún no está comprado.
+ * La dirección provisional del Worker (sakina-platero.sakinaplateroben.workers.dev)
+ * sigue funcionando, pero ya no es la del sitio: su canonical apunta al dominio, así
+ * que Google se queda con este.
  */
-const site =
-  process.env.SITE_URL ||
-  process.env.CF_PAGES_URL ||
-  'https://sakina-platero.sakinaplateroben.workers.dev';
+const site = process.env.SITE_URL || 'https://sakinaplatero.com';
 
 export default defineConfig({
   site,

@@ -9,6 +9,14 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sakina-platero",
   "compatibility_date": "2026-09-08",
+  // El dominio propio. Con "custom_domain", cada despliegue conecta el dominio al Worker
+  // y Cloudflare crea solo el registro DNS y el certificado (el dominio está en esta
+  // misma cuenta). El www sirve lo mismo; la canonical de cada página apunta a la
+  // dirección sin www, así que para Google cuenta una sola.
+  "routes": [
+    { "pattern": "sakinaplatero.com", "custom_domain": true },
+    { "pattern": "www.sakinaplatero.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     // Sirve nuestra propia página de error en vez de la genérica de Cloudflare.

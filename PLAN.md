@@ -67,7 +67,7 @@ Nada de esto es código. Son datos que solo tiene ella.
 - [ ] Decidir si se crea la rama `main` para producción, o se despliega desde
       `claude/ipad-access-issue-xczlml`.
 - [x] Desplegado como Worker con archivos estáticos (Cloudflare ya no da Pages a cuentas
-      nuevas; ver `wrangler.jsonc`), en la dirección provisional de workers.dev.
+      nuevas; ver `wrangler.jsonc`), primero en la dirección provisional de workers.dev y ya en sakinaplatero.com.
 
 ### Fase 2 — Legal y cumplimiento
 
@@ -238,7 +238,8 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
       que Google enseñe precio y disponibilidad en los resultados.
 - [ ] **Estado "reservado"** manual, además de disponible/vendido. Dos personas pueden
       preguntar por la misma pieza el mismo día; con esto ella la aparta en dos toques.
-- [ ] **Dominio propio** y, si quiere correo con el dominio, reenvío gratuito de Cloudflare
+- [x] **Dominio propio**: sakinaplatero.com (septiembre 2026), conectado al Worker desde
+      `wrangler.jsonc` y puesto como `site` en `astro.config.mjs`. Pendiente, si quiere correo con el dominio, reenvío gratuito de Cloudflare
       a su Gmail (recibir es gratis; enviar desde esa dirección ya pide más).
 - [ ] **Stripe**, solo cuando §4 esté resuelto. Se enchufa sin rehacer nada. En torno al
       1,5 % + 0,25 € por operación con tarjetas europeas.
