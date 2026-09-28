@@ -5,7 +5,7 @@ estado: disponible
 fecha: 2026-09-10
 nota: Doble asa de bambú.
 color: azul
-material: Trapillo azul
+material: Trapillo azul.
 ancho: 31
 alto: 19
 orden: 1
