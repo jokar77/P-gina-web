@@ -3,8 +3,9 @@ nombre: Sakura
 precio: 30
 estado: disponible
 fecha: 2026-09-08
+nota: Bolso con asa de hombro con arandelas y lazos.
 color: rosa
-material: Trapillo rosa, asa de hombro con arandelas y lazos.
+material: Trapillo rosa.
 ancho: 27
 alto: 18
 orden: 6

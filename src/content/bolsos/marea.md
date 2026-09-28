@@ -3,9 +3,10 @@ nombre: Marea
 precio: 25
 estado: disponible
 fecha: 2026-09-08
+nota: Bolso con asa ajustable para poder llevar tanto de mano como en hombro.
+  Cuentas en los flecos.
 color: azul
-material: Bolso en trapillo azul, asa ajustable para poder llevar tanto de mano
-  como en hombro.
+material: Trapillo azul.
 ancho: 23
 alto: 14
 orden: 2
