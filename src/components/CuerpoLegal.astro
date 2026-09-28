@@ -68,4 +68,17 @@ const { intro, actualizado, html } = Astro.props;
     font-weight: 600;
     font-size: 1.05em;
   }
+  /* Los enlaces del texto (a otra página legal, al correo, a WhatsApp) tienen que
+     verse como enlaces: subrayados y un poco más gruesos, y el subrayado engorda al pasar
+     por encima. Sin esto se leían como una frase más. */
+  .legal-cuerpo :global(a) {
+    font-weight: 500;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    transition: text-decoration-thickness 150ms;
+  }
+  .legal-cuerpo :global(a:hover) {
+    text-decoration-thickness: 2px;
+  }
 </style>
