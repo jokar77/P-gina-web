@@ -11,7 +11,7 @@ alto: 15
 orden: 1
 foto: ../../assets/piezas/bolsos nueva/image000201211zon.jpeg
 fotos:
-  - ../../assets/piezas/bolsos nueva/image000181011zon.jpeg
   - ../../assets/piezas/bolsos nueva/image00017911zon.jpeg
+  - ../../assets/piezas/bolsos nueva/image000181011zon.jpeg
   - ../../assets/piezas/bolsos nueva/image000191111zon.jpeg
 ---
