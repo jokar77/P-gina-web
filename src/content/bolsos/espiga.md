@@ -3,8 +3,9 @@ nombre: Plata
 precio: 40
 estado: disponible
 fecha: 2026-09-08
+nota: Bolso con cierre y forro interior, muy espacioso.
 color: gris
-material: Bolos con cierre de trapillo de fibra plateado y forro interior, muy espacioso.
+material: Trapillo de fibra plateado.
 ancho: 30
 alto: 16
 orden: 8
