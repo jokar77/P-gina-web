@@ -1,15 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
 import Portada from '../components/Portada.astro';
 import Sociales from '../components/Sociales.astro';
 import Taller from '../components/Taller.astro';
 import Layout from '../layouts/Layout.astro';
 import site from '../data/site.json';
+import compartir from '../assets/marca/compartir.jpg';
 
-// Los bolsos van primero en la portada, así que son también la imagen que se comparte.
-const { data: fotosPortones } = (await getCollection('portada'))[0]!;
-const og = await getImage({ src: fotosPortones.bolsos, width: 1200, format: 'jpeg' });
+/*
+ * Lo que se ve al pasar el enlace de la web por WhatsApp: la misma pantalla con la que
+ * se abre la portada, el nombre sobre el fondo gris y la frase debajo. Es una imagen
+ * hecha aparte (1200×630, la medida de estas vistas previas) a partir del logotipo; si
+ * cambia la frase de la portada, hay que rehacerla. Las fichas de cada pieza siguen
+ * enseñando su propia foto.
+ */
+const og = await getImage({ src: compartir, width: 1200, format: 'jpeg' });
 ---
 
 <Layout
@@ -17,7 +22,7 @@ const og = await getImage({ src: fotosPortones.bolsos, width: 1200, format: 'jpe
   imagen={og.src}
   imagenAncho={og.attributes.width}
   imagenAlto={og.attributes.height}
-  imagenAlt={fotosPortones.bolsosAlt || 'Bolsos de ganchillo.'}
+  imagenAlt={`${site.marca}. ${site.frasePortada}`}
 >
   <Portada />
   <Sociales />
