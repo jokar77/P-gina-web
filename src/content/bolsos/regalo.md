@@ -3,8 +3,9 @@ nombre: Amapola
 precio: 25
 estado: vendido
 fecha: 2026-09-22
+nota: Forro con bolsillo interior y botón magnético. Asa larga con dos arandelas.
 color: amarillo
-material: Lana, dos arandelas, botón magnético y forro con bolsillo interior.
+material: Lana acrílica.
 ancho: 30
 alto: 16
 orden: 100
