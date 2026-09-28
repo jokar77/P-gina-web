@@ -604,8 +604,8 @@ content:
         type: string
         required: true
         description: >-
-          La fecha en la que se publica esta versión del texto. Mientras no haya
-          fecha real, deja el aviso «[PENDIENTE: ...]» tal cual, no lo borres.
+          La fecha en la que se publica esta versión del texto (por ejemplo, «28 de
+          septiembre de 2026»). Cámbiala cada vez que cambies lo que dice el texto.
       - name: body
         label: Cuerpo del texto
         type: rich-text
@@ -635,8 +635,8 @@ content:
         type: string
         required: true
         description: >-
-          La fecha en la que se publica esta versión del texto. Mientras no haya
-          fecha real, deja el aviso «[PENDIENTE: ...]» tal cual, no lo borres.
+          La fecha en la que se publica esta versión del texto (por ejemplo, «28 de
+          septiembre de 2026»). Cámbiala cada vez que cambies lo que dice el texto.
       - name: body
         label: Cuerpo del texto
         type: rich-text
@@ -665,8 +665,8 @@ content:
         type: string
         required: true
         description: >-
-          La fecha en la que se publica esta versión del texto. Mientras no haya
-          fecha real, deja el aviso «[PENDIENTE: ...]» tal cual, no lo borres.
+          La fecha en la que se publica esta versión del texto (por ejemplo, «28 de
+          septiembre de 2026»). Cámbiala cada vez que cambies lo que dice el texto.
       - name: body
         label: Cuerpo del texto
         type: rich-text

@@ -18,6 +18,8 @@ interface Props {
   imagenAlt?: string;
   /** Ficha de producto, migas de pan… lo que cada página tenga de propio, además de la marca. */
   jsonLd?: object[];
+  /** `false` en páginas que no tiene sentido que salgan en Google, como el pedido. */
+  indexar?: boolean;
 }
 
 const {
@@ -28,6 +30,7 @@ const {
   imagenAlto,
   imagenAlt,
   jsonLd = [],
+  indexar = true,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : undefined;
@@ -50,6 +53,7 @@ const datosLd = [organizacion(Astro.site!), ...jsonLd];
  * Google no llega a leer el "no indexes" y puede acabar listando la URL igualmente.
  */
 const provisional = esProvisional(Astro.site);
+const noIndexar = provisional || !indexar;
 ---
 
 <!doctype html>
@@ -58,7 +62,7 @@ const provisional = esProvisional(Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="canonical" href={canonical} />
-    {provisional && <meta name="robots" content="noindex, nofollow" />}
+    {noIndexar && <meta name="robots" content={provisional ? 'noindex, nofollow' : 'noindex'} />}
     <title>{titulo}</title>
     <meta name="description" content={descripcion} />
 

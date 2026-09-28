@@ -57,15 +57,17 @@ Nada de esto es código. Son datos que solo tiene ella.
       está sobre el lino bueno. Esto sube el nivel más que cualquier cambio de código.
 - [ ] **Conseguir la foto de grupo a resolución completa.** Es la que abre la web y es la
       más pequeña de todas: 928×1152, mientras que las demás son 1536×2048.
-- [ ] **Página 404.** No hay ninguna; ahora saldría la genérica de Cloudflare. Es barata y
-      es la única página que alguien ve cuando algo va mal.
-- [ ] **`robots.txt` y comprobar el sitemap.** El sitemap ya se genera solo.
-- [ ] **Subir capturas para el apartado «Redes».** Está construido (ver §7) pero sin
-      contenido: mientras no haya ninguna captura subida en Pages CMS («Redes sociales
-      (capturas)»), la sección entera no aparece en la portada.
+- [x] **Página 404.** `src/pages/404.astro`, servida por el Worker en vez de la genérica
+      de Cloudflare (`not_found_handling` en `wrangler.jsonc`).
+- [x] **`robots.txt` y sitemap.** `src/pages/robots.txt.ts`, con la dirección del sitemap
+      sacada de `site`. El pedido queda fuera del sitemap y lleva `noindex`: es la cesta
+      de cada cual, no una página que buscar.
+- [x] **Subir capturas para el apartado «Redes».** Ya tiene fotos y vídeos de Instagram,
+      TikTok y YouTube, subidos desde Pages CMS («Redes sociales (capturas)»).
 - [ ] Decidir si se crea la rama `main` para producción, o se despliega desde
       `claude/ipad-access-issue-xczlml`.
-- [ ] Desplegar en Cloudflare Pages (ver §5).
+- [x] Desplegado como Worker con archivos estáticos (Cloudflare ya no da Pages a cuentas
+      nuevas; ver `wrangler.jsonc`), en la dirección provisional de workers.dev.
 
 ### Fase 2 — Legal y cumplimiento
 
@@ -232,7 +234,7 @@ esquema tipado, que es justo lo que un CMS de formularios necesita.
 - [ ] **Analítica sin banner.** Cloudflare Web Analytics no usa cookies ni identifica al
       visitante, así que no dispara la obligación de consentimiento. Es la opción sensata
       aquí: se entera de qué piezas se miran sin ensuciar la web con un banner.
-- [ ] **Datos estructurados** (JSON-LD `Product` con `Offer`) en las páginas de pieza, para
+- [x] **Datos estructurados** (JSON-LD `Product` con `Offer`) en las páginas de pieza, para
       que Google enseñe precio y disponibilidad en los resultados.
 - [ ] **Estado "reservado"** manual, además de disponible/vendido. Dos personas pueden
       preguntar por la misma pieza el mismo día; con esto ella la aparta en dos toques.
@@ -298,8 +300,8 @@ que quien las lea sepa que falta algo real y no se lea la página como completa.
 
 El mismo riesgo se extiende a `src/pages/desistimiento.astro`: el formulario modelo de
 desistimiento (TRLGDCU, anexo B) también pide el nombre y la dirección completa de quien
-vende, y esa página lo deja igualmente como `[PENDIENTE]` en vez de rellenarlo. Es el
-mismo dato, la misma decisión, solo que aparece en otra página.
+vende. Decidido con Sakina (septiembre 2026): ahí van su nombre, el correo y el WhatsApp,
+sin domicilio. Es el mismo dato, la misma decisión, solo que aparece en otra página.
 
 ---
 

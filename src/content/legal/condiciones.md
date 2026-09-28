@@ -3,11 +3,9 @@ titulo: Condiciones de venta
 descripcion: Cómo se compra, cómo se paga, cómo se envía y qué pasa si algo no sale bien.
 intro: Estas condiciones se aplican a los pedidos que salen de esta web y se
   cierran hablando por WhatsApp. Cualquier duda pregunta antes de pagar.
-actualizado: "[PENDIENTE: fecha en la que se publica esta versión]"
+actualizado: 28 de septiembre de 2026
 ---
 ## Quién vende
-
-
 
 - Nombre y apellidos: Sakina Platero
 - Correo de contacto: sakinaplateroben@gmail.com
@@ -19,7 +17,9 @@ Piezas hechas a mano, de una en una. Hay dos clases y no funcionan igual:
 - **Piezas de colección.** Son las que ves en la web, ya hechas. Cada una es única: no
 hay dos iguales y, cuando se vende una, no se repite exactamente. La foto es la
 pieza que recibes.
-- **Piezas por encargo.** Los bolsos de «Diseña tu bolso» , los conjuntos de niño, incluso los vestidos.             Se hacen para ti, con la forma, el color y los detalles que elijas.                                                                         Al ser personalizadas, no tienen derecho de desistimiento; está explicado  
+- **Piezas por encargo.** Los bolsos de «Diseña tu bolso», los conjuntos de niño,
+incluso los vestidos. Se hacen para ti, con la forma, el color y los detalles que
+elijas. Al ser personalizadas, no tienen derecho de desistimiento; está explicado
 en la [página del desistimiento](/desistimiento).
 
 Al ser trabajo a mano, cada pieza tiene sus irregularidades: un punto que no cae

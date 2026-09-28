@@ -6,7 +6,7 @@ descripcion: Catorce días para devolver una pieza de colección, cómo se hace 
 intro: Si compras una pieza de colección y al tenerla delante no te convence,
   tienes catorce días para devolverla sin dar ninguna explicación. Las piezas
   por encargo son otra cosa, y está explicado más abajo.
-actualizado: "[PENDIENTE: fecha en la que se publica esta versión]"
+actualizado: 28 de septiembre de 2026
 ---
 ## Cuánto tiempo tienes
 

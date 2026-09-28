@@ -23,7 +23,8 @@ const site =
 
 export default defineConfig({
   site,
-  integrations: [sitemap()],
+  // El pedido es la cesta de cada cual: vacía para Google, no pinta nada en el sitemap.
+  integrations: [sitemap({ filter: (pagina) => !new URL(pagina).pathname.startsWith('/pedido') })],
   vite: {
     plugins: [tailwindcss()],
   },

@@ -5,7 +5,7 @@ descripcion: Qué datos se tratan y cuáles no. Esta web no pone cookies, no car
 intro: La web no pone ni una cookie, no carga nada de otras empresas y no manda
   tus datos a ningún servidor. Lo único que guarda en tu navegador es el pedido
   que vas montando. Aquí está el detalle.
-actualizado: "[PENDIENTE: fecha en la que se publica esta versión]"
+actualizado: 28 de septiembre de 2026
 ---
 ## Quién responde de tus datos
 
