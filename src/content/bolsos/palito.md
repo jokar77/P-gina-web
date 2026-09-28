@@ -3,8 +3,9 @@ nombre: Bambo
 precio: 25
 estado: disponible
 fecha: 2026-09-10
+nota: Doble asa de bambú.
 color: azul
-material: Trapillo azul y asas de bambú
+material: Trapillo azul
 ancho: 31
 alto: 19
 orden: 1
