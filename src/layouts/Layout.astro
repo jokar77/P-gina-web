@@ -84,6 +84,10 @@ const noIndexar = provisional || !indexar;
     {imagenAlt && <meta name="twitter:image:alt" content={imagenAlt} />}
 
     <meta name="theme-color" content="#c2c2ba" />
+    {/* Demuestra a Bing Webmaster Tools que la web es de Sakina. No es secreta: Bing
+        solo la compara con la de su cuenta. Si se quita, Bing deja de dar la web por
+        verificada. */}
+    <meta name="msvalidate.01" content="8B43579C776D2B62ACE5DE0181A654B1" />
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/icono-512.png" type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
