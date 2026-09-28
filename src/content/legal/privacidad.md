@@ -1,10 +1,10 @@
 ---
 titulo: Política de privacidad
-descripcion: Qué datos se tratan y cuáles no. Esta web no pone cookies, no carga
-  scripts de terceros y no envía nada a ningún servidor.
-intro: La web no pone ni una cookie, no carga nada de otras empresas y no manda
-  tus datos a ningún servidor. Lo único que guarda en tu navegador es el pedido
-  que vas montando. Aquí está el detalle.
+descripcion: Qué datos se tratan y cuáles no. Esta web no pone cookies ni sigue
+  a nadie; solo cuenta visitas, de forma anónima, con la analítica de Cloudflare.
+intro: La web no pone ni una cookie y no sabe quién eres. Lo único que guarda en
+  tu navegador es el pedido que vas montando, y lo único que cuenta son las
+  visitas, sin identificar a nadie. Aquí está el detalle.
 actualizado: 28 de septiembre de 2026
 ---
 ## Quién responde de tus datos
@@ -87,8 +87,22 @@ Nadie más. Tus datos no se venden, no se ceden y no se usan para publicidad.
 
 La web está alojada en Cloudflare y es una web estática: no hay base de datos, ni
 cuentas de usuario, ni formularios que envíen nada. Como cualquier servidor, el que
-sirve estas páginas registra las peticiones para poder mostrarlas y protegerlas. No
-hay ninguna herramienta de analítica instalada.
+sirve estas páginas registra las peticiones para poder mostrarlas y protegerlas.
+
+## Estadísticas de visitas
+
+Para saber cuánta gente entra y qué páginas y piezas se miran más, la web usa
+Cloudflare Web Analytics. Cuando abres una página, se envía a Cloudflare qué página
+es, desde qué web llegaste, el tipo de navegador y dispositivo, el país y lo que ha
+tardado en cargar. Con eso solo se ven totales: cuántas visitas, de dónde vienen y
+qué se mira.
+
+No usa cookies, no guarda nada en tu navegador y no sirve para identificarte ni
+para seguirte de una web a otra. Por eso no te pedimos permiso con un aviso de
+cookies: no hay ninguna. La base legal es el interés legítimo en saber cómo se usa
+la web para mejorarla (RGPD art. 6.1.f). Cloudflare trata estos datos por encargo y
+puede hacerlo fuera de la Unión Europea; está adherida al EU-US Data Privacy
+Framework, el marco que la Comisión Europea reconoce como garantía suficiente.
 
 ## Tus derechos
 

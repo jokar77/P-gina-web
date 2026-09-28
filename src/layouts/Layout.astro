@@ -8,7 +8,6 @@ import Pie from '../components/Pie.astro';
 import site from '../data/site.json';
 import { esProvisional } from '../lib/sitio';
 import { organizacion } from '../lib/seo';
-import { ANALITICA, TOKEN_ANALITICA } from '../lib/analitica';
 
 interface Props {
   titulo: string;
@@ -105,16 +104,6 @@ const noIndexar = provisional || !indexar;
       datosLd.map((d) => (
         <script type="application/ld+json" set:html={JSON.stringify(d)} is:inline />
       ))
-    }
-    {
-      TOKEN_ANALITICA && (
-        <script
-          defer
-          src={ANALITICA.script}
-          data-cf-beacon={JSON.stringify({ token: TOKEN_ANALITICA })}
-          is:inline
-        />
-      )
     }
   </head>
   <body>

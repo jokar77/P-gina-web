@@ -44,9 +44,11 @@ function urlPublica(archivo) {
   return ruta.endsWith('/index.html') ? ruta.slice(0, -'index.html'.length) : ruta;
 }
 
-// La analítica de Cloudflare (ver src/lib/analitica.ts) es el único tercero: su script
-// y el sitio al que manda las visitas se abren solo en las páginas que de verdad lo
-// cargan, así que mientras no haya token la política sigue igual de cerrada que antes.
+// La analítica de Cloudflare (Web Analytics, configuración automática) es el único
+// tercero: no está en el HTML que construye Astro, la mete Cloudflare al servir cada
+// página. Por eso su script y el sitio al que manda las visitas van abiertos en todas
+// las páginas, y no se pueden detectar aquí. Sin cookies ni datos de quien visita (ver
+// la política de privacidad).
 const ANALITICA_SCRIPT = 'https://static.cloudflareinsights.com';
 const ANALITICA_ENVIO = 'https://cloudflareinsights.com';
 
@@ -66,11 +68,10 @@ for (const archivo of await htmlFiles(DIST)) {
     hashes.add(`'sha256-${hash}'`);
   }
   totalHashes += hashes.size;
-  const conAnalitica = html.includes(`src="${ANALITICA_SCRIPT}/`);
-  const scripts = [...hashes, ...(conAnalitica ? [ANALITICA_SCRIPT] : [])];
+  const scripts = [...hashes, ANALITICA_SCRIPT];
   const csp = baseCsp
-    .replace('{SCRIPTS}', scripts.length ? ' ' + scripts.join(' ') : '')
-    .replace('{CONEXIONES}', conAnalitica ? ' ' + ANALITICA_ENVIO : '');
+    .replace('{SCRIPTS}', ' ' + scripts.join(' '))
+    .replace('{CONEXIONES}', ' ' + ANALITICA_ENVIO);
   secciones.push(`${urlPublica(archivo)}\n  Content-Security-Policy: ${csp}\n`);
 }
 
