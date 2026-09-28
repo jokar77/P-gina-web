@@ -3,9 +3,9 @@ nombre: Escarcha
 precio: 30
 estado: disponible
 fecha: 2026-09-08
-nota: Tarjetero a juego.
+nota: Muy brillante con tarjetero a juego, efecto encantador.
 color: azul
-material: Lana acrílica más hilo con lentejuelas, efecto encantador.
+material: Lana acrílica e hilo con lentejuelas.
 ancho: 29
 alto: 15
 orden: 1
