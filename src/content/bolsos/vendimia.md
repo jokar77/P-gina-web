@@ -3,8 +3,9 @@ nombre: Hibiscus
 precio: 30
 estado: disponible
 fecha: 2026-09-08
+nota: Asa resistente y flor añadida a mano.
 color: morado
-material: Doble trapillo, bicolor, asa resistente y flor añadida a mano.
+material: Doble trapillo morado, bicolor.
 ancho: 25
 alto: 16
 orden: 4
