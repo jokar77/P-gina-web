@@ -3,8 +3,9 @@ nombre: Duna
 precio: 20
 estado: disponible
 fecha: 2026-09-08
+nota: Bolso de mano con asa incorporada y botones decorativos.
 color: blanco
-material: Trapillo blanco, bolso de mano con asa incorporada.
+material: Trapillo blanco.
 ancho: 28
 alto: 15
 orden: 9
