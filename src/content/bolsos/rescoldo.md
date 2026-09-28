@@ -3,8 +3,9 @@ nombre: Britney
 precio: 25
 estado: disponible
 fecha: 2026-09-08
+nota: Bolso de mano con tarjetero a juego.
 color: rosa
-material: Lana acrílica con brillo incluido, bolso de mano con tarjetero a juego.
+material: Lana e hilo acrílico con brillo y lentejuelas.
 ancho: 28
 alto: 15
 orden: 5
