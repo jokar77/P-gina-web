@@ -17,8 +17,9 @@
 # ningún sitio (WhatsApp se abre por JS, no por action=) ni recursos externos (fuentes,
 # imágenes y scripts van todos servidos desde aquí), así que se puede ir estricto sin
 # tener que abrir huecos: nada de 'unsafe-inline' en script-src, nada de dominios ajenos.
-# El día que entre un tercero (analítica, un embed), esta lista es la primera que hay
-# que tocar o dejará de cargar en silencio.
+# El día que entre un tercero (un embed, por ejemplo), la CSP es lo primero que hay
+# que tocar o dejará de cargar en silencio. La analítica de Cloudflare ya está prevista
+# en scripts/generar-cabeceras.mjs.
 #
 # La Content-Security-Policy NO va aquí, a propósito: cuando el navegador recibe dos
 # cabeceras CSP para la misma respuesta (esta de `/*` y la propia de cada página, más

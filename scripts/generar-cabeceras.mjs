@@ -44,10 +44,16 @@ function urlPublica(archivo) {
   return ruta.endsWith('/index.html') ? ruta.slice(0, -'index.html'.length) : ruta;
 }
 
+// La analítica de Cloudflare (ver src/lib/analitica.ts) es el único tercero: su script
+// y el sitio al que manda las visitas se abren solo en las páginas que de verdad lo
+// cargan, así que mientras no haya token la política sigue igual de cerrada que antes.
+const ANALITICA_SCRIPT = 'https://static.cloudflareinsights.com';
+const ANALITICA_ENVIO = 'https://cloudflareinsights.com';
+
 const baseCsp =
   "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; " +
-  "script-src 'self'{HASHES}; font-src 'self' data:; form-action 'none'; " +
-  "frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests";
+  "script-src 'self'{SCRIPTS}; connect-src 'self'{CONEXIONES}; font-src 'self' data:; " +
+  "form-action 'none'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests";
 
 const secciones = [];
 let totalHashes = 0;
@@ -60,7 +66,11 @@ for (const archivo of await htmlFiles(DIST)) {
     hashes.add(`'sha256-${hash}'`);
   }
   totalHashes += hashes.size;
-  const csp = baseCsp.replace('{HASHES}', hashes.size ? ' ' + [...hashes].join(' ') : '');
+  const conAnalitica = html.includes(`src="${ANALITICA_SCRIPT}/`);
+  const scripts = [...hashes, ...(conAnalitica ? [ANALITICA_SCRIPT] : [])];
+  const csp = baseCsp
+    .replace('{SCRIPTS}', scripts.length ? ' ' + scripts.join(' ') : '')
+    .replace('{CONEXIONES}', conAnalitica ? ' ' + ANALITICA_ENVIO : '');
   secciones.push(`${urlPublica(archivo)}\n  Content-Security-Policy: ${csp}\n`);
 }
 
