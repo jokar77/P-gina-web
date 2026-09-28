@@ -352,23 +352,35 @@ const finDelNombre = pct(1.9);
       overflow: hidden;
       height: 92svh;
     }
+    /*
+     * En el móvil el nombre va en su propia franja debajo de la foto, no encima. Encima
+     * dependía de lo que hubiera en la parte de abajo de cada foto, y en la de los
+     * conjuntos de niño —dos líneas de título sobre un pantalón de cuadros blancos y
+     * negros— no había velo que lo hiciera legible. La foto encoge lo que ocupe el
+     * nombre, así que el portón sigue midiendo lo mismo.
+     */
     .porton a {
-      display: block;
-      position: relative;
+      display: flex;
+      flex-direction: column;
       height: 100%;
       text-decoration: none;
     }
     .foto-porton {
+      flex: 1;
+      min-height: 0;
       width: 100%;
-      height: 100%;
       object-fit: cover;
     }
+    .velo-porton {
+      display: none;
+    }
     .nombre-porton {
-      position: absolute;
-      inset: auto 0 1.5rem;
+      padding: 1rem 1.25rem 1.6rem;
       text-align: center;
+      text-wrap: balance;
       font-family: var(--font-display);
       font-size: clamp(1.6rem, 7vw, 2.1rem);
+      line-height: 1.15;
       color: var(--color-deep);
     }
 
