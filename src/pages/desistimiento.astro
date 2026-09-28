@@ -17,7 +17,8 @@
  * desistir, hay que darlo antes. Es el mismo dato que condiciones.astro y
  * privacidad.astro dejan pendiente por decisión consciente (PLAN.md §4, «de momento no
  * se publican»): aquí se mantiene el mismo criterio, con el mismo riesgo asumido a
- * propósito, no por descuido.
+ * propósito, no por descuido. Decidido con Sakina (septiembre 2026): en el formulario
+ * van su nombre, el correo y el WhatsApp, sin domicilio.
  *
  * La dirección a la que se devuelve la pieza es un dato distinto: no es de
  * identificación legal, es simplemente dónde tiene que llegar el paquete. Puede ser una
@@ -34,10 +35,16 @@ import Layout from '../layouts/Layout.astro';
 import CuerpoLegal from '../components/CuerpoLegal.astro';
 import { getEntry } from 'astro:content';
 import { cuerpoLegal } from '../lib/legal';
+import site from '../data/site.json';
 
 const entry = await getEntry('legal', 'desistimiento');
 const { titulo, descripcion, intro, actualizado } = entry!.data;
 const html = cuerpoLegal(entry!);
+
+/** El mismo correo que da el texto de desistimiento.md para avisar. */
+const CORREO = 'sakinaplateroben@gmail.com';
+/** 34645330790 → +34 645 330 790 */
+const telefono = site.whatsapp.replace(/^(\d{2})(\d{3})(\d{3})(\d{3})$/, '+$1 $2 $3 $4');
 ---
 
 <Layout titulo={`${titulo} — Sakina Platero`} descripcion={descripcion}>
@@ -59,8 +66,8 @@ const html = cuerpoLegal(entry!);
         </p>
         <ul class="mt-5 grid gap-4">
           <li>
-            A la atención de [PENDIENTE: nombre y apellidos, domicilio postal y correo
-            electrónico de quien vende]:
+            A la atención de {site.marca} · <a href={`mailto:${CORREO}`}>{CORREO}</a> · WhatsApp{' '}
+            <a href={`https://wa.me/${site.whatsapp}`}>{telefono}</a>:
           </li>
           <li>
             Por la presente le comunico que desisto de mi contrato de venta del siguiente bien:
