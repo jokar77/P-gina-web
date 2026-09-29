@@ -233,11 +233,10 @@ const TRANSPORTISTAS = [
           <a class="boton mt-6 w-full lg:text-[19px]" data-enviar href="#">Enviar por WhatsApp</a>
 
           {/*
-            Solo en ordenador (detectado por si hay ratón de verdad, no por ancho de
-            pantalla: una tablet táctil ancha no lo es). En móvil el botón de arriba ya
-            abre la app directamente; aquí, sin la app vinculada, se queda en la
-            pantalla del código de WhatsApp Web, que para quien no sabe qué es eso es un
-            callejón sin salida. El QR evita ese paso entero: se escanea con la cámara
+            En ordenador y en tablet, no en el móvil (ver el CSS). En el móvil el botón
+            de arriba ya abre la app directamente; en ordenador o tablet, sin la app
+            vinculada, se queda en la pantalla del código de WhatsApp Web, que para quien
+            no sabe qué es eso es un callejón sin salida. El QR evita ese paso entero: se escanea con la cámara
             del móvil y abre la app ahí, con el pedido ya escrito, sin pasar por
             WhatsApp Web ni el ordenador para nada.
           */}
@@ -246,7 +245,7 @@ const TRANSPORTISTAS = [
             data-qr-escritorio
           >
             <p class="max-w-[26ch] text-[15px] text-ink lg:text-[17px]">
-              ¿No tienes WhatsApp Web en el ordenador? Usa este código con el móvil: te
+              ¿No tienes WhatsApp en este dispositivo? Usa este código con el móvil: te
               lleva directo a esta conversación con Sakina, con el pedido ya escrito.
             </p>
             <div class="qr-caja" data-qr-caja></div>
@@ -338,15 +337,19 @@ const TRANSPORTISTAS = [
   }
 
   /*
-   * Oculto por defecto y solo visible con puntero fino y hover de verdad —un ratón—,
-   * no por ancho de pantalla: eso deja fuera tablets táctiles anchas, donde el botón de
-   * WhatsApp de arriba ya funciona solo y un QR no tiene sentido (no hay cómo
-   * escanearlo con la misma pantalla que lo enseña).
+   * Oculto solo en el móvil, que es donde el botón de WhatsApp de arriba abre la app
+   * sin más y el QR no se podría escanear (lo enseña la misma pantalla).
+   *
+   * Se ve con ratón y también en tablets. Antes era solo con ratón, pensando que en una
+   * tablet el botón bastaba, pero en el iPad no es así: mucha gente no tiene WhatsApp
+   * ahí, o no vinculado, y el botón la deja en la pantalla del código de WhatsApp Web.
+   * La tablet se reconoce por tamaño en las dos direcciones: un móvil tumbado puede
+   * pasar de 700px de ancho, pero no llega a 600px de alto.
    */
   .qr-escritorio {
     display: none;
   }
-  @media (hover: hover) and (pointer: fine) {
+  @media (hover: hover) and (pointer: fine), (min-width: 700px) and (min-height: 600px) {
     .qr-escritorio {
       display: grid;
     }
@@ -354,6 +357,13 @@ const TRANSPORTISTAS = [
   .qr-caja {
     width: 9.5rem;
     box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+  /* En tablet, más grande: el pedido entero va dentro, así que el código sale denso y
+     a 9,5rem al móvil le cuesta enfocarlo. */
+  @media (min-width: 700px) and (min-height: 600px) {
+    .qr-caja {
+      width: 12rem;
+    }
   }
   /* Más grande en su propia columna de escritorio: ahí hay sitio de sobra y el gesto
      de escanear se hace desde más lejos (el móvil en una mano, la pantalla enfrente). */
@@ -580,7 +590,7 @@ const TRANSPORTISTAS = [
 
     enviar.href = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(mensaje(lineas))}`;
 
-    // El QR solo se ve en ordenador (ver CSS), pero se genera igual en cualquier
+    // El QR no se ve en el móvil (ver CSS), pero se genera igual en cualquier
     // pantalla: no cuesta nada y así no hace falta repetir aquí la misma comprobación
     // de puntero que ya hace la hoja de estilos.
     if (qrCaja) {
