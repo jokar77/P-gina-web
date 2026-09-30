@@ -38,6 +38,7 @@ const redes = [
           target="_blank"
           aria-label={r.nombre}
           title={r.nombre}
+          data-whatsapp={r.nombre === 'WhatsApp' ? '' : undefined}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
             {r.nombre === 'WhatsApp' && (

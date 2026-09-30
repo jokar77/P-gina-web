@@ -5,6 +5,7 @@ import '../styles/global.css';
 import Carrito from '../components/Carrito.astro';
 import Nav from '../components/Nav.astro';
 import Pie from '../components/Pie.astro';
+import QrWhatsapp from '../components/QrWhatsapp.astro';
 import site from '../data/site.json';
 import { esProvisional } from '../lib/sitio';
 import { organizacion } from '../lib/seo';
@@ -119,5 +120,6 @@ const noIndexar = provisional || !indexar;
     </main>
     <Pie />
     <Carrito />
+    <QrWhatsapp />
   </body>
 </html>
