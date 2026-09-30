@@ -1,5 +1,6 @@
 import { opcional } from './ajustes';
 import site from '../data/site.json';
+import { costeEnvio, METODOS } from './envio';
 
 interface Paso {
   nombre: string;
@@ -28,14 +29,73 @@ interface DatosProducto {
   sku: string;
   url: string;
   material?: string;
-  /** Sin oferta no hay precio que enseñar: es el caso del archivo, que no se vende. */
-  oferta?: { precio: number; disponible: boolean };
+  /**
+   * Sin oferta no hay precio que enseñar: es el caso del archivo, que no se vende.
+   * `devolucion` es si tiene los 14 días de desistimiento: las piezas de colección sí,
+   * las hechas por encargo no (TRLGDCU art. 103.c; ver desistimiento.md).
+   */
+  oferta?: { precio: number; disponible: boolean; devolucion: boolean };
 }
+
+/*
+ * Adónde se envía, en códigos postales: toda España menos Canarias (35, 38), Ceuta (51)
+ * y Melilla (52), que es lo que dicen las condiciones de venta. Por códigos postales
+ * porque schema.org no tiene forma de decir «España salvo estas provincias».
+ */
+const DESTINO = [
+  ['01000', '34999'],
+  ['36000', '37999'],
+  ['39000', '50999'],
+].map(([desde, hasta]) => ({
+  '@type': 'DefinedRegion',
+  addressCountry: 'ES',
+  postalCodeRange: { postalCodeBegin: desde, postalCodeEnd: hasta },
+}));
+
+/**
+ * Lo que cuesta el envío de esta pieza sola, con las mismas tarifas que el pedido
+ * (src/lib/envio.ts): una entrada por forma de envío, y gratis si la pieza ya pasa del
+ * mínimo. No se inventa plazo de entrega: no es obligatorio y no hay uno fijo.
+ */
+const envios = (precio: number) =>
+  METODOS.map((m) => ({
+    '@type': 'OfferShippingDetails',
+    shippingLabel: m.nombre,
+    shippingRate: {
+      '@type': 'MonetaryAmount',
+      value: costeEnvio(precio, m.id),
+      currency: 'EUR',
+    },
+    shippingDestination: DESTINO,
+  }));
+
+/**
+ * La política de devolución, tal cual está en la página de desistimiento: 14 días, por
+ * correo y pagando la vuelta quien compra. Lo hecho por encargo no se puede devolver.
+ */
+const devoluciones = (devolucion: boolean) =>
+  devolucion
+    ? {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'ES',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/ReturnShippingFees',
+      }
+    : {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'ES',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+      };
 
 /**
  * Ficha de producto. No hay carrito de compra de verdad —todo se cierra por
- * WhatsApp—, pero el precio, la disponibilidad y el material sí son reales, así que
- * vale la pena que el buscador los lea.
+ * WhatsApp—, pero el precio, la disponibilidad, el material, el envío y las
+ * devoluciones sí son reales, así que vale la pena que el buscador los lea.
+ *
+ * Google avisa también de que faltan valoraciones («aggregateRating», «review»). Se
+ * deja así a propósito: no hay reseñas, y ponerlas inventadas va contra sus normas.
  */
 export const producto = (base: URL, d: DatosProducto) => ({
   '@context': 'https://schema.org',
@@ -46,6 +106,9 @@ export const producto = (base: URL, d: DatosProducto) => ({
   // que el navegador resuelva solo, así que sin dominio Google no sabría de dónde sacarla.
   image: [new URL(d.imagen, base).href],
   sku: d.sku,
+  // Son piezas hechas a mano: no tienen código de barras (GTIN), así que el
+  // identificador que Google pide es la marca.
+  brand: { '@type': 'Brand', name: site.marca },
   ...(d.material ? { material: d.material } : {}),
   ...(d.oferta
     ? {
@@ -58,6 +121,8 @@ export const producto = (base: URL, d: DatosProducto) => ({
             ? 'https://schema.org/InStock'
             : 'https://schema.org/SoldOut',
           itemCondition: 'https://schema.org/NewCondition',
+          shippingDetails: envios(d.oferta.precio),
+          hasMerchantReturnPolicy: devoluciones(d.oferta.devolucion),
         },
       }
     : {}),

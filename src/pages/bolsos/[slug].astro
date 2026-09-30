@@ -69,7 +69,7 @@ const jsonLd = [
     sku: bolso.id,
     material: d.material,
     url: `/bolsos/${bolso.id}`,
-    oferta: { precio: d.precio, disponible: !vendido },
+    oferta: { precio: d.precio, disponible: !vendido, devolucion: d.estado !== 'encargo' },
   }),
   migasDePan(Astro.site!, [
     { nombre: 'Inicio', url: '/' },

@@ -29,7 +29,8 @@ const jsonLd = [
     material: d.material,
     url: `/ninos/${conjunto.id}`,
     // Se cose por encargo, así que siempre se puede pedir: no hay unidad que se agote.
-    oferta: { precio: d.precioDesde, disponible: true },
+    // Hecho a medida: sin derecho de desistimiento.
+    oferta: { precio: d.precioDesde, disponible: true, devolucion: false },
   }),
   migasDePan(Astro.site!, [
     { nombre: 'Inicio', url: '/' },
