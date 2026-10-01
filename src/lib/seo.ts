@@ -52,12 +52,46 @@ const DESTINO = [
   postalCodeRange: { postalCodeBegin: desde, postalCodeEnd: hasta },
 }));
 
+/** «2-3 días laborables» → { min: 2, max: 3 }. Si no se entiende, no se da plazo. */
+const dias = (texto: string) => {
+  const m = texto.match(/(\d+)(?:\s*[-–a]\s*(\d+))?/);
+  return m ? { min: Number(m[1]), max: Number(m[2] ?? m[1]) } : undefined;
+};
+
+/*
+ * El transporte: Correos o InPost en la península y Baleares suelen tardar de uno a
+ * cuatro días laborables desde que sale el paquete. Es una estimación, igual que la de
+ * las condiciones («la entrega depende del transporte»).
+ */
+const TRANSPORTE = { min: 1, max: 4 };
+
+/*
+ * Plazo de entrega: lo que tarda en salir del taller (site.json → envíos, el mismo dato
+ * que las condiciones de venta) más el transporte. Solo en piezas de colección: un
+ * encargo hay que hacerlo antes y su plazo depende de la cola del momento.
+ */
+const plazo = (coleccion: boolean) => {
+  const preparacion = dias(site.envios.plazoDias);
+  if (!coleccion || !preparacion) return undefined;
+  const rango = (r: { min: number; max: number }) => ({
+    '@type': 'QuantitativeValue',
+    minValue: r.min,
+    maxValue: r.max,
+    unitCode: 'DAY',
+  });
+  return {
+    '@type': 'ShippingDeliveryTime',
+    handlingTime: rango(preparacion),
+    transitTime: rango(TRANSPORTE),
+  };
+};
+
 /**
  * Lo que cuesta el envío de esta pieza sola, con las mismas tarifas que el pedido
  * (src/lib/envio.ts): una entrada por forma de envío, y gratis si la pieza ya pasa del
- * mínimo. No se inventa plazo de entrega: no es obligatorio y no hay uno fijo.
+ * mínimo.
  */
-const envios = (precio: number) =>
+const envios = (precio: number, coleccion: boolean) =>
   METODOS.map((m) => ({
     '@type': 'OfferShippingDetails',
     shippingLabel: m.nombre,
@@ -67,6 +101,7 @@ const envios = (precio: number) =>
       currency: 'EUR',
     },
     shippingDestination: DESTINO,
+    ...(plazo(coleccion) ? { deliveryTime: plazo(coleccion) } : {}),
   }));
 
 /**
@@ -81,7 +116,9 @@ const devoluciones = (devolucion: boolean) =>
         returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
         merchantReturnDays: 14,
         returnMethod: 'https://schema.org/ReturnByMail',
-        returnFees: 'https://schema.org/ReturnShippingFees',
+        // Quien devuelve manda el paquete por su cuenta y lo paga: no hay un importe
+        // fijo de vuelta que dar, que es lo que pediría `ReturnShippingFees`.
+        returnFees: 'https://schema.org/ReturnFeesCustomerResponsibility',
       }
     : {
         '@type': 'MerchantReturnPolicy',
@@ -121,7 +158,7 @@ export const producto = (base: URL, d: DatosProducto) => ({
             ? 'https://schema.org/InStock'
             : 'https://schema.org/SoldOut',
           itemCondition: 'https://schema.org/NewCondition',
-          shippingDetails: envios(d.oferta.precio),
+          shippingDetails: envios(d.oferta.precio, d.oferta.devolucion),
           hasMerchantReturnPolicy: devoluciones(d.oferta.devolucion),
         },
       }
