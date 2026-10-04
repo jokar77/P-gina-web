@@ -1,10 +1,11 @@
 ---
 nombre: Kitty
-precio: 30
+precio: 25
 estado: disponible
 fecha: 2026-10-01
+nota: Bolso en forma de lazo, cierre magnético.
 color: rosa
-material: trapillo
+material: Trapillo rosa.
 ancho: 25
 alto: 25
 orden: 0
