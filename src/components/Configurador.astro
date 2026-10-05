@@ -221,7 +221,8 @@ const seccion = site.secciones.disena;
     .panel-maqueta {
       order: -1;
       position: sticky;
-      top: 3.6rem;
+      /* Debajo de la barra, y del aviso de arriba si lo hay (ver Aviso.astro). */
+      top: calc(3.6rem + var(--alto-aviso, 0px));
       z-index: 10;
       margin: 0 -1.25rem;
       padding: 0.5rem 1.25rem 0.75rem;

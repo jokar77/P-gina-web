@@ -115,8 +115,14 @@ const noIndexar = provisional || !indexar;
     >
       Saltar al contenido
     </a>
-    <Aviso />
-    <Nav />
+    {/*
+      El aviso y la barra van juntos en un bloque pegado arriba: así el aviso se ve
+      siempre, no solo al entrar, y la barra queda justo debajo sin calcular nada.
+    */}
+    <div class="sticky top-0 z-40">
+      <Aviso />
+      <Nav />
+    </div>
     <main id="contenido">
       <slot />
     </main>

@@ -3,9 +3,12 @@
  * La franja de aviso de arriba del todo: el sorteo, una novedad, lo que toque. Se
  * escribe y se enciende o apaga desde Pages CMS («Aviso de arriba»).
  *
- * Va antes de la barra de navegación, en el flujo normal de la página: se va con el
- * scroll y la barra sigue pegándose arriba como siempre, así que no le quita sitio a
- * nada mientras se lee la página.
+ * Va pegado arriba junto con la barra de navegación (ver Layout.astro), así que se ve
+ * siempre. Por eso es lo más bajo posible: en el móvil, texto y enlace van seguidos,
+ * en dos líneas como mucho.
+ *
+ * Deja su alto en `--alto-aviso` para lo que también se pega arriba debajo de la
+ * barra (el dibujo de «Diseña tu bolso» en el móvil) y para los saltos a una sección.
  *
  * El enlace va al Instagram de los ajustes; si no hay Instagram puesto o el texto del
  * enlace está en blanco, sale solo el texto.
@@ -22,12 +25,15 @@ const conEnlace = instagram && aviso.enlace?.trim();
   aviso.mostrar && aviso.texto.trim() && (
     <div class="aviso">
       <p>
-        <span>{aviso.texto}</span>
+        {aviso.texto}
         {conEnlace && (
-          <a href={instagram} target="_blank" rel="me noopener">
-            {aviso.enlace}
-            <span aria-hidden="true"> →</span>
-          </a>
+          <>
+            {' '}
+            <a href={instagram} target="_blank" rel="me noopener">
+              {aviso.enlace}
+              <span aria-hidden="true"> →</span>
+            </a>
+          </>
         )}
       </p>
     </div>
@@ -36,28 +42,21 @@ const conEnlace = instagram && aviso.enlace?.trim();
 
 <style>
   .aviso {
-    position: relative;
-    z-index: 41;
     background-color: var(--color-deep);
     color: var(--color-paper);
-    padding: 0.7rem 1.25rem;
+    padding: 0.5rem 1rem;
     text-align: center;
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: 13px;
+    line-height: 1.4;
   }
   @media (min-width: 640px) {
     .aviso {
+      padding-block: 0.6rem;
       font-size: 15px;
     }
   }
-  .aviso p {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    column-gap: 0.9rem;
-    row-gap: 0.15rem;
-  }
   .aviso a {
+    margin-left: 0.4rem;
     font-weight: 600;
     white-space: nowrap;
     text-decoration-line: underline;
@@ -70,4 +69,17 @@ const conEnlace = instagram && aviso.enlace?.trim();
   .aviso a:focus-visible {
     outline-color: var(--color-paper);
   }
+  :global(html) {
+    scroll-padding-top: var(--alto-aviso, 0px);
+  }
 </style>
+
+<script>
+  const aviso = document.querySelector<HTMLElement>('.aviso');
+  if (aviso) {
+    const medir = () =>
+      document.documentElement.style.setProperty('--alto-aviso', `${aviso.offsetHeight}px`);
+    new ResizeObserver(medir).observe(aviso);
+    medir();
+  }
+</script>
