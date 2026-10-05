@@ -1,0 +1,73 @@
+---
+/**
+ * La franja de aviso de arriba del todo: el sorteo, una novedad, lo que toque. Se
+ * escribe y se enciende o apaga desde Pages CMS («Aviso de arriba»).
+ *
+ * Va antes de la barra de navegación, en el flujo normal de la página: se va con el
+ * scroll y la barra sigue pegándose arriba como siempre, así que no le quita sitio a
+ * nada mientras se lee la página.
+ *
+ * El enlace va al Instagram de los ajustes; si no hay Instagram puesto o el texto del
+ * enlace está en blanco, sale solo el texto.
+ */
+import site from '../data/site.json';
+import { opcional } from '../lib/ajustes';
+
+const aviso = site.aviso;
+const instagram = opcional('instagram');
+const conEnlace = instagram && aviso.enlace?.trim();
+---
+
+{
+  aviso.mostrar && aviso.texto.trim() && (
+    <div class="aviso">
+      <p>
+        <span>{aviso.texto}</span>
+        {conEnlace && (
+          <a href={instagram} target="_blank" rel="me noopener">
+            {aviso.enlace}
+            <span aria-hidden="true"> →</span>
+          </a>
+        )}
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .aviso {
+    position: relative;
+    z-index: 41;
+    background-color: var(--color-deep);
+    color: var(--color-paper);
+    padding: 0.7rem 1.25rem;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  @media (min-width: 640px) {
+    .aviso {
+      font-size: 15px;
+    }
+  }
+  .aviso p {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 0.9rem;
+    row-gap: 0.15rem;
+  }
+  .aviso a {
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+  .aviso a:hover {
+    text-decoration-thickness: 2px;
+  }
+  .aviso a:focus-visible {
+    outline-color: var(--color-paper);
+  }
+</style>

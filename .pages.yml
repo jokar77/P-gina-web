@@ -473,6 +473,21 @@ content:
         label: Frase de la portada
         type: text
         description: La línea que va debajo del nombre, en la primera pantalla.
+      - name: aviso
+        label: Aviso de arriba (banner)
+        type: object
+        description: >-
+          La franja oscura que sale encima de todo, en todas las páginas. Para quitarla,
+          desmarca «Mostrar»; el texto se queda guardado para otra vez.
+        fields:
+          - { name: mostrar, label: Mostrar, type: boolean }
+          - { name: texto, label: Texto, type: string }
+          - name: enlace
+            label: Texto del enlace
+            type: string
+            description: >-
+              Lleva a tu Instagram (el de arriba, en «Instagram»). En blanco, no sale
+              enlace.
       - name: piePortada
         label: Texto bajo la foto de portada
         type: string
