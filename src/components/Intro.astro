@@ -17,6 +17,27 @@
  * antes de que el navegador lo llegue a pintar cuando no toca.
  */
 
+/**
+ * Contorno con pelo: una elipse cuyo borde va en mechones (un pico hacia fuera, un
+ * valle hacia dentro), para el gato negro de pelo largo.
+ */
+const mechones = (cx: number, cy: number, rx: number, ry: number, n: number, largo: number, desde = 0, hasta = 360) => {
+  const pt = (ang: number, extra: number) => {
+    const t = (ang * Math.PI) / 180;
+    return `${(cx + (rx + extra) * Math.cos(t)).toFixed(1)} ${(cy + (ry + extra) * Math.sin(t)).toFixed(1)}`;
+  };
+  const paso = (hasta - desde) / n;
+  let d = `M${pt(desde, 0)}`;
+  for (let i = 0; i < n; i++) {
+    const a0 = desde + i * paso;
+    d += ` Q${pt(a0 + paso * 0.35, largo)} ${pt(a0 + paso * 0.55, largo * 0.7)} Q${pt(a0 + paso * 0.8, 0)} ${pt(a0 + paso, 0)}`;
+  }
+  return d + (hasta - desde >= 360 ? ' Z' : '');
+};
+const negroCuerpo = mechones(0, -58, 50, 58, 22, 9);
+const negroCabeza = mechones(0, -136, 43, 38, 20, 8);
+const negroGorguera = mechones(0, -104, 34, 16, 9, 10, 10, 170);
+
 // Las hebras enrolladas del ovillo: elipses giradas, recortadas por la bola.
 const CX = 200;
 const CY = 200;
@@ -34,48 +55,123 @@ const hebras = [
 ---
 
 <div class="intro" data-intro aria-hidden="true">
-  <svg viewBox="-20 -60 440 400" class="dibujo">
+  <svg viewBox="-58 22 536 318" class="dibujo">
+    <!--
+      El ovillo y las agujas van en su propio lienzo, a escala 0,72 y con la base en
+      el suelo de los gatos: así se hacen pequeños sin tocar sus medidas, y sus
+      animaciones (que giran sobre puntos de este lienzo) siguen cuadrando.
+    -->
+    <svg x="41.6" y="40.8" width="316.8" height="288" viewBox="-20 -60 440 400" overflow="visible">
     <defs>
-      <clipPath id="intro-bola"><circle cx={CX} cy={CY} r={R} /></clipPath>
-      <radialGradient id="intro-luz" cx="38%" cy="32%" r="75%">
-        <stop offset="0" stop-color="#f3efe6" />
-        <stop offset="0.6" stop-color="#e3ddd0" />
-        <stop offset="1" stop-color="#c9c1b1" />
-      </radialGradient>
-    </defs>
+        <clipPath id="intro-bola"><circle cx={CX} cy={CY} r={R} /></clipPath>
+        <radialGradient id="intro-luz" cx="38%" cy="32%" r="75%">
+          <stop offset="0" stop-color="#f3efe6" />
+          <stop offset="0.6" stop-color="#e3ddd0" />
+          <stop offset="1" stop-color="#c9c1b1" />
+        </radialGradient>
+      </defs>
 
-    <!-- Las agujas van detrás de la bola: asoman por arriba, como clavadas en ella -->
-    <g class="aguja aguja-izq">
-      <path d="M40 -26 L 238 236" class="palo" />
-      <circle cx="40" cy="-26" r="14" class="bolita" />
-    </g>
-    <g class="aguja aguja-der">
-      <path d="M360 -26 L 162 236" class="palo" />
-      <circle cx="360" cy="-26" r="14" class="bolita" />
-    </g>
+      <!-- Las agujas van detrás de la bola: asoman por arriba, como clavadas en ella -->
+      <g class="aguja aguja-izq">
+        <path d="M40 -26 L 238 236" class="palo" />
+        <circle cx="40" cy="-26" r="14" class="bolita" />
+      </g>
+      <g class="aguja aguja-der">
+        <path d="M360 -26 L 162 236" class="palo" />
+        <circle cx="360" cy="-26" r="14" class="bolita" />
+      </g>
 
-    <!-- El ovillo -->
-    <ellipse cx={CX} cy={CY + R + 10} rx={R * 0.78} ry="10" class="sombra" />
-    <circle cx={CX} cy={CY} r={R} fill="url(#intro-luz)" />
-    <g clip-path="url(#intro-bola)">
-      <g class="hebras">
-        {
-          hebras.map((h) => (
-            <ellipse
-              cx={CX + (h.dx ?? 0)}
-              cy={CY + (h.dy ?? 0)}
-              rx={h.rx}
-              ry={h.ry}
-              transform={`rotate(${h.giro} ${CX} ${CY})`}
-            />
-          ))
-        }
+      <!-- El ovillo -->
+      <ellipse cx={CX} cy={CY + R + 10} rx={R * 0.78} ry="10" class="sombra" />
+      <circle cx={CX} cy={CY} r={R} fill="url(#intro-luz)" />
+      <g clip-path="url(#intro-bola)">
+        <g class="hebras">
+          {
+            hebras.map((h) => (
+              <ellipse
+                cx={CX + (h.dx ?? 0)}
+                cy={CY + (h.dy ?? 0)}
+                rx={h.rx}
+                ry={h.ry}
+                transform={`rotate(${h.giro} ${CX} ${CY})`}
+              />
+            ))
+          }
+        </g>
+      </g>
+      <circle cx={CX} cy={CY} r={R} class="borde" />
+
+      <!-- La hebra suelta que sale del ovillo -->
+      <path class="cabo" d="M262 252 C 292 282, 330 272, 344 300 S 316 332, 360 330" />
+    </svg>
+
+    <!-- Gato negro de pelo largo, a la izquierda, mirando las agujas -->
+    <g transform="translate(28 300)">
+      <ellipse cx="0" cy="4" rx="58" ry="8" class="sombra" />
+      <path class="cola cola-negra" d="M38 -12 C 92 -10, 102 -62, 74 -92" />
+      <path d={negroCuerpo} class="pelo-negro" />
+      <ellipse cx="-17" cy="-6" rx="15" ry="9" class="pelo-negro" />
+      <ellipse cx="17" cy="-6" rx="15" ry="9" class="pelo-negro" />
+      <g class="cabeza-negra">
+        <path d="M-38 -150 L -34 -196 L -6 -170 Z" class="pelo-negro" />
+        <path d="M38 -150 L 34 -196 L 6 -170 Z" class="pelo-negro" />
+        <path d="M-31 -158 L -30 -184 L -15 -170 Z" class="oreja-negra" />
+        <path d="M31 -158 L 30 -184 L 15 -170 Z" class="oreja-negra" />
+        <path d={negroCabeza} class="pelo-negro" />
+        <path d={negroGorguera} class="pelo-negro" />
+        <g class="ojos">
+          <ellipse cx="-16" cy="-140" rx="10" ry="11" class="ojo-amarillo" />
+          <ellipse cx="16" cy="-140" rx="10" ry="11" class="ojo-amarillo" />
+          <ellipse cx="-15" cy="-140" rx="2.6" ry="8.5" class="pupila" />
+          <ellipse cx="17" cy="-140" rx="2.6" ry="8.5" class="pupila" />
+          <circle cx="-12.5" cy="-144" r="2" class="brillo" />
+          <circle cx="19.5" cy="-144" r="2" class="brillo" />
+        </g>
+        <path d="M-4 -124 L 4 -124 L 0 -119 Z" class="nariz-negra" />
+        <path d="M0 -119 Q -5 -113 -10 -115 M0 -119 Q 5 -113 10 -115" class="boca-negra" />
+        <path d="M-14 -120 L -46 -126 M-14 -117 L -46 -114 M14 -120 L 46 -126 M14 -117 L 46 -114" class="bigotes-claros" />
       </g>
     </g>
-    <circle cx={CX} cy={CY} r={R} class="borde" />
 
-    <!-- La hebra suelta que sale del ovillo -->
-    <path class="cabo" d="M262 252 C 292 282, 330 272, 344 300 S 316 332, 360 330" />
+    <!-- Gata blanca con manchas grises, a la derecha, un poco más pequeña -->
+    <g transform="translate(404 300) scale(0.86)">
+      <defs>
+        <clipPath id="intro-blanca-cuerpo"><path d="M-48 0 C -60 -52, -44 -108, 0 -112 C 44 -108, 60 -52, 48 0 Z" /></clipPath>
+        <clipPath id="intro-blanca-cabeza"><ellipse cx="0" cy="-138" rx="44" ry="38" /></clipPath>
+      </defs>
+      <ellipse cx="0" cy="4" rx="56" ry="8" class="sombra" />
+      <path class="cola cola-blanca" d="M-38 -12 C -92 -10, -100 -62, -72 -92" />
+      <path class="cola-punta" d="M-86 -66 C -88 -78, -82 -86, -72 -92" />
+      <path d="M-48 0 C -60 -52, -44 -108, 0 -112 C 44 -108, 60 -52, 48 0 Z" class="pelo-blanco" />
+      <g clip-path="url(#intro-blanca-cuerpo)">
+        <ellipse cx="34" cy="-62" rx="30" ry="24" class="mancha" />
+        <ellipse cx="-30" cy="-18" rx="18" ry="12" class="mancha" />
+      </g>
+      <ellipse cx="-17" cy="-6" rx="15" ry="9" class="pelo-blanco" />
+      <ellipse cx="17" cy="-6" rx="15" ry="9" class="pelo-blanco" />
+      <g class="cabeza-blanca">
+        <path d="M-38 -152 L -34 -196 L -8 -172 Z" class="pelo-blanco" />
+        <path d="M38 -152 L 34 -196 L 8 -172 Z" class="mancha-borde" />
+        <path d="M-31 -160 L -30 -185 L -16 -172 Z" class="oreja-rosa" />
+        <path d="M31 -160 L 30 -185 L 16 -172 Z" class="oreja-rosa" />
+        <ellipse cx="0" cy="-138" rx="44" ry="38" class="pelo-blanco" />
+        <g clip-path="url(#intro-blanca-cabeza)">
+          <ellipse cx="24" cy="-158" rx="30" ry="24" class="mancha" />
+        </g>
+        <ellipse cx="0" cy="-138" rx="44" ry="38" class="contorno" />
+        <g class="ojos">
+          <ellipse cx="-16" cy="-140" rx="9" ry="10" class="ojo-verde" />
+          <ellipse cx="16" cy="-140" rx="9" ry="10" class="ojo-verde" />
+          <ellipse cx="-16" cy="-140" rx="2.4" ry="7.5" class="pupila" />
+          <ellipse cx="16" cy="-140" rx="2.4" ry="7.5" class="pupila" />
+          <circle cx="-13.5" cy="-144" r="1.8" class="brillo" />
+          <circle cx="18.5" cy="-144" r="1.8" class="brillo" />
+        </g>
+        <path d="M-4 -124 L 4 -124 L 0 -119 Z" class="nariz-rosa" />
+        <path d="M0 -119 Q -5 -113 -10 -115 M0 -119 Q 5 -113 10 -115" class="boca-blanca" />
+        <path d="M-14 -120 L -46 -126 M-14 -117 L -46 -114 M14 -120 L 46 -126 M14 -117 L 46 -114" class="bigotes-oscuros" />
+      </g>
+    </g>
   </svg>
 </div>
 
@@ -128,7 +224,7 @@ const hebras = [
   }
 
   .dibujo {
-    width: min(96vw, 640px, 78svh);
+    width: min(98vw, 760px, 130svh);
     height: auto;
     overflow: visible;
     animation: aparecer 520ms var(--ease-salida) both;
@@ -202,6 +298,127 @@ const hebras = [
   @keyframes girar {
     to {
       transform: rotate(-360deg);
+    }
+  }
+
+  /* Los gatos: pestañean, mueven la cola y el negro sigue las agujas con la cabeza. */
+  .pelo-negro {
+    fill: #1f1d1b;
+  }
+  .oreja-negra {
+    fill: #3a3633;
+  }
+  .ojo-amarillo {
+    fill: #e2b33a;
+  }
+  .ojo-verde {
+    fill: #9fb08e;
+  }
+  .pupila {
+    fill: #141312;
+  }
+  .brillo {
+    fill: #fbf8f0;
+  }
+  .nariz-negra {
+    fill: #4a4440;
+  }
+  .boca-negra,
+  .bigotes-claros {
+    fill: none;
+    stroke: #6f6a62;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .pelo-blanco {
+    fill: #f4f1ea;
+    stroke: #a49b8a;
+    stroke-width: 2;
+  }
+  .contorno {
+    fill: none;
+    stroke: #a49b8a;
+    stroke-width: 2;
+  }
+  .mancha {
+    fill: #8f8e88;
+  }
+  .mancha-borde {
+    fill: #8f8e88;
+    stroke: #a49b8a;
+    stroke-width: 2;
+  }
+  .oreja-rosa,
+  .nariz-rosa {
+    fill: #d7a8a2;
+  }
+  .boca-blanca,
+  .bigotes-oscuros {
+    fill: none;
+    stroke: #8f8778;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .cola {
+    fill: none;
+    stroke-width: 15;
+    stroke-linecap: round;
+    transform-box: fill-box;
+    animation: cola 1.1s ease-in-out infinite alternate;
+  }
+  .cola-negra {
+    stroke: #1f1d1b;
+    stroke-width: 19;
+    transform-origin: 0% 100%;
+  }
+  .cola-blanca {
+    stroke: #f4f1ea;
+    transform-origin: 100% 100%;
+    animation-delay: -0.5s;
+  }
+  .cola-punta {
+    fill: none;
+    stroke: #8f8e88;
+    stroke-width: 15;
+    stroke-linecap: round;
+    transform-box: fill-box;
+    transform-origin: 100% 100%;
+    animation: cola 1.1s ease-in-out -0.5s infinite alternate;
+  }
+  @keyframes cola {
+    from {
+      transform: rotate(-9deg);
+    }
+    to {
+      transform: rotate(9deg);
+    }
+  }
+  .ojos {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pestanear 1.9s ease-in-out 0.7s infinite;
+  }
+  @keyframes pestanear {
+    0%,
+    90%,
+    100% {
+      transform: scaleY(1);
+    }
+    95% {
+      transform: scaleY(0.1);
+    }
+  }
+  .cabeza-negra {
+    transform-box: fill-box;
+    transform-origin: 50% 90%;
+    animation: mirar 800ms ease-in-out infinite alternate;
+  }
+  @keyframes mirar {
+    from {
+      transform: rotate(-4deg);
+    }
+    to {
+      transform: rotate(5deg);
     }
   }
 
