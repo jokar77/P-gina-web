@@ -6,7 +6,7 @@
  * negro de la barra y el pie, lana en crudo con sus hebras en el tono de las líneas.
  *
  * Reglas para que no estorbe:
- * - Dura menos de dos segundos y medio, y con un clic o una tecla se salta.
+ * - Dura unos tres segundos, y con un clic o una tecla se salta.
  * - Solo sale la primera vez que se entra en la visita (sessionStorage): volver a la
  *   portada desde una ficha no la repite.
  * - Con «reducir movimiento» activado en el sistema no sale nunca.
@@ -55,12 +55,89 @@ const hebras = [
 ---
 
 <div class="intro" data-intro aria-hidden="true">
-  <svg viewBox="-58 22 536 318" class="dibujo">
+  <svg viewBox="-50 22 486 318" class="dibujo">
+
+    <!-- Gato negro de pelo largo, a la izquierda, mirando las agujas -->
+    <g transform="translate(64 300)">
+      <ellipse cx="0" cy="4" rx="58" ry="8" class="sombra" />
+      <path class="cola cola-negra" d="M-38 -12 C -92 -10, -102 -62, -74 -92" />
+      <path d={negroCuerpo} class="pelo-negro" />
+      <ellipse cx="-17" cy="-6" rx="15" ry="9" class="pelo-negro" />
+      <g class="zarpa zarpa-negra">
+        <path d="M24 -70 L 46 -18" class="brazo brazo-negro" />
+        <ellipse cx="47" cy="-14" rx="12" ry="9" class="pelo-negro" />
+      </g>
+      <g class="cabeza-negra">
+        <path d="M-38 -150 L -34 -196 L -6 -170 Z" class="pelo-negro" />
+        <path d="M38 -150 L 34 -196 L 6 -170 Z" class="pelo-negro" />
+        <path d="M-31 -158 L -30 -184 L -15 -170 Z" class="oreja-negra" />
+        <path d="M31 -158 L 30 -184 L 15 -170 Z" class="oreja-negra" />
+        <path d={negroCabeza} class="pelo-negro" />
+        <path d={negroGorguera} class="pelo-negro" />
+        <g class="ojos">
+          <ellipse cx="-16" cy="-140" rx="10" ry="11" class="ojo-amarillo" />
+          <ellipse cx="16" cy="-140" rx="10" ry="11" class="ojo-amarillo" />
+          <ellipse cx="-15" cy="-140" rx="2.6" ry="8.5" class="pupila" />
+          <ellipse cx="17" cy="-140" rx="2.6" ry="8.5" class="pupila" />
+          <circle cx="-12.5" cy="-144" r="2" class="brillo" />
+          <circle cx="19.5" cy="-144" r="2" class="brillo" />
+        </g>
+        <path d="M-4 -124 L 4 -124 L 0 -119 Z" class="nariz-negra" />
+        <path d="M0 -119 Q -5 -113 -10 -115 M0 -119 Q 5 -113 10 -115" class="boca-negra" />
+        <path d="M-14 -120 L -46 -126 M-14 -117 L -46 -114 M14 -120 L 46 -126 M14 -117 L 46 -114" class="bigotes-claros" />
+      </g>
+    </g>
+
+    <!-- Gata blanca con manchas grises, a la derecha, un poco más pequeña -->
+    <g transform="translate(340 300) scale(0.86)">
+      <defs>
+        <clipPath id="intro-blanca-cuerpo"><path d="M-48 0 C -60 -52, -44 -108, 0 -112 C 44 -108, 60 -52, 48 0 Z" /></clipPath>
+        <clipPath id="intro-blanca-cabeza"><ellipse cx="0" cy="-138" rx="44" ry="38" /></clipPath>
+      </defs>
+      <ellipse cx="0" cy="4" rx="56" ry="8" class="sombra" />
+      <path class="cola cola-blanca" d="M38 -12 C 92 -10, 100 -62, 72 -92" />
+      <path class="cola-punta" d="M86 -66 C 88 -78, 82 -86, 72 -92" />
+      <path d="M-48 0 C -60 -52, -44 -108, 0 -112 C 44 -108, 60 -52, 48 0 Z" class="pelo-blanco" />
+      <g clip-path="url(#intro-blanca-cuerpo)">
+        <ellipse cx="34" cy="-62" rx="30" ry="24" class="mancha" />
+        <ellipse cx="-30" cy="-18" rx="18" ry="12" class="mancha" />
+      </g>
+      <ellipse cx="17" cy="-6" rx="15" ry="9" class="pelo-blanco" />
+      <g class="zarpa zarpa-blanca">
+        <path d="M-24 -70 L -46 -18" class="brazo brazo-blanco" />
+        <ellipse cx="-47" cy="-14" rx="12" ry="9" class="pelo-blanco" />
+      </g>
+      <g class="cabeza-blanca">
+        <path d="M-38 -152 L -34 -196 L -8 -172 Z" class="pelo-blanco" />
+        <path d="M38 -152 L 34 -196 L 8 -172 Z" class="mancha-borde" />
+        <path d="M-31 -160 L -30 -185 L -16 -172 Z" class="oreja-rosa" />
+        <path d="M31 -160 L 30 -185 L 16 -172 Z" class="oreja-rosa" />
+        <ellipse cx="0" cy="-138" rx="44" ry="38" class="pelo-blanco" />
+        <g clip-path="url(#intro-blanca-cabeza)">
+          <ellipse cx="24" cy="-158" rx="30" ry="24" class="mancha" />
+        </g>
+        <ellipse cx="0" cy="-138" rx="44" ry="38" class="contorno" />
+        <g class="ojos">
+          <ellipse cx="-16" cy="-140" rx="9" ry="10" class="ojo-verde" />
+          <ellipse cx="16" cy="-140" rx="9" ry="10" class="ojo-verde" />
+          <ellipse cx="-16" cy="-140" rx="2.4" ry="7.5" class="pupila" />
+          <ellipse cx="16" cy="-140" rx="2.4" ry="7.5" class="pupila" />
+          <circle cx="-13.5" cy="-144" r="1.8" class="brillo" />
+          <circle cx="18.5" cy="-144" r="1.8" class="brillo" />
+        </g>
+        <path d="M-4 -124 L 4 -124 L 0 -119 Z" class="nariz-rosa" />
+        <path d="M0 -119 Q -5 -113 -10 -115 M0 -119 Q 5 -113 10 -115" class="boca-blanca" />
+        <path d="M-14 -120 L -46 -126 M-14 -117 L -46 -114 M14 -120 L 46 -126 M14 -117 L 46 -114" class="bigotes-oscuros" />
+      </g>
+    </g>
+
     <!--
       El ovillo y las agujas van en su propio lienzo, a escala 0,72 y con la base en
       el suelo de los gatos: así se hacen pequeños sin tocar sus medidas, y sus
-      animaciones (que giran sobre puntos de este lienzo) siguen cuadrando.
+      animaciones (que giran sobre puntos de este lienzo) siguen cuadrando. Va después
+      de los gatos para quedar delante de ellos cuando sale lanzado hacia la pantalla.
     -->
+    <g class="ovillo-juego">
     <svg x="41.6" y="40.8" width="316.8" height="288" viewBox="-20 -60 440 400" overflow="visible">
     <defs>
         <clipPath id="intro-bola"><circle cx={CX} cy={CY} r={R} /></clipPath>
@@ -104,73 +181,6 @@ const hebras = [
       <!-- La hebra suelta que sale del ovillo -->
       <path class="cabo" d="M262 252 C 292 282, 330 272, 344 300 S 316 332, 360 330" />
     </svg>
-
-    <!-- Gato negro de pelo largo, a la izquierda, mirando las agujas -->
-    <g transform="translate(28 300)">
-      <ellipse cx="0" cy="4" rx="58" ry="8" class="sombra" />
-      <path class="cola cola-negra" d="M38 -12 C 92 -10, 102 -62, 74 -92" />
-      <path d={negroCuerpo} class="pelo-negro" />
-      <ellipse cx="-17" cy="-6" rx="15" ry="9" class="pelo-negro" />
-      <ellipse cx="17" cy="-6" rx="15" ry="9" class="pelo-negro" />
-      <g class="cabeza-negra">
-        <path d="M-38 -150 L -34 -196 L -6 -170 Z" class="pelo-negro" />
-        <path d="M38 -150 L 34 -196 L 6 -170 Z" class="pelo-negro" />
-        <path d="M-31 -158 L -30 -184 L -15 -170 Z" class="oreja-negra" />
-        <path d="M31 -158 L 30 -184 L 15 -170 Z" class="oreja-negra" />
-        <path d={negroCabeza} class="pelo-negro" />
-        <path d={negroGorguera} class="pelo-negro" />
-        <g class="ojos">
-          <ellipse cx="-16" cy="-140" rx="10" ry="11" class="ojo-amarillo" />
-          <ellipse cx="16" cy="-140" rx="10" ry="11" class="ojo-amarillo" />
-          <ellipse cx="-15" cy="-140" rx="2.6" ry="8.5" class="pupila" />
-          <ellipse cx="17" cy="-140" rx="2.6" ry="8.5" class="pupila" />
-          <circle cx="-12.5" cy="-144" r="2" class="brillo" />
-          <circle cx="19.5" cy="-144" r="2" class="brillo" />
-        </g>
-        <path d="M-4 -124 L 4 -124 L 0 -119 Z" class="nariz-negra" />
-        <path d="M0 -119 Q -5 -113 -10 -115 M0 -119 Q 5 -113 10 -115" class="boca-negra" />
-        <path d="M-14 -120 L -46 -126 M-14 -117 L -46 -114 M14 -120 L 46 -126 M14 -117 L 46 -114" class="bigotes-claros" />
-      </g>
-    </g>
-
-    <!-- Gata blanca con manchas grises, a la derecha, un poco más pequeña -->
-    <g transform="translate(404 300) scale(0.86)">
-      <defs>
-        <clipPath id="intro-blanca-cuerpo"><path d="M-48 0 C -60 -52, -44 -108, 0 -112 C 44 -108, 60 -52, 48 0 Z" /></clipPath>
-        <clipPath id="intro-blanca-cabeza"><ellipse cx="0" cy="-138" rx="44" ry="38" /></clipPath>
-      </defs>
-      <ellipse cx="0" cy="4" rx="56" ry="8" class="sombra" />
-      <path class="cola cola-blanca" d="M-38 -12 C -92 -10, -100 -62, -72 -92" />
-      <path class="cola-punta" d="M-86 -66 C -88 -78, -82 -86, -72 -92" />
-      <path d="M-48 0 C -60 -52, -44 -108, 0 -112 C 44 -108, 60 -52, 48 0 Z" class="pelo-blanco" />
-      <g clip-path="url(#intro-blanca-cuerpo)">
-        <ellipse cx="34" cy="-62" rx="30" ry="24" class="mancha" />
-        <ellipse cx="-30" cy="-18" rx="18" ry="12" class="mancha" />
-      </g>
-      <ellipse cx="-17" cy="-6" rx="15" ry="9" class="pelo-blanco" />
-      <ellipse cx="17" cy="-6" rx="15" ry="9" class="pelo-blanco" />
-      <g class="cabeza-blanca">
-        <path d="M-38 -152 L -34 -196 L -8 -172 Z" class="pelo-blanco" />
-        <path d="M38 -152 L 34 -196 L 8 -172 Z" class="mancha-borde" />
-        <path d="M-31 -160 L -30 -185 L -16 -172 Z" class="oreja-rosa" />
-        <path d="M31 -160 L 30 -185 L 16 -172 Z" class="oreja-rosa" />
-        <ellipse cx="0" cy="-138" rx="44" ry="38" class="pelo-blanco" />
-        <g clip-path="url(#intro-blanca-cabeza)">
-          <ellipse cx="24" cy="-158" rx="30" ry="24" class="mancha" />
-        </g>
-        <ellipse cx="0" cy="-138" rx="44" ry="38" class="contorno" />
-        <g class="ojos">
-          <ellipse cx="-16" cy="-140" rx="9" ry="10" class="ojo-verde" />
-          <ellipse cx="16" cy="-140" rx="9" ry="10" class="ojo-verde" />
-          <ellipse cx="-16" cy="-140" rx="2.4" ry="7.5" class="pupila" />
-          <ellipse cx="16" cy="-140" rx="2.4" ry="7.5" class="pupila" />
-          <circle cx="-13.5" cy="-144" r="1.8" class="brillo" />
-          <circle cx="18.5" cy="-144" r="1.8" class="brillo" />
-        </g>
-        <path d="M-4 -124 L 4 -124 L 0 -119 Z" class="nariz-rosa" />
-        <path d="M0 -119 Q -5 -113 -10 -115 M0 -119 Q 5 -113 10 -115" class="boca-blanca" />
-        <path d="M-14 -120 L -46 -126 M-14 -117 L -46 -114 M14 -120 L 46 -126 M14 -117 L 46 -114" class="bigotes-oscuros" />
-      </g>
     </g>
   </svg>
 </div>
@@ -207,7 +217,7 @@ const hebras = [
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.13'/%3E%3C/svg%3E");
     cursor: pointer;
     /* Se deshace sola al final: aunque el script no llegara a correr, no tapa nada. */
-    animation: deshacer 520ms cubic-bezier(0.4, 0, 0.2, 1) 2.1s forwards;
+    animation: deshacer 380ms cubic-bezier(0.4, 0, 0.2, 1) 2.72s forwards;
   }
   .intro.saltando {
     animation: deshacer 300ms ease forwards;
@@ -369,11 +379,11 @@ const hebras = [
   .cola-negra {
     stroke: #1f1d1b;
     stroke-width: 19;
-    transform-origin: 0% 100%;
+    transform-origin: 100% 100%;
   }
   .cola-blanca {
     stroke: #f4f1ea;
-    transform-origin: 100% 100%;
+    transform-origin: 0% 100%;
     animation-delay: -0.5s;
   }
   .cola-punta {
@@ -382,7 +392,7 @@ const hebras = [
     stroke-width: 15;
     stroke-linecap: round;
     transform-box: fill-box;
-    transform-origin: 100% 100%;
+    transform-origin: 0% 100%;
     animation: cola 1.1s ease-in-out -0.5s infinite alternate;
   }
   @keyframes cola {
@@ -419,6 +429,75 @@ const hebras = [
     }
     to {
       transform: rotate(5deg);
+    }
+  }
+
+  /*
+   * El juego, en una sola línea de tiempo de 3 s: los gatos dan zarpazos por turnos
+   * y el ovillo se balancea con cada uno; al final el negro coge impulso y lo lanza
+   * hacia quien mira: el ovillo sube y crece hasta salirse de la pantalla mientras
+   * el velo se deshace y aparece la portada.
+   */
+  .brazo {
+    fill: none;
+    stroke-width: 16;
+    stroke-linecap: round;
+  }
+  .brazo-negro {
+    stroke: #1f1d1b;
+  }
+  .brazo-blanco {
+    stroke: #f4f1ea;
+  }
+  /* El atajo `animation` va entero en cada una, con su nombre: si se parte en dos
+     reglas, el minificador lo junta como `animation: none` y la zarpa no se mueve. */
+  .zarpa {
+    transform-box: fill-box;
+  }
+  .zarpa-negra {
+    transform-origin: 0% 0%;
+    animation: zarpa-negra 3s ease-in-out forwards;
+  }
+  .zarpa-blanca {
+    transform-origin: 100% 0%;
+    animation: zarpa-blanca 3s ease-in-out forwards;
+  }
+  @keyframes zarpa-negra {
+    0%, 14%, 24%, 44%, 54% { transform: rotate(0deg); }
+    18%, 48% { transform: rotate(-55deg); }
+    75% { transform: rotate(14deg); }
+    82%, 100% { transform: rotate(-78deg); }
+  }
+  @keyframes zarpa-blanca {
+    0%, 29%, 39%, 59%, 69%, 100% { transform: rotate(0deg); }
+    33%, 63% { transform: rotate(55deg); }
+  }
+  .ovillo-juego {
+    transform-box: view-box;
+    transform-origin: 200px 228px;
+    animation: jugar 3s ease-in-out forwards;
+  }
+  @keyframes jugar {
+    0%, 16%, 26%, 31%, 41%, 46%, 56%, 61%, 71%, 82% {
+      transform: none;
+      opacity: 1;
+    }
+    19%, 49% {
+      transform: translate(10px, -5px) rotate(16deg);
+    }
+    34%, 64% {
+      transform: translate(-10px, -5px) rotate(-16deg);
+    }
+    90% {
+      transform: translate(6px, -40px) scale(2.6) rotate(40deg);
+      opacity: 1;
+    }
+    96% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(14px, -120px) scale(10) rotate(110deg);
+      opacity: 0;
     }
   }
 
