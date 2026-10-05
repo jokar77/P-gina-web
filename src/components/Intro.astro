@@ -6,7 +6,7 @@
  * negro de la barra y el pie, lana en crudo con sus hebras en el tono de las líneas.
  *
  * Reglas para que no estorbe:
- * - Dura menos de dos segundos, y con un clic o una tecla se salta.
+ * - Dura algo más de dos segundos, y con un clic o una tecla se salta.
  * - Solo sale la primera vez que se entra en la visita (sessionStorage): volver a la
  *   portada desde una ficha no la repite.
  * - Con «reducir movimiento» activado en el sistema no sale nunca.
@@ -217,7 +217,7 @@ const hebras = [
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.13'/%3E%3C/svg%3E");
     cursor: pointer;
     /* Se deshace sola al final: aunque el script no llegara a correr, no tapa nada. */
-    animation: deshacer 300ms cubic-bezier(0.4, 0, 0.2, 1) 1.64s forwards;
+    animation: deshacer 360ms cubic-bezier(0.4, 0, 0.2, 1) 1.98s forwards;
   }
   .intro.saltando {
     animation: deshacer 300ms ease forwards;
@@ -433,7 +433,7 @@ const hebras = [
   }
 
   /*
-   * El juego, en una sola línea de tiempo de 1,9 s: los gatos dan un zarpazo cada uno
+   * El juego, en una sola línea de tiempo de 2,3 s: los gatos dan un zarpazo cada uno
    * y el ovillo se balancea con cada uno; al final el negro coge impulso y lo lanza
    * hacia quien mira: el ovillo sube y crece hasta salirse de la pantalla mientras
    * el velo se deshace y aparece la portada.
@@ -456,11 +456,11 @@ const hebras = [
   }
   .zarpa-negra {
     transform-origin: 0% 0%;
-    animation: zarpa-negra 1.9s ease-in-out forwards;
+    animation: zarpa-negra 2.3s ease-in-out forwards;
   }
   .zarpa-blanca {
     transform-origin: 100% 0%;
-    animation: zarpa-blanca 1.9s ease-in-out forwards;
+    animation: zarpa-blanca 2.3s ease-in-out forwards;
   }
   @keyframes zarpa-negra {
     0%, 17%, 34%, 55% { transform: rotate(0deg); }
@@ -475,7 +475,7 @@ const hebras = [
   .ovillo-juego {
     transform-box: view-box;
     transform-origin: 200px 228px;
-    animation: jugar 1.9s ease-in-out forwards;
+    animation: jugar 2.3s ease-in-out forwards;
   }
   @keyframes jugar {
     0%, 22%, 35%, 42%, 55%, 73% {
