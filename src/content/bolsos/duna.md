@@ -1,6 +1,6 @@
 ---
 nombre: Duna
-precio: 20
+precio: 25
 estado: disponible
 fecha: 2026-09-08
 nota: Bolso de mano con asa incorporada y botones decorativos.
