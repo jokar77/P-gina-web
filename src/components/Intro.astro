@@ -1,7 +1,9 @@
 ---
 /**
- * La entrada de la portada: dos agujas tejiendo un trocito de punto con el ovillo al
- * lado, sobre el mismo gris de la web, y luego se deshace dejando ver la portada.
+ * La entrada de la portada: un ovillo grande con dos agujas clavadas, que se mueven
+ * como tejiendo mientras el ovillo gira, sobre el mismo gris de la web. Luego se
+ * deshace dejando ver la portada. Colores de la propia web: agujas en el gris casi
+ * negro de la barra y el pie, lana en crudo con sus hebras en el tono de las líneas.
  *
  * Reglas para que no estorbe:
  * - Dura menos de dos segundos y medio, y con un clic o una tecla se salta.
@@ -15,59 +17,65 @@
  * antes de que el navegador lo llegue a pintar cuando no toca.
  */
 
-// Las vueltas del trocito tejido: 4 filas de 6 puntos, de arriba abajo.
-const FILAS = 4;
-const PUNTOS = 6;
-const ANCHO = 12;
-const ALTO = 12;
-// Cada vuelta monta un poco sobre la de arriba, como en el punto de verdad.
-const PASO = 9;
-const x0 = 120 - (PUNTOS * ANCHO) / 2;
-const y0 = 100;
-const puntos = Array.from({ length: FILAS * PUNTOS }, (_, i) => {
-  const fila = Math.floor(i / PUNTOS);
-  const col = i % PUNTOS;
-  return { x: x0 + col * ANCHO, y: y0 + fila * PASO, orden: i };
-});
+// Las hebras enrolladas del ovillo: elipses giradas, recortadas por la bola.
+const CX = 200;
+const CY = 200;
+const R = 92;
+const hebras = [
+  { rx: 96, ry: 30, giro: -28, dy: -40 },
+  { rx: 100, ry: 34, giro: -28, dy: -12 },
+  { rx: 100, ry: 36, giro: -28, dy: 18 },
+  { rx: 96, ry: 32, giro: -28, dy: 48 },
+  { rx: 34, ry: 98, giro: 22, dx: -36 },
+  { rx: 38, ry: 100, giro: 22, dx: -4 },
+  { rx: 36, ry: 100, giro: 22, dx: 28 },
+  { rx: 30, ry: 92, giro: 22, dx: 58 },
+];
 ---
 
 <div class="intro" data-intro aria-hidden="true">
-  <svg viewBox="0 0 240 200" class="dibujo">
-    <!-- El hilo: sale del ovillo y sube hasta las agujas -->
-    <path class="hilo" d="M186 166 C 168 150, 150 122, 140 98" />
+  <svg viewBox="0 0 400 340" class="dibujo">
+    <defs>
+      <clipPath id="intro-bola"><circle cx={CX} cy={CY} r={R} /></clipPath>
+      <radialGradient id="intro-luz" cx="38%" cy="32%" r="75%">
+        <stop offset="0" stop-color="#f3efe6" />
+        <stop offset="0.6" stop-color="#e3ddd0" />
+        <stop offset="1" stop-color="#c9c1b1" />
+      </radialGradient>
+    </defs>
 
-    <!-- El trocito tejido, que crece vuelta a vuelta -->
-    <g class="tejido">
-      {
-        puntos.map((p) => (
-          <path
-            class="punto"
-            style={`--i:${p.orden}`}
-            d={`M${p.x + 1} ${p.y} L ${p.x + ANCHO / 2} ${p.y + ALTO} L ${p.x + ANCHO - 1} ${p.y}`}
-          />
-        ))
-      }
-    </g>
-
-    <!-- Las agujas, cruzadas, con su bolita en el extremo -->
+    <!-- Las agujas van detrás de la bola: asoman por arriba, como clavadas en ella -->
     <g class="aguja aguja-izq">
-      <line x1="58" y1="44" x2="150" y2="108" />
-      <circle cx="58" cy="44" r="5.5" />
+      <path d="M78 34 L 238 236" class="palo" />
+      <circle cx="78" cy="34" r="13" class="bolita" />
     </g>
     <g class="aguja aguja-der">
-      <line x1="182" y1="44" x2="90" y2="108" />
-      <circle cx="182" cy="44" r="5.5" />
+      <path d="M322 34 L 162 236" class="palo" />
+      <circle cx="322" cy="34" r="13" class="bolita" />
     </g>
 
-    <!-- El ovillo, que gira mientras suelta hilo -->
-    <g class="ovillo">
-      <circle cx="194" cy="168" r="22" class="bola" />
-      <path d="M176 158 C 186 150, 204 150, 212 162" />
-      <path d="M174 168 C 186 160, 204 160, 214 172" />
-      <path d="M178 180 C 188 172, 204 172, 210 182" />
-      <path d="M186 148 C 180 160, 182 176, 192 190" />
-      <path d="M200 147 C 194 160, 196 176, 206 188" />
+    <!-- El ovillo -->
+    <ellipse cx={CX} cy={CY + R + 10} rx={R * 0.78} ry="10" class="sombra" />
+    <circle cx={CX} cy={CY} r={R} fill="url(#intro-luz)" />
+    <g clip-path="url(#intro-bola)">
+      <g class="hebras">
+        {
+          hebras.map((h) => (
+            <ellipse
+              cx={CX + (h.dx ?? 0)}
+              cy={CY + (h.dy ?? 0)}
+              rx={h.rx}
+              ry={h.ry}
+              transform={`rotate(${h.giro} ${CX} ${CY})`}
+            />
+          ))
+        }
+      </g>
     </g>
+    <circle cx={CX} cy={CY} r={R} class="borde" />
+
+    <!-- La hebra suelta que sale del ovillo -->
+    <path class="cabo" d="M262 252 C 292 282, 330 272, 344 300 S 316 332, 360 330" />
   </svg>
 </div>
 
@@ -103,7 +111,7 @@ const puntos = Array.from({ length: FILAS * PUNTOS }, (_, i) => {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.13'/%3E%3C/svg%3E");
     cursor: pointer;
     /* Se deshace sola al final: aunque el script no llegara a correr, no tapa nada. */
-    animation: deshacer 520ms cubic-bezier(0.4, 0, 0.2, 1) 2.05s forwards;
+    animation: deshacer 520ms cubic-bezier(0.4, 0, 0.2, 1) 2.1s forwards;
   }
   .intro.saltando {
     animation: deshacer 300ms ease forwards;
@@ -120,96 +128,82 @@ const puntos = Array.from({ length: FILAS * PUNTOS }, (_, i) => {
   }
 
   .dibujo {
-    width: min(78vw, 340px);
+    width: min(88vw, 560px, 70svh);
     height: auto;
     overflow: visible;
-    animation: aparecer 380ms var(--ease-salida) both;
+    animation: aparecer 520ms var(--ease-salida) both;
   }
   @keyframes aparecer {
     from {
       opacity: 0;
-      transform: translateY(8px) scale(0.97);
+      transform: translateY(14px) scale(0.94);
     }
   }
 
-  /* Agujas de madera clara, con un vaivén alterno: así se lee que están tejiendo. */
-  .aguja line {
-    stroke: #8a6a48;
-    stroke-width: 4.5;
+  /* Agujas en el gris casi negro de la barra y el pie, con un vaivén alterno. */
+  .palo {
+    fill: none;
+    stroke: var(--color-deep);
+    stroke-width: 9;
     stroke-linecap: round;
   }
-  .aguja circle {
-    fill: #8a6a48;
+  .bolita {
+    fill: var(--color-deep);
   }
   .aguja {
     transform-box: view-box;
-    animation: tejer 420ms ease-in-out infinite alternate;
-  }
-  .aguja-izq {
-    transform-origin: 104px 80px;
+    transform-origin: 200px 150px;
+    animation: tejer 440ms ease-in-out infinite alternate;
   }
   .aguja-der {
-    transform-origin: 136px 80px;
-    animation-delay: -210ms;
+    animation-delay: -220ms;
   }
   @keyframes tejer {
     from {
-      transform: rotate(-4deg) translateY(-2px);
+      transform: rotate(-5deg);
     }
     to {
-      transform: rotate(4deg) translateY(2px);
+      transform: rotate(5deg);
     }
   }
 
-  /* El punto, en el granate de la marca: cada uno aparece de arriba abajo. */
-  .punto {
+  /* La lana, en crudo; las hebras en el tono de las líneas de la web. */
+  .hebras {
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    animation: girar 2.6s linear infinite;
+  }
+  .hebras ellipse {
     fill: none;
-    stroke: #8f1d2c;
-    stroke-width: 3.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 30;
-    stroke-dashoffset: 30;
-    animation: punto 220ms ease-out forwards;
-    animation-delay: calc(280ms + var(--i) * 62ms);
+    stroke: #b4ac9c;
+    stroke-width: 3.2;
   }
-  @keyframes punto {
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  .hilo {
+  .borde {
     fill: none;
-    stroke: #8f1d2c;
-    stroke-width: 2.2;
-    stroke-linecap: round;
-    stroke-dasharray: 4 5;
-    animation: tirar 600ms linear infinite;
-  }
-  @keyframes tirar {
-    to {
-      stroke-dashoffset: -18;
-    }
-  }
-
-  .ovillo {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: girar 2.4s linear infinite;
-  }
-  .ovillo .bola {
-    fill: #8f1d2c;
-  }
-  .ovillo path {
-    fill: none;
-    stroke: #6d1420;
+    stroke: #a49b8a;
     stroke-width: 2;
-    stroke-linecap: round;
+  }
+  .sombra {
+    fill: rgb(31 29 27 / 0.12);
   }
   @keyframes girar {
     to {
       transform: rotate(-360deg);
+    }
+  }
+
+  .cabo {
+    fill: none;
+    stroke: #d8d1c3;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: soltar 1.4s var(--ease-salida) 250ms forwards;
+  }
+  @keyframes soltar {
+    to {
+      stroke-dashoffset: 0;
     }
   }
 </style>
