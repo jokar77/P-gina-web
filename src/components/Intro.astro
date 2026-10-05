@@ -1,0 +1,215 @@
+---
+/**
+ * La entrada de la portada: dos agujas tejiendo un trocito de punto con el ovillo al
+ * lado, sobre el mismo gris de la web, y luego se deshace dejando ver la portada.
+ *
+ * Reglas para que no estorbe:
+ * - Dura menos de dos segundos y medio, y con un clic o una tecla se salta.
+ * - Solo sale la primera vez que se entra en la visita (sessionStorage): volver a la
+ *   portada desde una ficha no la repite.
+ * - Con «reducir movimiento» activado en el sistema no sale nunca.
+ * - Es todo CSS: si el JavaScript fallara, la propia animación de salida la deja
+ *   invisible y sin bloquear clics, así que nunca se queda tapando la web.
+ *
+ * El script que decide si sale va en línea y justo después del velo, para quitarlo
+ * antes de que el navegador lo llegue a pintar cuando no toca.
+ */
+
+// Las vueltas del trocito tejido: 4 filas de 6 puntos, de arriba abajo.
+const FILAS = 4;
+const PUNTOS = 6;
+const ANCHO = 12;
+const ALTO = 12;
+// Cada vuelta monta un poco sobre la de arriba, como en el punto de verdad.
+const PASO = 9;
+const x0 = 120 - (PUNTOS * ANCHO) / 2;
+const y0 = 100;
+const puntos = Array.from({ length: FILAS * PUNTOS }, (_, i) => {
+  const fila = Math.floor(i / PUNTOS);
+  const col = i % PUNTOS;
+  return { x: x0 + col * ANCHO, y: y0 + fila * PASO, orden: i };
+});
+---
+
+<div class="intro" data-intro aria-hidden="true">
+  <svg viewBox="0 0 240 200" class="dibujo">
+    <!-- El hilo: sale del ovillo y sube hasta las agujas -->
+    <path class="hilo" d="M186 166 C 168 150, 150 122, 140 98" />
+
+    <!-- El trocito tejido, que crece vuelta a vuelta -->
+    <g class="tejido">
+      {
+        puntos.map((p) => (
+          <path
+            class="punto"
+            style={`--i:${p.orden}`}
+            d={`M${p.x + 1} ${p.y} L ${p.x + ANCHO / 2} ${p.y + ALTO} L ${p.x + ANCHO - 1} ${p.y}`}
+          />
+        ))
+      }
+    </g>
+
+    <!-- Las agujas, cruzadas, con su bolita en el extremo -->
+    <g class="aguja aguja-izq">
+      <line x1="58" y1="44" x2="150" y2="108" />
+      <circle cx="58" cy="44" r="5.5" />
+    </g>
+    <g class="aguja aguja-der">
+      <line x1="182" y1="44" x2="90" y2="108" />
+      <circle cx="182" cy="44" r="5.5" />
+    </g>
+
+    <!-- El ovillo, que gira mientras suelta hilo -->
+    <g class="ovillo">
+      <circle cx="194" cy="168" r="22" class="bola" />
+      <path d="M176 158 C 186 150, 204 150, 212 162" />
+      <path d="M174 168 C 186 160, 204 160, 214 172" />
+      <path d="M178 180 C 188 172, 204 172, 210 182" />
+      <path d="M186 148 C 180 160, 182 176, 192 190" />
+      <path d="M200 147 C 194 160, 196 176, 206 188" />
+    </g>
+  </svg>
+</div>
+
+<script is:inline>
+  (function () {
+    var velo = document.querySelector('[data-intro]');
+    if (!velo) return;
+    var visto = false;
+    try { visto = sessionStorage.getItem('intro-vista') === '1'; } catch (e) {}
+    var quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (visto || quieto) { velo.remove(); return; }
+    try { sessionStorage.setItem('intro-vista', '1'); } catch (e) {}
+    document.documentElement.classList.add('con-intro');
+    var fuera = function () {
+      document.documentElement.classList.remove('con-intro');
+      velo.remove();
+    };
+    var saltar = function () { velo.classList.add('saltando'); setTimeout(fuera, 300); };
+    velo.addEventListener('animationend', function (e) { if (e.target === velo) fuera(); });
+    velo.addEventListener('click', saltar);
+    window.addEventListener('keydown', saltar, { once: true });
+  })();
+</script>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background-color: var(--color-manta);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.13'/%3E%3C/svg%3E");
+    cursor: pointer;
+    /* Se deshace sola al final: aunque el script no llegara a correr, no tapa nada. */
+    animation: deshacer 520ms cubic-bezier(0.4, 0, 0.2, 1) 2.05s forwards;
+  }
+  .intro.saltando {
+    animation: deshacer 300ms ease forwards;
+  }
+  @keyframes deshacer {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+  :global(html.con-intro) {
+    overflow: hidden;
+  }
+
+  .dibujo {
+    width: min(78vw, 340px);
+    height: auto;
+    overflow: visible;
+    animation: aparecer 380ms var(--ease-salida) both;
+  }
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.97);
+    }
+  }
+
+  /* Agujas de madera clara, con un vaivén alterno: así se lee que están tejiendo. */
+  .aguja line {
+    stroke: #8a6a48;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+  }
+  .aguja circle {
+    fill: #8a6a48;
+  }
+  .aguja {
+    transform-box: view-box;
+    animation: tejer 420ms ease-in-out infinite alternate;
+  }
+  .aguja-izq {
+    transform-origin: 104px 80px;
+  }
+  .aguja-der {
+    transform-origin: 136px 80px;
+    animation-delay: -210ms;
+  }
+  @keyframes tejer {
+    from {
+      transform: rotate(-4deg) translateY(-2px);
+    }
+    to {
+      transform: rotate(4deg) translateY(2px);
+    }
+  }
+
+  /* El punto, en el granate de la marca: cada uno aparece de arriba abajo. */
+  .punto {
+    fill: none;
+    stroke: #8f1d2c;
+    stroke-width: 3.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation: punto 220ms ease-out forwards;
+    animation-delay: calc(280ms + var(--i) * 62ms);
+  }
+  @keyframes punto {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .hilo {
+    fill: none;
+    stroke: #8f1d2c;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-dasharray: 4 5;
+    animation: tirar 600ms linear infinite;
+  }
+  @keyframes tirar {
+    to {
+      stroke-dashoffset: -18;
+    }
+  }
+
+  .ovillo {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: girar 2.4s linear infinite;
+  }
+  .ovillo .bola {
+    fill: #8f1d2c;
+  }
+  .ovillo path {
+    fill: none;
+    stroke: #6d1420;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  @keyframes girar {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+</style>

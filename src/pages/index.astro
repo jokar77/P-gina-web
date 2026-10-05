@@ -1,5 +1,6 @@
 ---
 import { getImage } from 'astro:assets';
+import Intro from '../components/Intro.astro';
 import Portada from '../components/Portada.astro';
 import FranjaAccesorios from '../components/FranjaAccesorios.astro';
 import Sociales from '../components/Sociales.astro';
@@ -25,6 +26,7 @@ const og = await getImage({ src: compartir, width: 1200, format: 'jpeg' });
   imagenAlto={og.attributes.height}
   imagenAlt={`${site.marca}. ${site.frasePortada}`}
 >
+  <Intro />
   <Portada />
   <FranjaAccesorios />
   <Sociales />
