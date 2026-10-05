@@ -34,7 +34,7 @@ const hebras = [
 ---
 
 <div class="intro" data-intro aria-hidden="true">
-  <svg viewBox="0 0 400 340" class="dibujo">
+  <svg viewBox="-20 -60 440 400" class="dibujo">
     <defs>
       <clipPath id="intro-bola"><circle cx={CX} cy={CY} r={R} /></clipPath>
       <radialGradient id="intro-luz" cx="38%" cy="32%" r="75%">
@@ -46,12 +46,12 @@ const hebras = [
 
     <!-- Las agujas van detrás de la bola: asoman por arriba, como clavadas en ella -->
     <g class="aguja aguja-izq">
-      <path d="M78 34 L 238 236" class="palo" />
-      <circle cx="78" cy="34" r="13" class="bolita" />
+      <path d="M40 -26 L 238 236" class="palo" />
+      <circle cx="40" cy="-26" r="14" class="bolita" />
     </g>
     <g class="aguja aguja-der">
-      <path d="M322 34 L 162 236" class="palo" />
-      <circle cx="322" cy="34" r="13" class="bolita" />
+      <path d="M360 -26 L 162 236" class="palo" />
+      <circle cx="360" cy="-26" r="14" class="bolita" />
     </g>
 
     <!-- El ovillo -->
@@ -128,7 +128,7 @@ const hebras = [
   }
 
   .dibujo {
-    width: min(88vw, 560px, 70svh);
+    width: min(96vw, 640px, 78svh);
     height: auto;
     overflow: visible;
     animation: aparecer 520ms var(--ease-salida) both;
@@ -150,20 +150,33 @@ const hebras = [
   .bolita {
     fill: var(--color-deep);
   }
+  /*
+   * Cada aguja oscila y a la vez entra y sale del ovillo a lo largo de su propio eje,
+   * a contratiempo de la otra: es el gesto de pasar el punto de una aguja a otra.
+   */
   .aguja {
     transform-box: view-box;
-    transform-origin: 200px 150px;
-    animation: tejer 440ms ease-in-out infinite alternate;
+    transform-origin: 200px 170px;
+    animation: tejer-izq 400ms ease-in-out infinite alternate;
   }
   .aguja-der {
-    animation-delay: -220ms;
+    animation-name: tejer-der;
+    animation-delay: -200ms;
   }
-  @keyframes tejer {
+  @keyframes tejer-izq {
     from {
-      transform: rotate(-5deg);
+      transform: rotate(-11deg) translate(-12px, -16px);
     }
     to {
-      transform: rotate(5deg);
+      transform: rotate(9deg) translate(8px, 10px);
+    }
+  }
+  @keyframes tejer-der {
+    from {
+      transform: rotate(11deg) translate(12px, -16px);
+    }
+    to {
+      transform: rotate(-9deg) translate(-8px, 10px);
     }
   }
 
