@@ -1,0 +1,172 @@
+---
+/**
+ * La franja de accesorios de la portada: una fila de piezas pequeñas que se pasa de
+ * lado, justo después de las puertas. Son cosas de comprar «de paso» —tarjeteros,
+ * monederos—, así que se enseñan ya con su precio y llevan directo a su ficha, sin
+ * tener que entrar antes a ninguna sección. «Ver todos» lleva a /accesorios.
+ *
+ * Mientras no haya ningún accesorio, la franja no sale.
+ *
+ * En el móvil se pasa con el dedo. Con ratón, además, hay dos flechas: una fila que
+ * solo se mueve con la rueda en horizontal (que casi nadie tiene) es una fila que no
+ * se mueve.
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import site from '../data/site.json';
+import { precio } from '../lib/formato';
+import { porOrdenConVendidosAlFinal } from '../lib/accesorios';
+
+const accesorios = porOrdenConVendidosAlFinal(await getCollection('accesorios'));
+const seccion = site.secciones.accesorios;
+
+const etiqueta = (estado: string, euros: number) =>
+  estado === 'vendido' ? 'Vendido' : estado === 'encargo' ? `Desde ${precio(euros)}` : precio(euros);
+---
+
+{
+  accesorios.length > 0 && (
+    <section class="franja px-5 py-section sm:px-8" aria-labelledby="franja-accesorios">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+          <div>
+            <h2 id="franja-accesorios" class="font-display text-[clamp(2rem,5vw,3.25rem)]">
+              {seccion.titulo}
+            </h2>
+            <p class="mt-2 max-w-[48ch] text-ink-soft">{seccion.intro}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" class="flecha" data-franja-mover="-1" aria-label="Anteriores">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" />
+              </svg>
+            </button>
+            <button type="button" class="flecha" data-franja-mover="1" aria-label="Siguientes">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <a href="/accesorios" class="ml-2 text-[15px] underline underline-offset-[0.28em]">
+              Ver todos
+            </a>
+          </div>
+        </div>
+
+        <ul class="fila" data-franja>
+          {accesorios.map((a, i) => (
+            <li class="pieza">
+              <a href={`/accesorios/${a.id}`} class="group block no-underline">
+                <div class="overflow-hidden rounded-[var(--radio-foto)] bg-paper">
+                  <Image
+                    src={a.data.foto}
+                    alt={`${a.data.nombre}: ${a.data.material.toLowerCase()}.`}
+                    widths={[240, 400, 560]}
+                    sizes="(min-width: 1024px) 15rem, 42vw"
+                    class="aspect-[3/4] w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                    loading={i < 4 ? 'eager' : 'lazy'}
+                  />
+                </div>
+                <div class="mt-3 flex items-baseline justify-between gap-3">
+                  <h3 class="font-display text-lg leading-tight">{a.data.nombre}</h3>
+                  <span
+                    class:list={[
+                      'shrink-0 text-[15px]',
+                      a.data.estado === 'vendido' && 'text-ink-soft',
+                    ]}
+                  >
+                    {etiqueta(a.data.estado, a.data.precio)}
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .fila {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(42vw, 15rem);
+    gap: 1.25rem;
+    margin: 2rem -1.25rem 0;
+    padding: 0 1.25rem 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1.25rem;
+    scrollbar-width: none;
+    list-style: none;
+  }
+  .fila::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .fila {
+      gap: 1.75rem;
+      margin-inline: -2rem;
+      padding-inline: 2rem;
+      scroll-padding-inline: 2rem;
+    }
+  }
+  .pieza {
+    scroll-snap-align: start;
+  }
+
+  /* Las flechas solo tienen sentido con ratón: con el dedo la fila ya se arrastra. */
+  .flecha {
+    display: none;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    transition: background-color 200ms var(--ease-salida), opacity 200ms;
+  }
+  .flecha svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .flecha:hover {
+    background-color: color-mix(in srgb, var(--color-line) 28%, transparent);
+  }
+  .flecha:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .flecha {
+      display: grid;
+    }
+  }
+</style>
+
+<script>
+  const fila = document.querySelector<HTMLElement>('[data-franja]');
+  const flechas = [...document.querySelectorAll<HTMLButtonElement>('[data-franja-mover]')];
+
+  if (fila) {
+    // Cada flecha avanza casi una pantalla de fila: se ve lo nuevo sin perder el hilo.
+    for (const f of flechas) {
+      f.addEventListener('click', () => {
+        const sentido = Number(f.dataset.franjaMover);
+        fila.scrollBy({ left: sentido * fila.clientWidth * 0.85, behavior: 'smooth' });
+      });
+    }
+    // Una flecha que no lleva a ningún sitio se apaga; si cabe todo, se apagan las dos.
+    const actualizar = () => {
+      const max = fila.scrollWidth - fila.clientWidth - 2;
+      flechas[0]!.disabled = fila.scrollLeft <= 2;
+      flechas[1]!.disabled = fila.scrollLeft >= max;
+    };
+    fila.addEventListener('scroll', actualizar, { passive: true });
+    window.addEventListener('resize', actualizar);
+    actualizar();
+  }
+</script>

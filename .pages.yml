@@ -141,6 +141,73 @@ content:
         type: image
         list: true
 
+  - name: accesorios
+    label: Accesorios
+    type: collection
+    path: src/content/accesorios
+    filename: '{fields.nombre}.md'
+    description: >-
+      Tarjeteros, monederos, coleteros… Salen en la franja de accesorios de la portada
+      y en su propia página. Mientras no haya ninguno, ni la franja ni el enlace del
+      menú aparecen.
+    view:
+      fields: [nombre, precio, estado]
+      primary: nombre
+    fields:
+      - name: nombre
+        label: Nombre de la pieza
+        type: string
+        required: true
+      - name: precio
+        label: Precio en euros
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+      - name: estado
+        label: Estado
+        type: select
+        required: true
+        default: disponible
+        options:
+          values:
+            - { value: disponible, label: Disponible }
+            - { value: vendido, label: Vendido (se queda expuesto) }
+            - { value: encargo, label: Solo por encargo }
+      - name: fecha
+        label: Fecha de alta
+        type: date
+        required: true
+        description: Cuándo lo subiste a la web.
+      - name: nota
+        label: Nota bajo el precio
+        type: text
+        options: { rows: 3 }
+        description: Opcional. Sale en la ficha, justo debajo del precio.
+      - name: material
+        label: Material
+        type: string
+        required: true
+        description: 'Ej.: Algodón, con broche dorado'
+      - name: medidas
+        label: Medidas
+        type: string
+        description: 'Opcional, escrito como quieras. Ej.: 11 × 8 cm'
+      - name: orden
+        label: Orden
+        type: number
+        required: true
+        options: { min: 0, step: 1 }
+        description: El número más bajo sale primero.
+      - name: foto
+        label: Foto principal
+        type: image
+        required: true
+        description: Vertical, formato 3:4. Es la que se ve en la franja, en la rejilla y al compartir.
+      - name: fotos
+        label: Más fotos
+        type: image
+        list: true
+
   - name: ninos
     label: Conjuntos de niño
     type: collection
@@ -432,6 +499,12 @@ content:
                 description: >-
                   Escribe {vendidos} y {total} donde quieras que salgan los números; se
                   cuentan solos, así que nunca se quedan viejos.
+          - name: accesorios
+            label: Sección de accesorios
+            type: object
+            fields:
+              - { name: titulo, label: Título, type: string }
+              - { name: intro, label: Texto de al lado, type: text }
           - name: nino
             label: Sección de niño
             type: object

@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import FichaCard from '../../components/FichaCard.astro';
+import Layout from '../../layouts/Layout.astro';
+import site from '../../data/site.json';
+import compartir from '../../assets/marca/compartir.jpg';
+import { migasDePan } from '../../lib/seo';
+import { porOrdenConVendidosAlFinal } from '../../lib/accesorios';
+
+const accesorios = porOrdenConVendidosAlFinal(await getCollection('accesorios'));
+const seccion = site.secciones.accesorios;
+
+// Al compartir esta página, la foto del primer accesorio; si aún no hay, la de la marca.
+const og = await getImage({ src: accesorios[0]?.data.foto ?? compartir, width: 1200, format: 'jpeg' });
+
+const jsonLd = [
+  migasDePan(Astro.site!, [
+    { nombre: 'Inicio', url: '/' },
+    { nombre: seccion.titulo, url: '/accesorios' },
+  ]),
+];
+---
+
+<Layout
+  titulo={`${seccion.titulo} — ${site.marca}`}
+  descripcion={seccion.intro}
+  imagen={og.src}
+  imagenAncho={og.attributes.width}
+  imagenAlto={og.attributes.height}
+  imagenAlt={accesorios[0] ? `${accesorios[0].data.nombre}, accesorio hecho a mano.` : site.marca}
+  jsonLd={jsonLd}
+  indexar={accesorios.length > 0}
+>
+  <section class="px-5 py-section sm:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+        <h1 class="font-display text-[clamp(2rem,5vw,3.25rem)]">{seccion.titulo}</h1>
+        <p class="max-w-[52ch] text-ink-soft">{seccion.intro}</p>
+      </div>
+
+      {
+        accesorios.length > 0 ? (
+          <div class="mt-10 grid grid-cols-2 gap-x-5 gap-y-10 sm:gap-x-7 lg:grid-cols-4 lg:gap-x-8">
+            {accesorios.map((a, i) => (
+              <FichaCard
+                href={`/accesorios/${a.id}`}
+                nombre={a.data.nombre}
+                foto={a.data.foto}
+                alt={`${a.data.nombre}: ${a.data.material.toLowerCase()}.`}
+                estado={a.data.estado}
+                precioNum={a.data.precio}
+                fecha={a.data.fecha}
+                cargaDiferida={i > 3}
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="filete mt-8 pt-8 text-ink-soft">
+            Todavía no hay accesorios a la venta. Mientras tanto, echa un vistazo a los{' '}
+            <a href="/bolsos" class="underline">bolsos</a>.
+          </p>
+        )
+      }
+    </div>
+  </section>
+</Layout>

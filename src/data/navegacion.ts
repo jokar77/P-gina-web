@@ -9,13 +9,17 @@ import site from './site.json';
  * portada es solo los tres portones y el taller. «Diseña tu bolso» vive dentro de la
  * página de bolsos, así que su enlace apunta ahí con su propia ancla.
  *
- * «Otros trabajos» solo aparece cuando hay algo dentro. Un enlace del menú que lleva a
+ * «Accesorios» y «Otros trabajos» solo aparecen cuando hay algo dentro. Un enlace del menú que lleva a
  * una sección vacía —o peor, a una sección que no existe— es una promesa incumplida.
  */
 export async function secciones() {
   const archivo = await getCollection('archivo');
+  const accesorios = await getCollection('accesorios');
   return [
     { href: '/bolsos', texto: site.secciones.bolsos.titulo },
+    ...(accesorios.length > 0
+      ? [{ href: '/accesorios', texto: site.secciones.accesorios.titulo }]
+      : []),
     { href: '/ninos', texto: site.secciones.nino.titulo },
     ...(archivo.length > 0
       ? [{ href: '/archivo', texto: site.secciones.archivo.titulo }]

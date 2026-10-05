@@ -165,4 +165,29 @@ const collage = defineCollection({
     }),
 });
 
-export const collections = { bolsos, ninos, archivo, portada, redes, legal, collage };
+/**
+ * Accesorios: piezas pequeñas (tarjeteros, monederos, coleteros…) que se venden igual
+ * que los bolsos, pieza a pieza. Salen en una franja de la portada y en /accesorios.
+ *
+ * Sin color, a diferencia de los bolsos: con pocas piezas un filtro por color sobra.
+ * Las medidas son texto libre y opcionales, porque no todo accesorio se mide en ancho
+ * por alto (un coletero, un llavero).
+ */
+const accesorios = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/accesorios' }),
+  schema: ({ image }) =>
+    z.object({
+      nombre: z.string(),
+      precio: z.number(),
+      estado,
+      nota: z.string().optional(),
+      material: z.string(),
+      medidas: z.string().optional(),
+      foto: image(),
+      fotos: z.array(image()).default([]),
+      orden: z.number().default(0),
+      fecha: z.coerce.date().optional(),
+    }),
+});
+
+export const collections = { bolsos, accesorios, ninos, archivo, portada, redes, legal, collage };

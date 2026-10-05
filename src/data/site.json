@@ -11,6 +11,10 @@
       "titulo": "Bolsos",
       "intro": "Cada bolso es único y diferente al resto, con varias horas de trabajo detrás."
     },
+    "accesorios": {
+      "titulo": "Accesorios",
+      "intro": "Piezas pequeñas hechas a mano, para llevar con el bolso o regalar."
+    },
     "nino": {
       "titulo": "Conjuntos para los más pequeños",
       "intro": "Camisa y pantalón cosidos a mano, de la talla 1 a la 6. Se hacen por encargo y a medida, así que el plazo depende de la cola que haya."

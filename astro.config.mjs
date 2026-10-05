@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
@@ -19,10 +20,21 @@ import tailwindcss from '@tailwindcss/vite';
  */
 const site = process.env.SITE_URL || 'https://sakinaplatero.com';
 
+/*
+ * Fuera del sitemap: el pedido, que es la cesta de cada cual y para Google está vacío,
+ * y /accesorios mientras no haya ningún accesorio (la página existe, pero solo dice que
+ * aún no hay nada). En cuanto Sakina suba el primero, entra sola.
+ */
+const hayAccesorios = readdirSync('./src/content/accesorios').some((f) => f.endsWith('.md'));
+const fueraDelSitemap = ['/pedido', ...(hayAccesorios ? [] : ['/accesorios'])];
+
 export default defineConfig({
   site,
-  // El pedido es la cesta de cada cual: vacía para Google, no pinta nada en el sitemap.
-  integrations: [sitemap({ filter: (pagina) => !new URL(pagina).pathname.startsWith('/pedido') })],
+  integrations: [
+    sitemap({
+      filter: (pagina) => !fueraDelSitemap.some((r) => new URL(pagina).pathname.startsWith(r)),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
