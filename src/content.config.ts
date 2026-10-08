@@ -200,6 +200,9 @@ const accesorios = defineCollection({
       /** Entra en el 3x2 de accesorios: de cada tres (de cualquiera que lo tenga), el
        *  más barato gratis. */
       tresPorDos: z.boolean().default(false),
+      /** Debajo de la ficha sale «Diseña el tuyo»: flores, tallo y formato a elegir
+       *  (pensado para el marcapáginas o llavero de flores). */
+      disena: z.boolean().default(false),
     }),
 });
 

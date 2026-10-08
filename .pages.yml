@@ -222,6 +222,13 @@ content:
           Actívalo y esta pieza entra en el 3x2 de accesorios: de cada tres que se pidan
           (mezclando las piezas que lo tengan activado, colores y formatos), la más barata
           sale gratis. Se ve una etiqueta «3x2» y el pedido ya lo descuenta solo.
+      - name: disena
+        label: Diseña el tuyo (flores y tallo)
+        type: boolean
+        description: >-
+          Solo para el marcapáginas o llavero de flores: debajo de la ficha sale un
+          apartado para elegir las flores (o flor y lazo), el color del tallo y si va con
+          arandela, con un dibujo que cambia. Cuesta lo mismo que la pieza.
       - name: orden
         label: Orden
         type: number

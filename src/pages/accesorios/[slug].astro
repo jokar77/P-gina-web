@@ -8,6 +8,7 @@ import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import Galeria from '../../components/Galeria.astro';
+import DisenaLlavero from '../../components/DisenaLlavero.astro';
 import site from '../../data/site.json';
 import { COLORES } from '../../data/colores';
 import { precio } from '../../lib/formato';
@@ -211,6 +212,11 @@ const jsonLd = [
                   <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">
                     {d.estado === 'encargo' ? site.fichas.aMedida : site.fichas.disponible}
                   </p>
+                  {d.disena && (
+                    <a href="#disena-llavero" class="mt-5 inline-block text-[15px] underline underline-offset-[0.28em]">
+                      ¿Otros colores? Diseña el tuyo ↓
+                    </a>
+                  )}
                 </>
               )
             }
@@ -232,6 +238,7 @@ const jsonLd = [
       </div>
     </div>
   </article>
+  {d.disena && <DisenaLlavero precio={d.precio} slug={accesorio.id} />}
 </Layout>
 
 <style>

@@ -1,0 +1,457 @@
+---
+/**
+ * «Diseña el tuyo» para el marcapáginas o llavero de flores: como «Diseña tu bolso»,
+ * pero en pequeño. Se elige qué lleva en los extremos (dos flores, o flor y lazo), el
+ * color de las flores, el del cordón —el tallo— y si va con arandela de llavero, y el
+ * dibujo de al lado cambia con cada elección.
+ *
+ * Vive en la propia ficha de la pieza (se activa con «Diseña el tuyo» en Pages CMS), no
+ * en una página aparte: quien no encuentra su color entre los ya tejidos lo tiene justo
+ * debajo.
+ *
+ * Cuesta lo mismo que la pieza hecha y entra en el 3x2 de accesorios. Cada uno lleva un
+ * id propio, así que aquí sí se pueden pedir dos iguales.
+ */
+import { COLORES } from '../data/colores';
+
+interface Props {
+  precio: number;
+  slug: string;
+}
+const { precio: euros, slug } = Astro.props;
+
+// Los colores de la paleta, menos «Bicolor» (aquí los dos colores se eligen de verdad), y
+// el marrón de los cordones, que en los bolsos no se usa.
+const paleta = [
+  ...Object.entries(COLORES)
+    .filter(([id]) => id !== 'bicolor')
+    .map(([id, c]) => ({ id, nombre: c.nombre, muestra: c.muestra })),
+  { id: 'marron', nombre: 'Marrón', muestra: '#8A6A4F' },
+];
+const POR_DEFECTO = { flor: 'rosa', flor2: 'crudo', tallo: 'verde' };
+const muestra = (id: string) => paleta.find((c) => c.id === id)!.muestra;
+
+const petalos = [0, 1, 2, 3, 4].map((k) => {
+  const a = ((k * 72 - 90) * Math.PI) / 180;
+  return { x: Math.cos(a) * 12.5, y: Math.sin(a) * 12.5 };
+});
+---
+
+<section id="disena-llavero" class="oscuro scroll-mt-20 px-5 py-section sm:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Diseña el tuyo</h2>
+      <p class="max-w-[52ch] text-paper/70">
+        Elige el color de las flores y del cordón, y te lo tejo a mano.
+      </p>
+    </div>
+
+    <form
+      class="mt-12 grid gap-x-12 gap-y-10 lg:grid-cols-[1fr_20rem]"
+      data-disena-llavero
+      data-precio={euros}
+      data-slug={slug}
+    >
+      <div class="grid gap-10">
+        <fieldset>
+          <legend class="font-display text-2xl">En los extremos</legend>
+          <div class="modos mt-5">
+            <label class="modo">
+              <input type="radio" name="remate" value="flores" checked class="sr-only" />
+              <span>Dos flores</span>
+            </label>
+            <label class="modo">
+              <input type="radio" name="remate" value="lazo" class="sr-only" />
+              <span>Flor y lazo</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display text-2xl">Las flores</legend>
+          <div class="modos mt-5">
+            <label class="modo">
+              <input type="radio" name="modo" value="uno" checked class="sr-only" />
+              <span>Un color</span>
+            </label>
+            <label class="modo">
+              <input type="radio" name="modo" value="dos" class="sr-only" />
+              <span>Dos colores</span>
+            </label>
+          </div>
+          <p class="mt-6 text-[15px] text-paper/70" data-rotulo-flor hidden>La flor</p>
+          <div class="mt-4 flex flex-wrap gap-2.5">
+            {
+              paleta.map((c) => (
+                <label class="opcion-color" title={c.nombre}>
+                  <input type="radio" name="flor" value={c.id} checked={c.id === POR_DEFECTO.flor} class="sr-only" />
+                  <span class="punto" style={`--muestra:${c.muestra}`} aria-hidden="true" />
+                  <span class="sr-only">{c.nombre}</span>
+                </label>
+              ))
+            }
+          </div>
+          <div data-segundo hidden>
+            <p class="mt-6 text-[15px] text-paper/70" data-rotulo-segundo>La otra flor</p>
+            <div class="mt-3 flex flex-wrap gap-2.5">
+              {
+                paleta.map((c) => (
+                  <label class="opcion-color" title={c.nombre}>
+                    <input
+                      type="radio"
+                      name="flor2"
+                      value={c.id}
+                      checked={c.id === POR_DEFECTO.flor2}
+                      class="sr-only"
+                    />
+                    <span class="punto" style={`--muestra:${c.muestra}`} aria-hidden="true" />
+                    <span class="sr-only">{c.nombre}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display text-2xl">El tallo</legend>
+          <p class="mt-1 text-[15px] text-paper/60">El cordón que une los dos extremos.</p>
+          <div class="mt-4 flex flex-wrap gap-2.5">
+            {
+              paleta.map((c) => (
+                <label class="opcion-color" title={c.nombre}>
+                  <input type="radio" name="tallo" value={c.id} checked={c.id === POR_DEFECTO.tallo} class="sr-only" />
+                  <span class="punto" style={`--muestra:${c.muestra}`} aria-hidden="true" />
+                  <span class="sr-only">{c.nombre}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display text-2xl">Para qué</legend>
+          <div class="modos mt-5">
+            <label class="modo">
+              <input type="radio" name="formato" value="marcapaginas" checked class="sr-only" />
+              <span>Marcapáginas</span>
+            </label>
+            <label class="modo">
+              <input type="radio" name="formato" value="llavero" class="sr-only" />
+              <span>Llavero (con arandela)</span>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <aside class="panel lg:sticky lg:top-24 lg:self-start">
+        <div class="panel-dibujo">
+          <svg
+            class="dibujo"
+            viewBox="0 0 240 220"
+            role="img"
+            aria-label="Dibujo de cómo quedaría"
+            data-dibujo
+            data-remate="flores"
+            data-formato="marcapaginas"
+            style={`--flor:${muestra(POR_DEFECTO.flor)};--flor2:${muestra(POR_DEFECTO.flor)};--tallo:${muestra(POR_DEFECTO.tallo)}`}
+          >
+            <circle class="arandela" cx="120" cy="25" r="14" />
+            <path class="cordon" d="M78 158 Q98 96 120 40 Q142 96 162 158" />
+            <path class="cordon-punto" d="M78 158 Q98 96 120 40 Q142 96 162 158" />
+            <circle class="nudo" cx="120" cy="41" r="5.5" />
+
+            <g class="flor" transform="translate(78 168)">
+              {petalos.map((p) => <circle cx={p.x} cy={p.y} r="12" />)}
+              <path class="centro" d="M-5 -5 L5 5 M5 -5 L-5 5" />
+            </g>
+            <g class="flor flor-dos" transform="translate(162 168)">
+              {petalos.map((p) => <circle cx={p.x} cy={p.y} r="12" />)}
+              <path class="centro" d="M-5 -5 L5 5 M5 -5 L-5 5" />
+            </g>
+            <g class="lazo" transform="translate(162 162)">
+              <path d="M0 0C-12-16-30-10-24 2C-20 10-8 8 0 0Z" />
+              <path d="M0 0C12-16 30-10 24 2C20 10 8 8 0 0Z" />
+              <path d="M-2 2L-12 30M2 2L14 28" />
+              <ellipse cx="0" cy="0" rx="5" ry="6" />
+            </g>
+          </svg>
+        </div>
+        <div class="panel-resumen border-t border-paper/25 pt-6">
+          <p class="text-[15px] text-paper/70" data-resumen-titulo>Tu marcapáginas</p>
+          <p class="mt-2 font-display text-2xl" data-resumen></p>
+          <p class="mt-1 text-paper/70" data-resumen-tallo></p>
+
+          <div class="mt-7 flex items-baseline justify-between gap-4 border-t border-paper/25 pt-5">
+            <span class="text-[15px] text-paper/70">Precio</span>
+            <span class="flex items-center gap-3">
+              <span class="etiqueta-oferta etiqueta-clara">3x2</span>
+              <span class="font-display text-3xl">{euros} €</span>
+            </span>
+          </div>
+
+          <button type="button" class="boton boton-claro mt-6 w-full" data-anadir-llavero>
+            Añadir al pedido
+          </button>
+          <p class="mt-3 text-[14px] text-paper/60">
+            Se teje cuando lo pides. No se paga nada aquí: lo revisáis por WhatsApp antes de
+            que empiece. Entra en el 3x2 de accesorios.
+          </p>
+        </div>
+      </aside>
+    </form>
+  </div>
+</section>
+
+<style>
+  .dibujo {
+    display: block;
+    width: 100%;
+    max-width: 20rem;
+    margin-inline: auto;
+    overflow: visible;
+  }
+  .dibujo .flor circle,
+  .dibujo .lazo path,
+  .dibujo .lazo ellipse,
+  .dibujo .cordon,
+  .dibujo .nudo {
+    transition:
+      fill 260ms var(--ease-salida),
+      stroke 260ms var(--ease-salida);
+  }
+  .cordon {
+    fill: none;
+    stroke: var(--tallo);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  /* Los puntos de cadeneta del cordón: un trazo a trazos un poco más oscuro encima. */
+  .cordon-punto {
+    fill: none;
+    stroke: color-mix(in srgb, var(--tallo) 70%, black);
+    stroke-width: 2;
+    stroke-dasharray: 2.5 4.5;
+    stroke-linecap: round;
+  }
+  .nudo {
+    fill: var(--tallo);
+    stroke: color-mix(in srgb, var(--tallo) 70%, black);
+    stroke-width: 1.2;
+  }
+  .arandela {
+    fill: none;
+    stroke: #c9ccd0;
+    stroke-width: 4;
+  }
+  .flor circle {
+    fill: var(--flor);
+    stroke: color-mix(in srgb, var(--flor) 68%, black);
+    stroke-width: 1.4;
+  }
+  .flor-dos circle {
+    fill: var(--flor2);
+    stroke: color-mix(in srgb, var(--flor2) 68%, black);
+  }
+  .flor .centro {
+    fill: none;
+    stroke: var(--tallo);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+  .lazo path {
+    fill: none;
+    stroke: var(--flor2);
+    stroke-width: 6.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .lazo ellipse {
+    fill: var(--flor2);
+    stroke: color-mix(in srgb, var(--flor2) 68%, black);
+    stroke-width: 1.2;
+  }
+  .dibujo[data-remate='flores'] .lazo,
+  .dibujo[data-remate='lazo'] .flor-dos,
+  .dibujo[data-formato='marcapaginas'] .arandela {
+    display: none;
+  }
+
+  .panel-dibujo {
+    margin-bottom: 1.75rem;
+  }
+  @media (max-width: 1023.98px) {
+    .panel {
+      display: contents;
+    }
+    /* En el móvil el dibujo sube arriba y se queda pegado mientras se elige. */
+    .panel-dibujo {
+      order: -1;
+      position: sticky;
+      top: calc(3.6rem + var(--alto-aviso, 0px));
+      z-index: 10;
+      margin: 0 -1.25rem;
+      padding: 0.5rem 1.25rem 0.75rem;
+      background: var(--color-deep);
+      box-shadow: 0 1rem 1rem -1rem rgb(0 0 0 / 0.5);
+    }
+    .dibujo {
+      width: auto;
+      height: min(28svh, 13rem);
+    }
+  }
+
+  .etiqueta-clara {
+    background-color: var(--color-paper);
+    color: var(--color-deep);
+  }
+
+  .modos {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 1.4rem;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
+  }
+  .modo > span {
+    display: block;
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    font-size: 15px;
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-salida),
+      color 200ms var(--ease-salida);
+  }
+  .modo:has(input:checked) > span {
+    background-color: var(--color-paper);
+    color: var(--color-deep);
+  }
+  .modo:has(input:focus-visible) > span {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 2px;
+  }
+
+  .opcion-color {
+    cursor: pointer;
+  }
+  .punto {
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background: var(--muestra);
+    box-shadow: inset 0 0 0 1px rgb(230 232 229 / 0.25);
+    transition:
+      transform 200ms var(--ease-salida),
+      box-shadow 200ms var(--ease-salida);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .opcion-color:hover .punto {
+      transform: scale(1.1);
+    }
+  }
+  .opcion-color:has(input:checked) .punto {
+    box-shadow:
+      inset 0 0 0 1px rgb(230 232 229 / 0.25),
+      0 0 0 2px var(--color-deep),
+      0 0 0 3.5px var(--color-paper);
+  }
+  .opcion-color:has(input:focus-visible) .punto {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  import { COLORES } from '../data/colores';
+  import { anadir, leer } from '../lib/carrito';
+
+  const form = document.querySelector<HTMLFormElement>('[data-disena-llavero]');
+
+  if (form) {
+    const euros = Number(form.dataset.precio);
+    const slug = form.dataset.slug!;
+    const dibujo = form.querySelector<SVGElement>('[data-dibujo]')!;
+    const segundo = form.querySelector<HTMLElement>('[data-segundo]')!;
+    const rotuloFlor = form.querySelector<HTMLElement>('[data-rotulo-flor]')!;
+    const rotuloSegundo = form.querySelector<HTMLElement>('[data-rotulo-segundo]')!;
+    const titulo = form.querySelector<HTMLElement>('[data-resumen-titulo]')!;
+    const resumen = form.querySelector<HTMLElement>('[data-resumen]')!;
+    const resumenTallo = form.querySelector<HTMLElement>('[data-resumen-tallo]')!;
+    const boton = form.querySelector<HTMLButtonElement>('[data-anadir-llavero]')!;
+
+    const PALETA: Record<string, { nombre: string; muestra: string }> = {
+      ...COLORES,
+      marron: { nombre: 'Marrón', muestra: '#8A6A4F' },
+    };
+
+    const estado = () => {
+      const d = new FormData(form);
+      const lazo = d.get('remate') === 'lazo';
+      const dos = d.get('modo') === 'dos';
+      const flor = PALETA[d.get('flor') as string]!;
+      const flor2 = dos ? PALETA[d.get('flor2') as string]! : flor;
+      const tallo = PALETA[d.get('tallo') as string]!;
+      const llavero = d.get('formato') === 'llavero';
+      // «En rosa», «en amarillo»: así el color no tiene que concordar con flor o lazo.
+      const n = (c: { nombre: string }) => c.nombre.toLowerCase();
+      const extremos = lazo
+        ? `Flor en ${n(flor)} y lazo en ${n(flor2)}`
+        : dos
+          ? `Flores en ${n(flor)} y ${n(flor2)}`
+          : `Dos flores en ${n(flor)}`;
+      return { lazo, dos, flor, flor2, tallo, llavero, extremos, cordon: `Tallo en ${n(tallo)}` };
+    };
+
+    const pintar = () => {
+      const e = estado();
+      segundo.hidden = !e.dos;
+      rotuloFlor.hidden = !e.dos;
+      rotuloSegundo.textContent = e.lazo ? 'El lazo' : 'La otra flor';
+      dibujo.dataset.remate = e.lazo ? 'lazo' : 'flores';
+      dibujo.dataset.formato = e.llavero ? 'llavero' : 'marcapaginas';
+      dibujo.style.setProperty('--flor', e.flor.muestra);
+      dibujo.style.setProperty('--flor2', e.flor2.muestra);
+      dibujo.style.setProperty('--tallo', e.tallo.muestra);
+      titulo.textContent = e.llavero ? 'Tu llavero' : 'Tu marcapáginas';
+      resumen.textContent = e.extremos;
+      resumenTallo.textContent = e.cordon;
+    };
+
+    form.addEventListener('change', pintar);
+    pintar();
+
+    // Como en «Diseña tu bolso»: cada uno lleva su id, así que se pueden pedir dos
+    // iguales; si la combinación exacta ya está en el pedido, se pide un segundo clic.
+    const ETIQUETA = boton.textContent!.trim();
+    let confirmando: ReturnType<typeof setTimeout> | undefined;
+    const reponer = () => {
+      clearTimeout(confirmando);
+      confirmando = undefined;
+      boton.textContent = ETIQUETA;
+    };
+
+    boton.addEventListener('click', () => {
+      const e = estado();
+      const nombre = e.llavero ? 'Llavero de flores a medida' : 'Marcapáginas de flores a medida';
+      const detalle = `${e.extremos} · ${e.cordon.toLowerCase()}${e.llavero ? ' · con arandela' : ''}`;
+      if (!confirmando && leer().some((l) => l.nombre === nombre && l.detalle === detalle)) {
+        boton.textContent = '¿Seguro? Pulsa otra vez para añadirlo igual';
+        confirmando = setTimeout(reponer, 4000);
+        return;
+      }
+      reponer();
+      anadir({
+        id: `llavero-medida-${Date.now()}`,
+        nombre,
+        precio: euros,
+        detalle,
+        url: `/accesorios/${slug}#disena-llavero`,
+        tresPorDos: 'accesorios',
+      });
+      document.querySelector<HTMLDialogElement>('[data-carrito]')?.showModal();
+    });
+  }
+</script>
