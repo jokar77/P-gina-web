@@ -15,7 +15,7 @@
  */
 import { COLORES } from '../data/colores';
 import { precio } from '../lib/formato';
-import { DOS_COLORES } from '../lib/disena';
+import { DOS_COLORES_FUNDA as DOS_COLORES } from '../lib/disena';
 import { cadeneta, muestrearCubica, tejido, type Caja, type Punto } from '../lib/maqueta';
 
 interface Props {
@@ -502,7 +502,7 @@ const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
   import { COLORES, type ColorId } from '../data/colores';
   import { anadir, leer } from '../lib/carrito';
   import { precio } from '../lib/formato';
-  import { DOS_COLORES } from '../lib/disena';
+  import { DOS_COLORES_FUNDA as DOS_COLORES } from '../lib/disena';
 
   const form = document.querySelector<HTMLFormElement>('[data-disena-funda]');
 
