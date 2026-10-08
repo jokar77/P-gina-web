@@ -1,6 +1,6 @@
 ---
 nombre: Tarjetero con flor
-precio: 15
+precio: 5
 estado: disponible
 fecha: 2026-10-08
 material: Lana rosa con hilo de lentejuelas y flor de lana en crudo
