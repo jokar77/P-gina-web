@@ -290,7 +290,8 @@ const etiqueta = (estado: string, euros: number) =>
       fila.addEventListener('focusout', () => (encima = false));
       fila.addEventListener('wheel', esperar, { passive: true });
       for (const f of flechas) f.addEventListener('click', esperar);
-      new IntersectionObserver(([e]) => (enPantalla = !!e?.isIntersecting), { threshold: 0.3 }).observe(
+      // En cuanto asoma un trozo de la fila, ya se mueve.
+      new IntersectionObserver(([e]) => (enPantalla = !!e?.isIntersecting), { threshold: 0 }).observe(
         fila,
       );
     }
