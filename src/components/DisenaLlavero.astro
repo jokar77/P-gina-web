@@ -55,20 +55,36 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       data-precio={euros}
       data-slug={slug}
     >
-      <div class="grid gap-10">
-        <fieldset>
-          <legend class="font-display text-2xl">En los extremos</legend>
-          <div class="modos mt-5">
-            <label class="modo">
-              <input type="radio" name="remate" value="flores" checked class="sr-only" />
-              <span>Dos flores</span>
-            </label>
-            <label class="modo">
-              <input type="radio" name="remate" value="lazo" class="sr-only" />
-              <span>Flor y lazo</span>
-            </label>
-          </div>
-        </fieldset>
+      <div class="grid content-start gap-10">
+        {/* Lo primero, juntos: qué lleva en los extremos y para qué es. */}
+        <div class="flex flex-wrap gap-x-14 gap-y-10">
+          <fieldset>
+            <legend class="font-display text-2xl">En los extremos</legend>
+            <div class="modos mt-5">
+              <label class="modo">
+                <input type="radio" name="remate" value="flores" checked class="sr-only" />
+                <span>Dos flores</span>
+              </label>
+              <label class="modo">
+                <input type="radio" name="remate" value="lazo" class="sr-only" />
+                <span>Flor y lazo</span>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="font-display text-2xl">Para qué</legend>
+            <div class="modos mt-5">
+              <label class="modo">
+                <input type="radio" name="formato" value="marcapaginas" checked class="sr-only" />
+                <span>Marcapáginas</span>
+              </label>
+              <label class="modo">
+                <input type="radio" name="formato" value="llavero" class="sr-only" />
+                <span>Llavero (con arandela)</span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
 
         <fieldset>
           <legend class="font-display text-2xl">Las flores</legend>
@@ -129,20 +145,6 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
                 </label>
               ))
             }
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend class="font-display text-2xl">Para qué</legend>
-          <div class="modos mt-5">
-            <label class="modo">
-              <input type="radio" name="formato" value="marcapaginas" checked class="sr-only" />
-              <span>Marcapáginas</span>
-            </label>
-            <label class="modo">
-              <input type="radio" name="formato" value="llavero" class="sr-only" />
-              <span>Llavero (con arandela)</span>
-            </label>
           </div>
         </fieldset>
       </div>
