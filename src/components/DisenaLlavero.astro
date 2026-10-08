@@ -9,10 +9,13 @@
  * en una página aparte: quien no encuentra su color entre los ya tejidos lo tiene justo
  * debajo.
  *
- * Cuesta lo mismo que la pieza hecha y entra en el 3x2 de accesorios. Cada uno lleva un
+ * Cuesta lo mismo que la pieza hecha (más DOS_COLORES si las flores van de dos colores)
+ * y entra en el 3x2 de accesorios. Cada uno lleva un
  * id propio, así que aquí sí se pueden pedir dos iguales.
  */
 import { COLORES } from '../data/colores';
+import { precio } from '../lib/formato';
+import { DOS_COLORES } from '../lib/llavero';
 
 interface Props {
   precio: number;
@@ -76,7 +79,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
             </label>
             <label class="modo">
               <input type="radio" name="modo" value="dos" class="sr-only" />
-              <span>Dos colores</span>
+              <span>Dos colores <span class="suplemento">+{precio(DOS_COLORES)}</span></span>
             </label>
           </div>
           <p class="mt-6 text-[15px] text-paper/70" data-rotulo-flor hidden>La flor</p>
@@ -186,7 +189,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
             <span class="text-[15px] text-paper/70">Precio</span>
             <span class="flex items-center gap-3">
               <span class="etiqueta-oferta etiqueta-clara">3x2</span>
-              <span class="font-display text-3xl">{euros} €</span>
+              <span class="font-display text-3xl" data-total>{precio(euros)}</span>
             </span>
           </div>
 
@@ -301,6 +304,9 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
     }
   }
 
+  .suplemento {
+    opacity: 0.65;
+  }
   .etiqueta-clara {
     background-color: var(--color-paper);
     color: var(--color-deep);
@@ -367,6 +373,8 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
 <script>
   import { COLORES } from '../data/colores';
   import { anadir, leer } from '../lib/carrito';
+  import { precio } from '../lib/formato';
+  import { DOS_COLORES } from '../lib/llavero';
 
   const form = document.querySelector<HTMLFormElement>('[data-disena-llavero]');
 
@@ -381,6 +389,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
     const resumen = form.querySelector<HTMLElement>('[data-resumen]')!;
     const resumenTallo = form.querySelector<HTMLElement>('[data-resumen-tallo]')!;
     const boton = form.querySelector<HTMLButtonElement>('[data-anadir-llavero]')!;
+    const total = form.querySelector<HTMLElement>('[data-total]')!;
 
     const PALETA: Record<string, { nombre: string; muestra: string }> = {
       ...COLORES,
@@ -402,7 +411,9 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
         : dos
           ? `Flores en ${n(flor)} y ${n(flor2)}`
           : `Dos flores en ${n(flor)}`;
-      return { lazo, dos, flor, flor2, tallo, llavero, extremos, cordon: `Tallo en ${n(tallo)}` };
+      // Dos colores lleva otro ovillo y cambiar de hilo: suma el suplemento.
+      const coste = Math.round((euros + (dos ? DOS_COLORES : 0)) * 100) / 100;
+      return { lazo, dos, flor, flor2, tallo, llavero, extremos, cordon: `Tallo en ${n(tallo)}`, coste };
     };
 
     const pintar = () => {
@@ -418,6 +429,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       titulo.textContent = e.llavero ? 'Tu llavero' : 'Tu marcapáginas';
       resumen.textContent = e.extremos;
       resumenTallo.textContent = e.cordon;
+      total.textContent = precio(e.coste);
     };
 
     form.addEventListener('change', pintar);
@@ -437,7 +449,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       const e = estado();
       const nombre = e.llavero ? 'Llavero de flores a medida' : 'Marcapáginas de flores a medida';
       const detalle = `${e.extremos} · ${e.cordon.toLowerCase()}${e.llavero ? ' · con arandela' : ''}`;
-      if (!confirmando && leer().some((l) => l.nombre === nombre && l.detalle === detalle)) {
+      if (!confirmando && leer().some((l) => l.nombre === nombre && l.detalle === detalle && l.precio === e.coste)) {
         boton.textContent = '¿Seguro? Pulsa otra vez para añadirlo igual';
         confirmando = setTimeout(reponer, 4000);
         return;
@@ -446,7 +458,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       anadir({
         id: `llavero-medida-${Date.now()}`,
         nombre,
-        precio: euros,
+        precio: e.coste,
         detalle,
         url: `/accesorios/${slug}#disena-llavero`,
         tresPorDos: 'accesorios',
