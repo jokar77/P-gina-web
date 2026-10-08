@@ -9,6 +9,7 @@ import { getImage } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import Galeria from '../../components/Galeria.astro';
 import site from '../../data/site.json';
+import { COLORES } from '../../data/colores';
 import { precio } from '../../lib/formato';
 import { migasDePan, producto } from '../../lib/seo';
 import { porOrdenConVendidosAlFinal } from '../../lib/accesorios';
@@ -28,7 +29,20 @@ export async function getStaticPaths() {
 
 const { accesorio, anterior, siguiente } = Astro.props;
 const d = accesorio.data;
-const galeria = [d.foto, ...d.fotos];
+const galeria = [d.foto, ...d.fotos, ...d.fotosColor.flatMap((c) => c.fotos)];
+// A qué color pertenece cada foto de la galería; las comunes, a ninguno.
+const grupos = [
+  undefined,
+  ...d.fotos.map(() => undefined),
+  ...d.fotosColor.flatMap((c) => c.fotos.map(() => c.color)),
+];
+
+/** La muestra de un color por su nombre («Rosa» → la de la paleta), si existe. */
+const muestra = (nombre: string) =>
+  Object.values(COLORES).find((c) => c.nombre.toLowerCase() === nombre.trim().toLowerCase())?.muestra;
+/** La opción de color se enseña con muestras, sin texto, si todos sus colores existen. */
+const esColor = (o: { nombre: string; valores: string[] }) =>
+  o.nombre.trim().toLowerCase() === 'color' && o.valores.every((v) => muestra(v));
 const vendido = d.estado === 'vendido';
 const seccion = site.secciones.accesorios;
 
@@ -80,7 +94,7 @@ const jsonLd = [
       </a>
 
       <div class="mt-8 grid items-start gap-x-14 gap-y-10 lg:grid-cols-[1.15fr_1fr]">
-        <Galeria fotos={galeria} nombre={d.nombre} tipo="Accesorio" />
+        <Galeria fotos={galeria} nombre={d.nombre} tipo="Accesorio" grupos={grupos} />
 
         <div class="lg:sticky lg:top-24">
           <h1 class="font-display text-[clamp(2.25rem,6vw,3.5rem)]">{d.nombre}</h1>
@@ -122,10 +136,22 @@ const jsonLd = [
               ) : (
                 <>
                   {d.opciones.map((o, i) => (
-                    <fieldset class="mb-6" data-opcion={o.nombre}>
+                    <fieldset class="mb-6" data-opcion={o.nombre} data-color={esColor(o) ? '' : undefined}>
                       <legend class="text-[15px] text-ink-soft">{o.nombre}</legend>
                       <div class="mt-2.5 flex flex-wrap gap-2.5">
-                        {o.valores.map((v, j) => (
+                        {o.valores.map((v, j) => esColor(o) ? (
+                          <label class="muestra-color" title={v} style={`--muestra:${muestra(v)}`}>
+                            <input
+                              type="radio"
+                              class="sr-only"
+                              name={`opcion-${i}`}
+                              value={v}
+                              checked={j === 0}
+                            />
+                            <span aria-hidden="true" />
+                            <span class="sr-only">{v}</span>
+                          </label>
+                        ) : (
                           <label class="opcion">
                             <input
                               type="radio"
@@ -196,6 +222,26 @@ const jsonLd = [
     color: var(--color-paper);
     box-shadow: none;
   }
+  .muestra-color span[aria-hidden] {
+    display: block;
+    width: 38px;
+    height: 38px;
+    border-radius: 9999px;
+    background: var(--muestra);
+    box-shadow: inset 0 0 0 1px rgb(31 29 27 / 0.18);
+    cursor: pointer;
+    transition: box-shadow 180ms var(--ease-salida);
+  }
+  .muestra-color input:checked + span {
+    box-shadow:
+      inset 0 0 0 1px rgb(31 29 27 / 0.18),
+      0 0 0 3px var(--color-paper),
+      0 0 0 5px var(--color-ink);
+  }
+  .muestra-color input:focus-visible + span {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 5px;
+  }
   .opcion input:focus-visible + span {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
@@ -233,7 +279,17 @@ const jsonLd = [
       boton.textContent = contiene(linea.id) ? 'Quitar del pedido' : 'Añadir al pedido';
     };
 
+    /** Al elegir color, la galería pasa a las fotos de ese color. */
+    const colores = document.querySelector<HTMLFieldSetElement>('[data-opcion][data-color]');
+    const avisarColor = (saltar: boolean) => {
+      const elegido = colores?.querySelector<HTMLInputElement>('input:checked')?.value ?? null;
+      document.dispatchEvent(new CustomEvent('galeria:grupo', { detail: { nombre: elegido, saltar } }));
+    };
+    colores?.addEventListener('change', () => avisarColor(true));
+
     for (const g of grupos) g.addEventListener('change', actualizar);
     actualizar();
+    // Después de que la galería haya montado su script.
+    if (colores) setTimeout(() => avisarColor(false), 0);
   }
 </script>

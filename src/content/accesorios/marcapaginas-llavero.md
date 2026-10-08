@@ -7,12 +7,16 @@ nota: La misma pieza sirve de marcapáginas o, con arandela, de llavero. Mismo p
 material: Lana con cordón verde, una flor en cada extremo
 orden: 5
 foto: ../../assets/piezas/accesorios/marcapaginas-llavero/01.jpg
-fotos:
-  - ../../assets/piezas/accesorios/marcapaginas-llavero/02.jpg
-  - ../../assets/piezas/accesorios/marcapaginas-llavero/03.jpg
-  - ../../assets/piezas/accesorios/marcapaginas-llavero/04.jpg
-  - ../../assets/piezas/accesorios/marcapaginas-llavero/05.jpg
-  - ../../assets/piezas/accesorios/marcapaginas-llavero/06.jpg
+fotosColor:
+  - color: Rosa
+    fotos:
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/02.jpg
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/03.jpg
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/04.jpg
+  - color: Rojo
+    fotos:
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/05.jpg
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/06.jpg
 opciones:
   - nombre: Color
     valores:

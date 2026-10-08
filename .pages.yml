@@ -203,6 +203,17 @@ content:
         fields:
           - { name: nombre, label: 'Nombre (ej.: Color)', type: string, required: true }
           - { name: valores, label: Valores, type: string, list: true, required: true }
+      - name: fotosColor
+        label: Fotos de cada color
+        type: object
+        list: true
+        description: >-
+          Opcional. Si la pieza tiene la opción «Color», aquí van las fotos de cada uno:
+          al pulsar un color en la ficha, se ven las suyas. Escribe el color igual que en
+          la opción (por ejemplo, «Rosa»). Las de «Más fotos» se ven con todos.
+        fields:
+          - { name: color, label: Color, type: string, required: true }
+          - { name: fotos, label: Fotos, type: image, list: true }
       - name: orden
         label: Orden
         type: number

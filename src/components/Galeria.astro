@@ -18,6 +18,11 @@
  * En el móvil las fotos se pasan también deslizando el dedo a un lado, tanto la grande
  * de la ficha como la ampliada (si no está acercada): la foto sigue al dedo mientras se
  * arrastra y, si se suelta lo bastante lejos, pasa a la siguiente.
+ *
+ * Y si nadie la toca, la foto grande va pasando sola hacia el lado cada pocos
+ * segundos. Se para en cuanto alguien interactúa (y vuelve tras un rato sin tocarla),
+ * con el ratón encima, con la foto ampliada abierta, fuera de pantalla y con «reducir
+ * movimiento».
  */
 import { Image } from 'astro:assets';
 
@@ -29,9 +34,15 @@ interface Props {
   tipo: string;
   /** Alto de la caja. Los bolsos van en 3:4; el lino, más alargado. */
   proporcion?: string;
+  /**
+   * A qué grupo (un color, por ejemplo) pertenece cada foto, en el mismo orden que
+   * `fotos`. Las que no tienen grupo se ven siempre. Al elegir un grupo con el evento
+   * `galeria:grupo`, solo se pasa por las suyas y las comunes.
+   */
+  grupos?: (string | undefined)[];
 }
 
-const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
+const { fotos, nombre, tipo, proporcion = '3/4', grupos = [] } = Astro.props;
 ---
 
 <div class="flex flex-col gap-3 sm:flex-row">
@@ -50,6 +61,7 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
             i > 0 && 'pointer-events-none opacity-0',
           ]}
           data-foto={i}
+          data-grupo={grupos[i]}
           aria-hidden={i > 0 ? 'true' : undefined}
           loading={i === 0 ? 'eager' : 'lazy'}
         />
@@ -88,7 +100,7 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
         aria-label="Fotos de la pieza"
       >
         {fotos.map((foto, i) => (
-          <button type="button" class="miniatura" data-mini={i} aria-current={i === 0}>
+          <button type="button" class="miniatura" data-mini={i} data-grupo={grupos[i]} aria-current={i === 0}>
             <Image
               src={foto}
               alt={`Ver foto ${i + 1} de ${fotos.length}`}
@@ -286,7 +298,45 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
     // Al pasar de foto, la acercada vuelve a verse entera (lo pone el bloque del zoom).
     let alCambiarFoto = () => {};
 
-    const activar = (i: number) => {
+    /** El grupo elegido (un color); `null` es que se ven todas. */
+    let grupo: string | null = null;
+    const permitida = (i: number) => {
+      const g = fotos[i]?.dataset.grupo;
+      return !g || !grupo || g === grupo;
+    };
+    /** La siguiente (o anterior) foto que se puede ver, saltando las de otro grupo. */
+    const vecina = (sentido: number) => {
+      let i = actual();
+      for (let k = 0; k < fotos.length; k++) {
+        i = (i + sentido + fotos.length) % fotos.length;
+        if (permitida(i)) return i;
+      }
+      return actual();
+    };
+    const quietud = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    /** `sentido` (1 o -1) hace que la foto entre deslizándose desde ese lado. */
+    const activar = (i: number, sentido = 0) => {
+      const antes = fotos[actual()];
+      const despues = fotos[i];
+      if (sentido && antes && despues && antes !== despues && !quietud.matches) {
+        const desde = getComputedStyle(antes).transform;
+        const curva = { duration: 480, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' };
+        antes.animate(
+          [
+            { transform: desde === 'none' ? 'translateX(0)' : desde, opacity: 1 },
+            { transform: `translateX(${-100 * sentido}%)`, opacity: 1 },
+          ],
+          curva,
+        );
+        despues.animate(
+          [
+            { transform: `translateX(${100 * sentido}%)`, opacity: 1 },
+            { transform: 'translateX(0)', opacity: 1 },
+          ],
+          curva,
+        );
+      }
       alCambiarFoto();
       for (const foto of fotos) {
         const activa = Number(foto.dataset.foto) === i;
@@ -302,25 +352,49 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
       for (const mini of minis) mini.setAttribute('aria-current', String(Number(mini.dataset.mini) === i));
     };
 
+    /*
+     * Elegir un grupo (lo manda la ficha al pulsar un color): las miniaturas de otros
+     * grupos se esconden y, si se pide `saltar`, se pasa a la primera foto del grupo.
+     */
+    document.addEventListener('galeria:grupo', (e) => {
+      const { nombre: g, saltar } = (e as CustomEvent<{ nombre: string | null; saltar?: boolean }>).detail;
+      grupo = g;
+      for (const mini of minis) mini.hidden = !permitida(Number(mini.dataset.mini));
+      const primera = fotos.findIndex((f) => f.dataset.grupo && f.dataset.grupo === g);
+      if (saltar && primera >= 0) {
+        activar(primera, primera > actual() ? 1 : -1);
+        // En el móvil la foto queda por encima de los colores: se sube hasta ella para
+        // que se vea el cambio.
+        if (galeria.getBoundingClientRect().bottom < 80) {
+          galeria.scrollIntoView({ behavior: quietud.matches ? 'auto' : 'smooth', block: 'center' });
+        }
+      }
+      else if (!permitida(actual())) activar(vecina(1));
+    });
+
     for (const mini of minis) {
-      mini.addEventListener('click', () => activar(Number(mini.dataset.mini)));
+      mini.addEventListener('click', () => {
+        const n = Number(mini.dataset.mini);
+        activar(n, n > actual() ? 1 : -1);
+      });
     }
 
     for (const flecha of flechas) {
       flecha.addEventListener('click', () => {
-        activar((actual() + Number(flecha.dataset.flecha) + fotos.length) % fotos.length);
+        const s = Number(flecha.dataset.flecha);
+        activar(vecina(s), s);
       });
     }
 
     for (const flecha of flechasZoom) {
       flecha.addEventListener('click', () => {
-        activar((actual() + Number(flecha.dataset.flechaZoom) + fotos.length) % fotos.length);
+        activar(vecina(Number(flecha.dataset.flechaZoom)));
       });
     }
 
     /** Cuánto hay que deslizar, en píxeles, para que pase de foto. */
     const UMBRAL = 50;
-    const pasar = (sentido: number) => activar((actual() + sentido + fotos.length) % fotos.length);
+    const pasar = (sentido: number) => activar(vecina(sentido), sentido);
 
     /*
      * Deslizar en la foto grande de la ficha, con el dedo. La foto sigue al dedo; al
@@ -507,7 +581,7 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
           acercar(img, r.left + r.width / 2, r.top + r.height / 2);
         } else if (e.key === '-' && escala > 1) alejar();
         else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && fotos.length > 1) {
-          activar((actual() + (e.key === 'ArrowLeft' ? -1 : 1) + fotos.length) % fotos.length);
+          activar(vecina(e.key === 'ArrowLeft' ? -1 : 1));
         } else return;
         e.preventDefault();
       });
@@ -554,6 +628,38 @@ const { fotos, nombre, tipo, proporcion = '3/4' } = Astro.props;
       zoom.addEventListener('click', (e) => {
         if (e.target === zoom || e.target === fondo) zoom.close();
       });
+    }
+
+    /*
+     * Pasar solas. Cada pocos segundos, la foto grande se desliza a la siguiente si
+     * nadie está mirando de cerca: cualquier toque, clic o tecla dentro de la galería
+     * la para un rato, igual que tener el ratón encima o la foto ampliada abierta.
+     */
+    if (fotos.length > 1) {
+      const CADA = 3800;
+      let enPantalla = false;
+      let encima = false;
+      let quietaHasta = 0;
+      const parar = () => (quietaHasta = Date.now() + CADA * 3);
+      const caja = galeria.parentElement!;
+
+      setInterval(() => {
+        if (quietud.matches || encima || !enPantalla || document.hidden) return;
+        if (zoom?.open || Date.now() < quietaHasta) return;
+        if (fotos.filter((_, i) => permitida(i)).length < 2) return;
+        activar(vecina(1), 1);
+      }, CADA);
+
+      caja.addEventListener('pointerdown', parar);
+      caja.addEventListener('keydown', parar);
+      caja.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && (encima = true));
+      caja.addEventListener('pointerleave', () => (encima = false));
+      document.addEventListener('galeria:grupo', (e) => {
+        if ((e as CustomEvent<{ saltar?: boolean }>).detail?.saltar) parar();
+      });
+      new IntersectionObserver(([e]) => (enPantalla = !!e?.isIntersecting), { threshold: 0.5 }).observe(
+        galeria,
+      );
     }
   }
 </script>

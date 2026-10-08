@@ -192,6 +192,11 @@ const accesorios = defineCollection({
       opciones: z
         .array(z.object({ nombre: z.string(), valores: z.array(z.string()).min(1) }))
         .default([]),
+      /** Fotos que solo se ven al elegir ese color en la ficha (el nombre tiene que ser
+       *  el mismo que en la opción «Color»). Las de «Más fotos» se ven con todos. */
+      fotosColor: z
+        .array(z.object({ color: z.string(), fotos: z.array(image()).default([]) }))
+        .default([]),
     }),
 });
 
