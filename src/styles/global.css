@@ -173,6 +173,20 @@
   .filete {
     border-top: 1px solid var(--color-line);
   }
+
+  /* «3x2»: la misma etiqueta en la franja, la rejilla y la ficha de la pieza. */
+  .etiqueta-oferta {
+    display: inline-block;
+    border-radius: 5px;
+    background-color: var(--color-deep);
+    color: var(--color-paper);
+    padding: 0.2em 0.6em;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

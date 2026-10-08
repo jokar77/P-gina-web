@@ -197,6 +197,8 @@ const accesorios = defineCollection({
       fotosColor: z
         .array(z.object({ color: z.string(), fotos: z.array(image()).default([]) }))
         .default([]),
+      /** 3x2: de cada tres de esta pieza (mezclando colores y formatos), una gratis. */
+      tresPorDos: z.boolean().default(false),
     }),
 });
 

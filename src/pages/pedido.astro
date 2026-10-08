@@ -210,6 +210,8 @@ const TRANSPORTISTAS = [
           <dl class="grid grid-cols-[1fr_auto] gap-y-1 border-t border-(--color-line) pt-6 text-[15px] lg:border-t-0 lg:pt-0 lg:text-[17px]">
             <dt class="text-ink-soft">Piezas</dt>
             <dd class="text-right" data-subtotal></dd>
+            <dt class="text-ink-soft" data-fila-oferta hidden>Oferta 3x2</dt>
+            <dd class="text-right" data-oferta hidden></dd>
             <dt class="text-ink-soft">Envío</dt>
             <dd class="text-right" data-coste-envio></dd>
             <dt class="mt-1 self-baseline">Total</dt>
@@ -384,7 +386,7 @@ const TRANSPORTISTAS = [
 </style>
 
 <script>
-  import { hayOrientativos, leer, soloConsultas, suscribir, total } from '../lib/carrito';
+  import { descuento, hayOrientativos, leer, soloConsultas, suscribir, total } from '../lib/carrito';
   import type { Linea } from '../lib/carrito';
   import { costeEnvio, METODOS, nombreMetodo, type Metodo } from '../lib/envio';
   import { precio } from '../lib/formato';
@@ -405,6 +407,8 @@ const TRANSPORTISTAS = [
   const notaEnvio = document.querySelector<HTMLElement>('[data-envio-nota]');
   const marcaSubtotal = document.querySelector<HTMLElement>('[data-subtotal]');
   const marcaEnvio = document.querySelector<HTMLElement>('[data-coste-envio]');
+  const filaOferta = document.querySelector<HTMLElement>('[data-fila-oferta]');
+  const marcaOferta = document.querySelector<HTMLElement>('[data-oferta]');
   const marcaTotal = document.querySelector<HTMLElement>('[data-total]');
   const soloPregunta = document.querySelector<HTMLElement>('[data-solo-pregunta]');
   const aviso = document.querySelector<HTMLElement>('[data-aviso]');
@@ -453,7 +457,8 @@ const TRANSPORTISTAS = [
   const requiereDatos = (lineas: Linea[]) => lineas.some((l) => !l.orientativo && !l.consultar);
 
   function mensaje(lineas: Linea[]) {
-    const piezas = total();
+    const ahorro = descuento();
+    const piezas = total() - ahorro;
     const metodo = metodoElegido();
     const envioCoste = costeEnvio(piezas, metodo);
     const preguntando = soloConsultas();
@@ -475,6 +480,7 @@ const TRANSPORTISTAS = [
           '',
           cuerpo,
           '',
+          ...(ahorro > 0 ? [`Oferta 3x2: −${precio(ahorro)}`] : []),
           `Envío (${nombreMetodo(metodo).toLowerCase()}): ${envioCoste === 0 ? 'gratis' : precio(envioCoste)}`,
           `Total: ${precio(piezas + envioCoste)}${hayOrientativos() ? ' (orientativo)' : ''}`,
         ];
@@ -569,7 +575,9 @@ const TRANSPORTISTAS = [
         : 'Esto es una consulta —el precio y los detalles se cierran hablando—, así que puedes dejarlo en blanco y lo acordáis por WhatsApp.';
     }
 
-    const piezas = total();
+    // El 3x2 se descuenta antes de mirar si el envío sale gratis: cuenta lo que se paga.
+    const ahorro = descuento();
+    const piezas = total() - ahorro;
     const envioCoste = costeEnvio(piezas, metodo);
 
     // Con el pedido ya por encima del mínimo, el envío es gratis elijas lo que elijas,
@@ -582,7 +590,12 @@ const TRANSPORTISTAS = [
       el.textContent = envioSiempreGratis ? '' : precio(precioMetodo);
     }
 
-    if (marcaSubtotal) marcaSubtotal.textContent = precio(piezas);
+    if (marcaSubtotal) marcaSubtotal.textContent = precio(total());
+    if (filaOferta) filaOferta.hidden = ahorro === 0;
+    if (marcaOferta) {
+      marcaOferta.hidden = ahorro === 0;
+      marcaOferta.textContent = `−${precio(ahorro)}`;
+    }
     if (marcaEnvio) marcaEnvio.textContent = envioCoste === 0 ? 'Gratis' : precio(envioCoste);
     if (marcaTotal) marcaTotal.textContent = precio(piezas + envioCoste);
     if (aviso) aviso.hidden = !hayOrientativos() || preguntando;

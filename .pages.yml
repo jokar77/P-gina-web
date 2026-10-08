@@ -214,6 +214,13 @@ content:
         fields:
           - { name: color, label: Color, type: string, required: true }
           - { name: fotos, label: Fotos, type: image, list: true }
+      - name: tresPorDos
+        label: Oferta 3x2
+        type: boolean
+        description: >-
+          Actívalo y esta pieza va en 3x2: de cada tres que se pidan (aunque sean de
+          distinto color o formato), una sale gratis. Se ve una etiqueta «3x2» y el pedido
+          ya lo descuenta solo.
       - name: orden
         label: Orden
         type: number

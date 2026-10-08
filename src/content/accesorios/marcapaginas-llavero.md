@@ -4,8 +4,9 @@ precio: 5
 estado: disponible
 fecha: 2026-10-08
 nota: La misma pieza sirve de marcapáginas o, con arandela, de llavero. Mismo precio.
-material: Lana, una flor en cada extremo del cordón
+material: Lana, con una flor en cada extremo del cordón o con flor y lazo
 orden: 1
+tresPorDos: true
 foto: ../../assets/piezas/accesorios/marcapaginas-llavero/01.jpg
 fotosColor:
   - color: Rosa
@@ -25,6 +26,10 @@ fotosColor:
     fotos:
       - ../../assets/piezas/accesorios/marcapaginas-llavero/09.jpg
       - ../../assets/piezas/accesorios/marcapaginas-llavero/10.jpg
+  - color: Rojo y marrón con lazo
+    fotos:
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/11.jpg
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/12.jpg
 opciones:
   - nombre: Color
     valores:
@@ -32,6 +37,7 @@ opciones:
       - Rojo
       - Rosa y crudo
       - Rojo y marrón
+      - Rojo y marrón con lazo
   - nombre: Formato
     valores:
       - Marcapáginas

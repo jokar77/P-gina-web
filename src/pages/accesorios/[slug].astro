@@ -37,18 +37,20 @@ const grupos = [
   ...d.fotosColor.flatMap((c) => c.fotos.map(() => c.color)),
 ];
 
+/** Colores de cordones y remates que no están en la paleta de los bolsos. */
+const DE_ACCESORIOS = [{ nombre: 'Marrón', muestra: '#8A6A4F' }];
 /**
  * La muestra de un color por su nombre («Rosa» → la de la paleta), si existe. Dos
  * colores con «y» («Rosa y crudo») salen como un círculo partido por la mitad.
  */
-/** Colores de cordones y remates que no están en la paleta de los bolsos. */
-const DE_ACCESORIOS = [{ nombre: 'Marrón', muestra: '#8A6A4F' }];
 const unColor = (nombre: string) =>
   [...Object.values(COLORES), ...DE_ACCESORIOS].find(
     (c) => c.nombre.toLowerCase() === nombre.trim().toLowerCase(),
   )?.muestra;
+/** «… con lazo» es otro modelo del mismo color: la muestra lleva un lazo dibujado. */
+const CON_LAZO = /\s+con\s+lazo$/i;
 const muestra = (nombre: string) => {
-  const partes = nombre.split(/\s+y\s+/i).map(unColor);
+  const partes = nombre.replace(CON_LAZO, '').split(/\s+y\s+/i).map(unColor);
   if (partes.some((m) => !m || m.includes('gradient'))) return undefined;
   return partes.length === 1
     ? partes[0]
@@ -70,7 +72,9 @@ const linea = {
   detalle: [d.material, d.medidas].filter(Boolean).join(' · '),
   url: `/accesorios/${accesorio.id}`,
   ...(d.estado === 'encargo' ? { orientativo: true } : {}),
+  ...(d.tresPorDos ? { tresPorDos: accesorio.id } : {}),
 };
+const tresPorDos = d.tresPorDos && !vendido;
 
 const descripcion = `${d.nombre}: ${d.material.toLowerCase()}.${d.medidas ? ` ${d.medidas}.` : ''} Accesorio hecho a mano.`;
 
@@ -113,9 +117,17 @@ const jsonLd = [
         <div class="lg:sticky lg:top-24">
           <h1 class="font-display text-[clamp(2.25rem,6vw,3.5rem)]">{d.nombre}</h1>
 
-          <p class="mt-3 font-display text-2xl">
+          <p class="mt-3 flex items-center gap-3 font-display text-2xl">
             {vendido ? 'Vendido' : d.estado === 'encargo' ? `Desde ${precio(d.precio)}` : precio(d.precio)}
+            {tresPorDos && <span class="etiqueta-oferta">3x2</span>}
           </p>
+          {
+            tresPorDos && (
+              <p class="mt-2 max-w-[46ch] text-[15px]" data-tres-por-dos={accesorio.id}>
+                Llévate 3 y paga solo 2. Puedes mezclar colores y formatos.
+              </p>
+            )
+          }
 
           {d.nota && <p class="mt-3 max-w-[46ch] text-[15px] text-ink-soft">{d.nota}</p>}
 
@@ -163,6 +175,11 @@ const jsonLd = [
                               checked={j === 0}
                             />
                             <span aria-hidden="true" />
+                            {CON_LAZO.test(v) && (
+                              <svg class="lazo" viewBox="0 0 24 16" aria-hidden="true">
+                                <path d="M12 8C9 3 3 1 2 4s3 7 10 4c7 3 11-1 10-4s-7-1-10 4Zm0 0-3 7m3-7 3 7" />
+                              </svg>
+                            )}
                             <span class="sr-only">{v}</span>
                           </label>
                         ) : (
@@ -246,6 +263,23 @@ const jsonLd = [
     cursor: pointer;
     transition: box-shadow 180ms var(--ease-salida);
   }
+  .muestra-color {
+    position: relative;
+  }
+  .muestra-color .lazo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 26px;
+    height: 18px;
+    translate: -50% -50%;
+    fill: var(--color-paper);
+    stroke: rgb(31 29 27 / 0.55);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
   .muestra-color input:checked + span {
     box-shadow:
       inset 0 0 0 1px rgb(31 29 27 / 0.18),
@@ -268,7 +302,7 @@ const jsonLd = [
    * detalle, para que llegue escrito por WhatsApp, y en el id, para que se puedan pedir
    * a la vez dos combinaciones distintas de la misma pieza.
    */
-  import { contiene } from '../../lib/carrito';
+  import { contiene, cuantasTresPorDos, suscribir } from '../../lib/carrito';
 
   const boton = document.querySelector<HTMLButtonElement>('[data-con-opciones]');
   if (boton) {
@@ -305,5 +339,24 @@ const jsonLd = [
     actualizar();
     // Después de que la galería haya montado su script.
     if (colores) setTimeout(() => avisarColor(false), 0);
+  }
+
+  /** Con 3x2, la frase de la oferta cuenta cuántas lleva ya y cuánto le falta. */
+  const oferta = document.querySelector<HTMLElement>('[data-tres-por-dos]');
+  if (oferta) {
+    const grupo = oferta.dataset.tresPorDos!;
+    const inicial = oferta.textContent!.trim();
+    suscribir(() => {
+      const n = cuantasTresPorDos(grupo);
+      const gratis = Math.floor(n / 3);
+      oferta.textContent =
+        n === 0
+          ? inicial
+          : n % 3 === 1
+            ? `Llevas ${n} en el pedido: añade 2 más y uno te sale gratis.`
+            : n % 3 === 2
+              ? `Llevas ${n} en el pedido: el siguiente te sale gratis.`
+              : `Llevas ${n} en el pedido: ${gratis === 1 ? 'uno te sale gratis' : `${gratis} te salen gratis`}. Elige otro color o formato si quieres más.`;
+    });
   }
 </script>

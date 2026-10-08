@@ -38,6 +38,8 @@
       <dl class="grid grid-cols-[1fr_auto] gap-y-1 text-[15px]" data-carrito-cuentas>
         <dt class="text-paper/70">Piezas</dt>
         <dd class="text-right" data-carrito-subtotal></dd>
+        <dt class="text-paper/70" data-carrito-fila-oferta hidden>Oferta 3x2</dt>
+        <dd class="text-right" data-carrito-oferta hidden></dd>
       </dl>
 
       <p class="text-[15px] text-paper/70" data-carrito-solo-pregunta hidden>
@@ -115,7 +117,17 @@
 </style>
 
 <script>
-  import { anadir, contiene, leer, quitar, soloConsultas, suscribir, total, vaciar } from '../lib/carrito';
+  import {
+    anadir,
+    contiene,
+    descuento,
+    leer,
+    quitar,
+    soloConsultas,
+    suscribir,
+    total,
+    vaciar,
+  } from '../lib/carrito';
   import type { Linea } from '../lib/carrito';
   import { precio } from '../lib/formato';
 
@@ -124,6 +136,8 @@
   const pie = document.querySelector<HTMLElement>('[data-carrito-pie]');
   const vacio = document.querySelector<HTMLElement>('[data-carrito-vacio]');
   const marcaSubtotal = document.querySelector<HTMLElement>('[data-carrito-subtotal]');
+  const filaOferta = document.querySelector<HTMLElement>('[data-carrito-fila-oferta]');
+  const marcaOferta = document.querySelector<HTMLElement>('[data-carrito-oferta]');
   const cuentas = [...document.querySelectorAll<HTMLElement>('[data-carrito-cuentas]')];
   const soloPregunta = [...document.querySelectorAll<HTMLElement>('[data-carrito-solo-pregunta]')];
   const irPedido = document.querySelector<HTMLAnchorElement>('[data-ir-pedido]');
@@ -200,6 +214,12 @@
     vacio.hidden = hay;
 
     if (marcaSubtotal) marcaSubtotal.textContent = precio(total());
+    const ahorro = descuento();
+    if (filaOferta) filaOferta.hidden = ahorro === 0;
+    if (marcaOferta) {
+      marcaOferta.hidden = ahorro === 0;
+      marcaOferta.textContent = `−${precio(ahorro)}`;
+    }
     if (irPedido) irPedido.textContent = preguntando ? 'Preguntar' : 'Comprar';
   }
 

@@ -29,6 +29,11 @@ export interface Linea {
    * decir que son gratis.
    */
   consultar?: boolean;
+  /**
+   * Pieza en 3x2: las líneas con el mismo valor (el slug de la pieza) cuentan juntas,
+   * aunque sean de distinto color o formato, y de cada tres la más barata sale gratis.
+   */
+  tresPorDos?: string;
 }
 
 let memoria: Linea[] = [];
@@ -72,6 +77,25 @@ export const leer = (): Linea[] => memoria.slice();
 export const contiene = (id: string) => memoria.some((l) => l.id === id);
 
 export const total = () => memoria.reduce((suma, l) => suma + l.precio, 0);
+
+/** Cuántas líneas del pedido hay ya de una pieza en 3x2. */
+export const cuantasTresPorDos = (grupo: string) =>
+  memoria.filter((l) => l.tresPorDos === grupo).length;
+
+/** Lo que se ahorra con el 3x2: de cada tres de la misma pieza, la más barata. */
+export const descuento = () => {
+  const grupos = new Map<string, number[]>();
+  for (const l of memoria) {
+    if (!l.tresPorDos || l.consultar) continue;
+    grupos.set(l.tresPorDos, [...(grupos.get(l.tresPorDos) ?? []), l.precio]);
+  }
+  let ahorro = 0;
+  for (const precios of grupos.values()) {
+    const gratis = Math.floor(precios.length / 3);
+    ahorro += precios.sort((a, b) => a - b).slice(0, gratis).reduce((s, p) => s + p, 0);
+  }
+  return ahorro;
+};
 
 /** ¿Algún precio del pedido es orientativo? Entonces el total también lo es. */
 export const hayOrientativos = () => memoria.some((l) => l.orientativo);
