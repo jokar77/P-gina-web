@@ -37,9 +37,19 @@ const grupos = [
   ...d.fotosColor.flatMap((c) => c.fotos.map(() => c.color)),
 ];
 
-/** La muestra de un color por su nombre («Rosa» → la de la paleta), si existe. */
-const muestra = (nombre: string) =>
+/**
+ * La muestra de un color por su nombre («Rosa» → la de la paleta), si existe. Dos
+ * colores con «y» («Rosa y crudo») salen como un círculo partido por la mitad.
+ */
+const unColor = (nombre: string) =>
   Object.values(COLORES).find((c) => c.nombre.toLowerCase() === nombre.trim().toLowerCase())?.muestra;
+const muestra = (nombre: string) => {
+  const partes = nombre.split(/\s+y\s+/i).map(unColor);
+  if (partes.some((m) => !m || m.includes('gradient'))) return undefined;
+  return partes.length === 1
+    ? partes[0]
+    : `linear-gradient(135deg, ${partes[0]} 0 50%, ${partes[1]} 50% 100%)`;
+};
 /** La opción de color se enseña con muestras, sin texto, si todos sus colores existen. */
 const esColor = (o: { nombre: string; valores: string[] }) =>
   o.nombre.trim().toLowerCase() === 'color' && o.valores.every((v) => muestra(v));
