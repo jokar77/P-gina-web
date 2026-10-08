@@ -192,6 +192,17 @@ content:
         label: Medidas
         type: string
         description: 'Opcional, escrito como quieras. Ej.: 11 × 8 cm'
+      - name: opciones
+        label: Opciones a elegir
+        type: object
+        list: true
+        description: >-
+          Opcional. Lo que se elige antes de pedir, por ejemplo «Color» con «Rosa» y
+          «Rojo». Cada opción sale como una fila de botones en la ficha, y lo elegido va
+          escrito en el pedido de WhatsApp.
+        fields:
+          - { name: nombre, label: 'Nombre (ej.: Color)', type: string, required: true }
+          - { name: valores, label: Valores, type: string, list: true, required: true }
       - name: orden
         label: Orden
         type: number

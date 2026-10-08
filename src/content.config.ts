@@ -187,6 +187,11 @@ const accesorios = defineCollection({
       fotos: z.array(image()).default([]),
       orden: z.number().default(0),
       fecha: z.coerce.date().optional(),
+      /** Lo que se elige en la ficha antes de pedir (color, formato…). Cada opción
+       *  sale como una fila de botones y lo elegido va escrito en el pedido. */
+      opciones: z
+        .array(z.object({ nombre: z.string(), valores: z.array(z.string()).min(1) }))
+        .default([]),
     }),
 });
 
