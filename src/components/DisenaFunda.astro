@@ -3,7 +3,8 @@
  * «Diseña tu funda» para la funda de móvil: como «Diseña tu bolso», porque también es
  * de trapillo. Se elige el color de la funda (uno o dos hilos juntos), el del asa
  * trenzada —que es también el del borde de arriba, como en la funda rosa con granate—,
- * el botón, y se apunta el modelo de móvil para que la medida sea la buena.
+ * el botón, y se apunta el modelo de móvil o sus medidas (obligatorio: sin eso no se
+ * puede tejer a medida).
  *
  * El dibujo usa las mismas piezas que la maqueta del bolso (src/lib/maqueta.ts): el
  * punto grueso vuelta a vuelta, la cadeneta del borde y la trenza del asa. Se dibuja una
@@ -15,7 +16,7 @@
 import { COLORES } from '../data/colores';
 import { precio } from '../lib/formato';
 import { DOS_COLORES } from '../lib/disena';
-import { cadeneta, tejido, trenza, type Caja, type Punto } from '../lib/maqueta';
+import { cadeneta, muestrearCubica, tejido, type Caja, type Punto } from '../lib/maqueta';
 
 interface Props {
   precio: number;
@@ -40,14 +41,18 @@ const punto = tejido(c, 8, 4);
 const linea = (a: Punto, b: Punto, n = 24): Punto[] =>
   Array.from({ length: n + 1 }, (_, i) => [a[0] + ((b[0] - a[0]) * i) / n, a[1] + ((b[1] - a[1]) * i) / n]);
 const borde = cadeneta(linea([80, 124], [160, 124]), 7.5);
-// El asa sale de las dos esquinas de arriba y hace un lazo largo por encima.
-const asa = trenza(
-  [
-    [82, 126],
-    [6, -64],
-    [234, -64],
-    [158, 126],
-  ],
+// El asa es larga, de colgar cruzada, y está tendida hacia un lado como en la foto:
+// sale de la esquina derecha, pasa por encima, baja por la izquierda hasta abajo del
+// todo, da la vuelta y sube a la esquina izquierda.
+const tramos: Punto[][] = [
+  [[158, 126], [160, 96], [110, 82], [70, 87]],
+  [[70, 87], [22, 92], [6, 170], [12, 240]],
+  [[12, 240], [16, 292], [42, 314], [55, 290]],
+  [[55, 290], [65, 262], [50, 200], [64, 160]],
+  [[64, 160], [72, 140], [78, 132], [82, 126]],
+];
+const asa = cadeneta(
+  tramos.flatMap((t, i) => muestrearCubica(t, 30).slice(i ? 1 : 0)),
   7,
 );
 // La lengüeta que baja desde el borde y sujeta el botón.
@@ -160,16 +165,23 @@ const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
             </div>
           </fieldset>
           <label class="block min-w-[16rem] flex-1">
-            <span class="font-display text-2xl">Tu móvil</span>
-            <span class="mt-1 block text-[15px] text-paper/60">El modelo, para hacerla a su medida.</span>
+            <span class="font-display text-2xl">Tu móvil o sus medidas</span>
+            <span class="mt-1 block text-[15px] text-paper/60">
+              Hace falta para tejerla a su medida: el modelo o lo que mide.
+            </span>
             <input
               type="text"
               name="movil"
               maxlength="60"
-              placeholder="Ej.: iPhone 13, Samsung A54…"
+              required
+              placeholder="Ej.: iPhone 13, o 15 × 7,5 cm"
               class="campo mt-4 w-full"
               autocomplete="off"
+              data-movil
             />
+            <span class="aviso-movil mt-2 block text-[14px]" data-aviso-movil hidden>
+              Escribe tu móvil o sus medidas para poder añadirla.
+            </span>
           </label>
         </div>
       </div>
@@ -178,7 +190,7 @@ const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
         <div class="panel-dibujo">
           <svg
             class="dibujo"
-            viewBox="0 -40 240 340"
+            viewBox="-32 70 240 254"
             role="img"
             aria-label="Dibujo de cómo quedaría la funda"
             data-dibujo
@@ -404,6 +416,12 @@ const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
     font-size: 16px;
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
   }
+  .campo[aria-invalid='true'] {
+    box-shadow: inset 0 0 0 2px #f2a08f;
+  }
+  .aviso-movil {
+    color: #f2a08f;
+  }
   .campo::placeholder {
     color: color-mix(in srgb, var(--color-paper) 45%, transparent);
   }
@@ -498,6 +516,8 @@ const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
     const detalles = form.querySelector<HTMLElement>('[data-resumen-detalles]')!;
     const total = form.querySelector<HTMLElement>('[data-total]')!;
     const boton = form.querySelector<HTMLButtonElement>('[data-anadir-funda]')!;
+    const campoMovil = form.querySelector<HTMLInputElement>('[data-movil]')!;
+    const avisoMovil = form.querySelector<HTMLElement>('[data-aviso-movil]')!;
     const segundos = [...form.querySelectorAll<HTMLInputElement>('input[name="funda2"]')];
     const BOTONES: Record<string, { nombre: string; color: string }> = {
       dorado: { nombre: 'Dorado', color: '#C9A54A' },
@@ -552,14 +572,29 @@ const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
       boton.textContent = ETIQUETA;
     };
 
+    campoMovil.addEventListener('input', () => {
+      if (campoMovil.value.trim()) {
+        avisoMovil.hidden = true;
+        campoMovil.removeAttribute('aria-invalid');
+      }
+    });
+
     boton.addEventListener('click', () => {
       const e = estado();
+      // Sin el móvil o sus medidas no se puede tejer: se pide antes de añadirla.
+      if (!e.movil) {
+        avisoMovil.hidden = false;
+        campoMovil.setAttribute('aria-invalid', 'true');
+        campoMovil.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        campoMovil.focus({ preventScroll: true });
+        return;
+      }
       const nombre = 'Funda para móvil a medida';
       const detalle = [
         `En ${e.color.toLowerCase()}`,
         `asa en ${e.asa.nombre.toLowerCase()}`,
         `botón ${e.botonElegido.nombre.toLowerCase()}`,
-        e.movil ? `para ${e.movil}` : 'móvil: lo digo por WhatsApp',
+        `para ${e.movil}`,
       ].join(' · ');
       if (!confirmando && leer().some((l) => l.nombre === nombre && l.detalle === detalle && l.precio === e.coste)) {
         boton.textContent = '¿Seguro? Pulsa otra vez para añadirla igual';
