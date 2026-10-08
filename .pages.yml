@@ -217,10 +217,11 @@ content:
       - name: tresPorDos
         label: Oferta 3x2
         type: boolean
+        default: true
         description: >-
-          Actívalo y esta pieza va en 3x2: de cada tres que se pidan (aunque sean de
-          distinto color o formato), una sale gratis. Se ve una etiqueta «3x2» y el pedido
-          ya lo descuenta solo.
+          Actívalo y esta pieza entra en el 3x2 de accesorios: de cada tres que se pidan
+          (mezclando las piezas que lo tengan activado, colores y formatos), la más barata
+          sale gratis. Se ve una etiqueta «3x2» y el pedido ya lo descuenta solo.
       - name: orden
         label: Orden
         type: number

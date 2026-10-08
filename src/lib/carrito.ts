@@ -30,8 +30,9 @@ export interface Linea {
    */
   consultar?: boolean;
   /**
-   * Pieza en 3x2: las líneas con el mismo valor (el slug de la pieza) cuentan juntas,
-   * aunque sean de distinto color o formato, y de cada tres la más barata sale gratis.
+   * Pieza en 3x2: las líneas con el mismo valor (hoy, «accesorios») cuentan juntas,
+   * aunque sean piezas, colores o formatos distintos, y de cada tres la más barata sale
+   * gratis.
    */
   tresPorDos?: string;
 }
@@ -78,11 +79,11 @@ export const contiene = (id: string) => memoria.some((l) => l.id === id);
 
 export const total = () => memoria.reduce((suma, l) => suma + l.precio, 0);
 
-/** Cuántas líneas del pedido hay ya de una pieza en 3x2. */
+/** Cuántas líneas del pedido entran ya en un mismo 3x2. */
 export const cuantasTresPorDos = (grupo: string) =>
   memoria.filter((l) => l.tresPorDos === grupo).length;
 
-/** Lo que se ahorra con el 3x2: de cada tres de la misma pieza, la más barata. */
+/** Lo que se ahorra con el 3x2: de cada tres del mismo grupo, las más baratas. */
 export const descuento = () => {
   const grupos = new Map<string, number[]>();
   for (const l of memoria) {

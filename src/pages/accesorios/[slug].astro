@@ -72,7 +72,8 @@ const linea = {
   detalle: [d.material, d.medidas].filter(Boolean).join(' · '),
   url: `/accesorios/${accesorio.id}`,
   ...(d.estado === 'encargo' ? { orientativo: true } : {}),
-  ...(d.tresPorDos ? { tresPorDos: accesorio.id } : {}),
+  // Un solo 3x2 para todos los accesorios: se pueden mezclar piezas distintas.
+  ...(d.tresPorDos ? { tresPorDos: 'accesorios' } : {}),
 };
 const tresPorDos = d.tresPorDos && !vendido;
 
@@ -123,8 +124,9 @@ const jsonLd = [
           </p>
           {
             tresPorDos && (
-              <p class="mt-2 max-w-[46ch] text-[15px]" data-tres-por-dos={accesorio.id}>
-                Llévate 3 y paga solo 2. Puedes mezclar colores y formatos.
+              <p class="mt-2 max-w-[46ch] text-[15px]" data-tres-por-dos="accesorios">
+                3x2 en accesorios: llévate 3 y paga 2, el más barato sale gratis. Puedes
+                mezclar los que quieras.
               </p>
             )
           }
@@ -345,7 +347,7 @@ const jsonLd = [
   const oferta = document.querySelector<HTMLElement>('[data-tres-por-dos]');
   if (oferta) {
     const grupo = oferta.dataset.tresPorDos!;
-    const inicial = oferta.textContent!.trim();
+    const inicial = oferta.textContent!.trim().replace(/\s+/g, ' ');
     suscribir(() => {
       const n = cuantasTresPorDos(grupo);
       const gratis = Math.floor(n / 3);
@@ -353,10 +355,10 @@ const jsonLd = [
         n === 0
           ? inicial
           : n % 3 === 1
-            ? `Llevas ${n} en el pedido: añade 2 más y uno te sale gratis.`
+            ? `3x2: llevas ${n} ${n === 1 ? 'accesorio' : 'accesorios'} en el pedido. Añade 2 más y el más barato te sale gratis.`
             : n % 3 === 2
-              ? `Llevas ${n} en el pedido: el siguiente te sale gratis.`
-              : `Llevas ${n} en el pedido: ${gratis === 1 ? 'uno te sale gratis' : `${gratis} te salen gratis`}. Elige otro color o formato si quieres más.`;
+              ? `3x2: llevas ${n} accesorios en el pedido. Con uno más, el más barato te sale gratis.`
+              : `3x2: llevas ${n} accesorios en el pedido. ${gratis === 1 ? 'El más barato te sale gratis' : `Los ${gratis} más baratos te salen gratis`}.`;
     });
   }
 </script>
