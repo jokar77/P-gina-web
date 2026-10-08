@@ -2,8 +2,8 @@
 /**
  * «Diseña el tuyo» para el marcapáginas o llavero de flores: como «Diseña tu bolso»,
  * pero en pequeño. Se elige qué lleva en los extremos (dos flores, o flor y lazo), el
- * color de las flores, el del cordón —el tallo— y si va con arandela de llavero, y el
- * dibujo de al lado cambia con cada elección.
+ * color de las flores, el del cordón —el tallo—, si lleva flecos y si va con arandela
+ * de llavero, y el dibujo de al lado cambia con cada elección.
  *
  * Vive en la propia ficha de la pieza (se activa con «Diseña el tuyo» en Pages CMS), no
  * en una página aparte: quien no encuentra su color entre los ya tejidos lo tiene justo
@@ -34,6 +34,15 @@ const paleta = [
 const POR_DEFECTO = { flor: 'rosa', flor2: 'crudo', tallo: 'verde' };
 const muestra = (id: string) => paleta.find((c) => c.id === id)!.muestra;
 
+// Los flecos, como en el rosa con verde: hebras sueltas y algo onduladas que cuelgan de
+// cada flor, unas del color de la flor y otras del tallo.
+const hebras = [
+  { clase: 'hebra-flor', d: 'M-6 10C-10 26-2 36-7 50S-4 70-9 84' },
+  { clase: 'hebra-tallo', d: 'M-2 10C-5 30 2 40-1 56S3 74-2 90' },
+  { clase: 'hebra-flor', d: 'M3 10C6 28-1 40 4 54S1 72 6 86' },
+  { clase: 'hebra-tallo', d: 'M7 10C11 24 4 36 9 48S6 66 11 78' },
+];
+
 const petalos = [0, 1, 2, 3, 4].map((k) => {
   const a = ((k * 72 - 90) * Math.PI) / 180;
   return { x: Math.cos(a) * 12.5, y: Math.sin(a) * 12.5 };
@@ -56,7 +65,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       data-slug={slug}
     >
       <div class="grid content-start gap-10">
-        {/* Lo primero, juntos: qué lleva en los extremos y para qué es. */}
+        {/* Lo primero, juntos: qué lleva en los extremos, para qué es y si lleva flecos. */}
         <div class="flex flex-wrap gap-x-14 gap-y-10">
           <fieldset>
             <legend class="font-display text-2xl">En los extremos</legend>
@@ -81,6 +90,19 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
               <label class="modo">
                 <input type="radio" name="formato" value="llavero" class="sr-only" />
                 <span>Llavero (con arandela)</span>
+              </label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend class="font-display text-2xl">Flecos</legend>
+            <div class="modos mt-5">
+              <label class="modo">
+                <input type="radio" name="flecos" value="no" checked class="sr-only" />
+                <span>Sin flecos</span>
+              </label>
+              <label class="modo">
+                <input type="radio" name="flecos" value="si" class="sr-only" />
+                <span>Con flecos</span>
               </label>
             </div>
           </fieldset>
@@ -159,6 +181,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
             data-dibujo
             data-remate="flores"
             data-formato="marcapaginas"
+            data-flecos="no"
             style={`--flor:${muestra(POR_DEFECTO.flor)};--flor2:${muestra(POR_DEFECTO.flor)};--tallo:${muestra(POR_DEFECTO.tallo)}`}
           >
             <circle class="arandela" cx="120" cy="25" r="14" />
@@ -167,10 +190,16 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
             <circle class="nudo" cx="120" cy="41" r="5.5" />
 
             <g class="flor" transform="translate(78 168)">
+              <g class="flecos" aria-hidden="true">
+                {hebras.map((h) => <path class={h.clase} d={h.d} />)}
+              </g>
               {petalos.map((p) => <circle cx={p.x} cy={p.y} r="12" />)}
               <path class="centro" d="M-5 -5 L5 5 M5 -5 L-5 5" />
             </g>
             <g class="flor flor-dos" transform="translate(162 168)">
+              <g class="flecos" aria-hidden="true">
+                {hebras.map((h) => <path class={h.clase} d={h.d} />)}
+              </g>
               {petalos.map((p) => <circle cx={p.x} cy={p.y} r="12" />)}
               <path class="centro" d="M-5 -5 L5 5 M5 -5 L-5 5" />
             </g>
@@ -276,6 +305,22 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
     stroke: color-mix(in srgb, var(--flor2) 68%, black);
     stroke-width: 1.2;
   }
+  .flecos path {
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    transition: stroke 260ms var(--ease-salida);
+  }
+  .flecos .hebra-flor {
+    stroke: color-mix(in srgb, var(--flor) 88%, black);
+  }
+  .flor-dos .flecos .hebra-flor {
+    stroke: color-mix(in srgb, var(--flor2) 88%, black);
+  }
+  .flecos .hebra-tallo {
+    stroke: var(--tallo);
+  }
+  .dibujo[data-flecos='no'] .flecos,
   .dibujo[data-remate='flores'] .lazo,
   .dibujo[data-remate='lazo'] .flor-dos,
   .dibujo[data-formato='marcapaginas'] .arandela {
@@ -406,6 +451,7 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       const flor2 = dos ? PALETA[d.get('flor2') as string]! : flor;
       const tallo = PALETA[d.get('tallo') as string]!;
       const llavero = d.get('formato') === 'llavero';
+      const flecos = d.get('flecos') === 'si';
       // «En rosa», «en amarillo»: así el color no tiene que concordar con flor o lazo.
       const n = (c: { nombre: string }) => c.nombre.toLowerCase();
       const extremos = lazo
@@ -415,7 +461,18 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
           : `Dos flores en ${n(flor)}`;
       // Dos colores lleva otro ovillo y cambiar de hilo: suma el suplemento.
       const coste = Math.round((euros + (dos ? DOS_COLORES : 0)) * 100) / 100;
-      return { lazo, dos, flor, flor2, tallo, llavero, extremos, cordon: `Tallo en ${n(tallo)}`, coste };
+      return {
+        lazo,
+        dos,
+        flor,
+        flor2,
+        tallo,
+        llavero,
+        extremos: flecos ? `${extremos}, con flecos` : extremos,
+        cordon: `Tallo en ${n(tallo)}`,
+        coste,
+        flecos,
+      };
     };
 
     const pintar = () => {
@@ -425,6 +482,9 @@ const petalos = [0, 1, 2, 3, 4].map((k) => {
       rotuloSegundo.textContent = e.lazo ? 'El lazo' : 'La otra flor';
       dibujo.dataset.remate = e.lazo ? 'lazo' : 'flores';
       dibujo.dataset.formato = e.llavero ? 'llavero' : 'marcapaginas';
+      dibujo.dataset.flecos = e.flecos ? 'si' : 'no';
+      // Con flecos el dibujo crece hacia abajo para que quepan las hebras.
+      dibujo.setAttribute('viewBox', e.flecos ? '0 0 240 268' : '0 0 240 220');
       dibujo.style.setProperty('--flor', e.flor.muestra);
       dibujo.style.setProperty('--flor2', e.flor2.muestra);
       dibujo.style.setProperty('--tallo', e.tallo.muestra);
