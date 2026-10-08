@@ -11,3 +11,16 @@ export const porOrdenConVendidosAlFinal = (l: CollectionEntry<'accesorios'>[]) =
       Number(a.data.estado === 'vendido') - Number(b.data.estado === 'vendido') ||
       a.data.orden - b.data.orden,
   );
+
+/** La línea del pedido de un accesorio tal cual (sin opciones elegidas todavía). */
+export const lineaAccesorio = (a: CollectionEntry<'accesorios'>) => ({
+  // Con prefijo: el nombre de un accesorio podría coincidir con el de un bolso.
+  id: `accesorio-${a.id}`,
+  nombre: a.data.nombre,
+  precio: a.data.precio,
+  detalle: [a.data.material, a.data.medidas].filter(Boolean).join(' · '),
+  url: `/accesorios/${a.id}`,
+  ...(a.data.estado === 'encargo' ? { orientativo: true } : {}),
+  // Un solo 3x2 para todos los accesorios: se pueden mezclar piezas distintas.
+  ...(a.data.tresPorDos ? { tresPorDos: 'accesorios' } : {}),
+});

@@ -79,6 +79,10 @@ export const contiene = (id: string) => memoria.some((l) => l.id === id);
 
 export const total = () => memoria.reduce((suma, l) => suma + l.precio, 0);
 
+/** ¿Hay ya algún accesorio en el pedido? (de la tienda o diseñado a medida) */
+export const llevaAccesorios = () =>
+  memoria.some((l) => l.id.startsWith('accesorio-') || l.tresPorDos === 'accesorios');
+
 /** Cuántas líneas del pedido entran ya en un mismo 3x2. */
 export const cuantasTresPorDos = (grupo: string) =>
   memoria.filter((l) => l.tresPorDos === grupo).length;

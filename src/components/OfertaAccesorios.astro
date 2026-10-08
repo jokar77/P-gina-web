@@ -1,0 +1,269 @@
+---
+/**
+ * «¿Quieres añadir esto a tu pedido?»: antes de pagar, si en el pedido todavía no hay
+ * ningún accesorio, se enseñan los que hay a la venta con el 3x2, para añadir alguno
+ * de paso.
+ *
+ * Sale al pulsar cualquier botón con `data-ofrecer-accesorios` («Comprar» en el
+ * carrito, «Enviar por WhatsApp» en /pedido), una sola vez por visita: quien dice que
+ * no, no lo vuelve a ver hasta otro día. Al seguir, el botón que se había pulsado hace
+ * lo suyo de siempre.
+ *
+ * Las piezas sin nada que elegir se añaden aquí mismo; las que tienen colores o
+ * formato llevan a su ficha, que es donde se eligen.
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { precio } from '../lib/formato';
+import { lineaAccesorio, porOrdenConVendidosAlFinal } from '../lib/accesorios';
+
+const accesorios = porOrdenConVendidosAlFinal(await getCollection('accesorios')).filter(
+  (a) => a.data.estado !== 'vendido',
+);
+const hayOferta = accesorios.some((a) => a.data.tresPorDos);
+---
+
+{
+  accesorios.length > 0 && (
+    <dialog data-oferta-accesorios class="oferta m-auto w-[min(34rem,calc(100%-1.5rem))] p-0" aria-labelledby="oferta-titulo">
+      <div class="px-5 pt-6 pb-5 sm:px-7">
+        <div class="flex items-start gap-4">
+          <div class="flex-1">
+            <h2 id="oferta-titulo" class="font-display text-[1.75rem] leading-tight">
+              ¿Quieres añadir esto a tu pedido?
+            </h2>
+            {hayOferta && (
+              <p class="mt-2 flex items-center gap-2.5 text-[15px] text-ink-soft">
+                <span class="etiqueta-oferta">3x2</span>
+                En accesorios. Puedes mezclar los que quieras.
+              </p>
+            )}
+          </div>
+          <button type="button" class="-mt-1 -mr-2 px-2 py-2 text-[15px] underline" data-oferta-cerrar>
+            Cerrar
+          </button>
+        </div>
+
+        <ul class="fila mt-5">
+          {accesorios.map((a) => {
+            const elegir = a.data.opciones.length > 0 || a.data.disena;
+            return (
+              <li class="pieza">
+                <a href={`/accesorios/${a.id}`} class="block no-underline" tabindex="-1">
+                  <div class="relative overflow-hidden rounded-[var(--radio-foto)] bg-paper">
+                    <Image
+                      src={a.data.foto}
+                      alt={a.data.nombre}
+                      widths={[200, 320]}
+                      sizes="10rem"
+                      class="aspect-[3/4] w-full object-cover"
+                      loading="lazy"
+                    />
+                    {a.data.tresPorDos && <span class="etiqueta-oferta absolute top-2 left-2">3x2</span>}
+                  </div>
+                </a>
+                <p class="mt-2 font-display text-[17px] leading-tight">{a.data.nombre}</p>
+                <p class="mt-0.5 text-[14px] text-ink-soft">
+                  {a.data.estado === 'encargo' ? `Desde ${precio(a.data.precio)}` : precio(a.data.precio)}
+                </p>
+                {elegir ? (
+                  <a href={`/accesorios/${a.id}`} class="accion mt-2">
+                    Elegir color
+                  </a>
+                ) : (
+                  <button type="button" class="accion mt-2" data-oferta-anadir={JSON.stringify(lineaAccesorio(a))}>
+                    Añadir
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Pegado abajo: con muchas piezas la ventana se desplaza, y seguir siempre se ve. */}
+        <div class="pie">
+          <button type="button" class="boton w-full" data-oferta-seguir>
+            No, gracias. Seguir con el pedido
+          </button>
+        </div>
+      </div>
+    </dialog>
+  )
+}
+
+<style>
+  .oferta {
+    max-height: min(46rem, calc(100dvh - 1.5rem));
+    border: 0;
+    border-radius: 14px;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.45);
+  }
+  .oferta[open] {
+    animation: aparecer 260ms var(--ease-salida);
+  }
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+    }
+  }
+
+  .pie {
+    position: sticky;
+    bottom: 0;
+    margin: 0 -1.25rem -1.25rem;
+    padding: 1rem 1.25rem 1.25rem;
+    background: linear-gradient(to top, var(--color-paper) 80%, transparent);
+  }
+  @media (min-width: 640px) {
+    .pie {
+      margin-inline: -1.75rem;
+      padding-inline: 1.75rem;
+    }
+  }
+  .fila {
+    display: grid;
+    grid-auto-flow: column;
+    /* Estrechas: que asome la tercera y se vea que hay más pasando con el dedo. */
+    grid-auto-columns: 8.25rem;
+    gap: 1rem;
+    margin-inline: -1.25rem;
+    padding: 0 1.25rem 0.25rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1.25rem;
+    scrollbar-width: none;
+    list-style: none;
+  }
+  .fila::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .fila {
+      margin-inline: -1.75rem;
+      padding-inline: 1.75rem;
+      scroll-padding-inline: 1.75rem;
+    }
+  }
+  .pieza {
+    scroll-snap-align: start;
+  }
+  /* Con ratón no se pasa de lado cómodamente: en filas de tres. */
+  @media (hover: hover) and (pointer: fine) {
+    .fila {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(3, 1fr);
+      row-gap: 1.5rem;
+      margin-inline: 0;
+      padding: 0;
+      overflow: visible;
+    }
+  }
+
+  .accion {
+    display: inline-block;
+    padding: 0.4rem 0.95rem;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1.5px var(--color-ink);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background-color 200ms var(--ease-salida),
+      color 200ms var(--ease-salida);
+  }
+  .accion:hover {
+    background-color: color-mix(in srgb, var(--color-line) 40%, transparent);
+  }
+  .accion[data-anadido] {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+</style>
+
+<script>
+  import { anadir, contiene, leer, llevaAccesorios, quitar } from '../lib/carrito';
+
+  const ventana = document.querySelector<HTMLDialogElement>('[data-oferta-accesorios]');
+  const VISTA = 'oferta-accesorios-vista';
+
+  if (ventana) {
+    const seguir = ventana.querySelector<HTMLButtonElement>('[data-oferta-seguir]')!;
+    const botones = [...ventana.querySelectorAll<HTMLButtonElement>('[data-oferta-anadir]')];
+    let pulsado: HTMLElement | null = null;
+    let dejarPasar = false;
+
+    const vista = () => {
+      try {
+        return sessionStorage.getItem(VISTA) === '1';
+      } catch {
+        return false;
+      }
+    };
+    const marcarVista = () => {
+      try {
+        sessionStorage.setItem(VISTA, '1');
+      } catch {}
+    };
+
+    const pintar = () => {
+      let alguno = false;
+      for (const b of botones) {
+        const { id } = JSON.parse(b.dataset.ofertaAnadir!);
+        const esta = contiene(id);
+        alguno ||= esta;
+        b.toggleAttribute('data-anadido', esta);
+        b.textContent = esta ? 'Añadido ✓' : 'Añadir';
+      }
+      seguir.textContent = alguno ? 'Seguir con el pedido' : 'No, gracias. Seguir con el pedido';
+    };
+
+    // Antes que nadie (fase de captura): si toca ofrecer, el clic se queda aquí.
+    document.addEventListener(
+      'click',
+      (e) => {
+        const boton = (e.target as Element | null)?.closest<HTMLElement>('[data-ofrecer-accesorios]');
+        if (!boton || dejarPasar) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (vista() || leer().length === 0 || llevaAccesorios()) return;
+        e.preventDefault();
+        e.stopPropagation();
+        marcarVista();
+        pulsado = boton;
+        pintar();
+        ventana.showModal();
+      },
+      { capture: true },
+    );
+
+    for (const b of botones) {
+      b.addEventListener('click', () => {
+        const linea = JSON.parse(b.dataset.ofertaAnadir!);
+        if (contiene(linea.id)) quitar(linea.id);
+        else anadir(linea);
+        pintar();
+      });
+    }
+
+    // Seguir: el botón que se había pulsado hace ahora lo suyo (ir a /pedido, abrir
+    // WhatsApp con el pedido ya puesto al día).
+    seguir.addEventListener('click', () => {
+      ventana.close();
+      if (!pulsado) return;
+      dejarPasar = true;
+      pulsado.click();
+      dejarPasar = false;
+      pulsado = null;
+    });
+
+    ventana.querySelector('[data-oferta-cerrar]')?.addEventListener('click', () => ventana.close());
+    // Pulsar fuera de la ventana la cierra, como la del QR.
+    ventana.addEventListener('click', (e) => {
+      const r = ventana.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) ventana.close();
+    });
+  }
+</script>

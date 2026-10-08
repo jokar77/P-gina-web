@@ -13,7 +13,7 @@ import site from '../../data/site.json';
 import { COLORES } from '../../data/colores';
 import { precio } from '../../lib/formato';
 import { migasDePan, producto } from '../../lib/seo';
-import { porOrdenConVendidosAlFinal } from '../../lib/accesorios';
+import { lineaAccesorio, porOrdenConVendidosAlFinal } from '../../lib/accesorios';
 import { enlaceWhatsapp } from '../../lib/whatsapp';
 
 export async function getStaticPaths() {
@@ -65,17 +65,7 @@ const seccion = site.secciones.accesorios;
 
 const og = await getImage({ src: d.foto, width: 1200, format: 'jpeg' });
 
-const linea = {
-  // Con prefijo: el nombre de un accesorio podría coincidir con el de un bolso.
-  id: `accesorio-${accesorio.id}`,
-  nombre: d.nombre,
-  precio: d.precio,
-  detalle: [d.material, d.medidas].filter(Boolean).join(' · '),
-  url: `/accesorios/${accesorio.id}`,
-  ...(d.estado === 'encargo' ? { orientativo: true } : {}),
-  // Un solo 3x2 para todos los accesorios: se pueden mezclar piezas distintas.
-  ...(d.tresPorDos ? { tresPorDos: 'accesorios' } : {}),
-};
+const linea = lineaAccesorio(accesorio);
 const tresPorDos = d.tresPorDos && !vendido;
 
 const descripcion = `${d.nombre}: ${d.material.toLowerCase()}.${d.medidas ? ` ${d.medidas}.` : ''} Accesorio hecho a mano.`;
