@@ -41,8 +41,12 @@ const grupos = [
  * La muestra de un color por su nombre («Rosa» → la de la paleta), si existe. Dos
  * colores con «y» («Rosa y crudo») salen como un círculo partido por la mitad.
  */
+/** Colores de cordones y remates que no están en la paleta de los bolsos. */
+const DE_ACCESORIOS = [{ nombre: 'Marrón', muestra: '#8A6A4F' }];
 const unColor = (nombre: string) =>
-  Object.values(COLORES).find((c) => c.nombre.toLowerCase() === nombre.trim().toLowerCase())?.muestra;
+  [...Object.values(COLORES), ...DE_ACCESORIOS].find(
+    (c) => c.nombre.toLowerCase() === nombre.trim().toLowerCase(),
+  )?.muestra;
 const muestra = (nombre: string) => {
   const partes = nombre.split(/\s+y\s+/i).map(unColor);
   if (partes.some((m) => !m || m.includes('gradient'))) return undefined;

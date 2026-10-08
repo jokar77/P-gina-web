@@ -7,7 +7,7 @@
  *
  * Mientras no haya ningún accesorio, la franja no sale.
  *
- * En el móvil se pasa con el dedo. Con ratón, además, hay dos flechas: una fila que
+ * Se pasa arrastrando, con el dedo o con el ratón. Con ratón, además, hay dos flechas: una fila que
  * solo se mueve con la rueda en horizontal (que casi nadie tiene) es una fila que no
  * se mueve.
  *
@@ -103,6 +103,15 @@ const etiqueta = (estado: string, euros: number) =>
     scrollbar-width: none;
     list-style: none;
   }
+  @media (hover: hover) and (pointer: fine) {
+    .fila {
+      cursor: grab;
+    }
+  }
+  .fila.arrastrando {
+    cursor: grabbing;
+    user-select: none;
+  }
   .fila::-webkit-scrollbar {
     display: none;
   }
@@ -187,6 +196,38 @@ const etiqueta = (estado: string, euros: number) =>
     actualizar();
 
     /*
+     * Con el dedo la fila ya se arrastra sola (es un scroll de verdad). Con ratón se
+     * arrastra a mano: se mueve con el puntero y, si de verdad se ha arrastrado, el
+     * clic de al soltar no abre la pieza.
+     */
+    let arrastre: { x: number; left: number; movido: boolean } | null = null;
+    fila.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      arrastre = { x: e.clientX, left: fila.scrollLeft, movido: false };
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!arrastre) return;
+      const dx = e.clientX - arrastre.x;
+      if (Math.abs(dx) > 5) arrastre.movido = true;
+      if (arrastre.movido) {
+        fila.scrollLeft = arrastre.left - dx;
+        fila.classList.add('arrastrando');
+      }
+    });
+    window.addEventListener('pointerup', () => {
+      if (arrastre?.movido) {
+        fila.addEventListener('click', (e) => (e.preventDefault(), e.stopPropagation()), {
+          capture: true,
+          once: true,
+        });
+      }
+      arrastre = null;
+      fila.classList.remove('arrastrando');
+    });
+    // Que el navegador no arrastre la foto o el enlace como si fuera un archivo.
+    fila.addEventListener('dragstart', (e) => e.preventDefault());
+
+    /*
      * Movimiento continuo. Se clonan las piezas detrás de las de verdad (ocultas para
      * lectores de pantalla y teclado) y, cuando la fila ha corrido el ancho de una
      * vuelta, se resta ese ancho: así parece una cinta sin fin, sin volver atrás.
@@ -232,13 +273,19 @@ const etiqueta = (estado: string, euros: number) =>
       // Tras moverla a mano, espera un poco antes de seguir sola.
       const esperar = () => (quietaHasta = Date.now() + 2500);
       fila.addEventListener('pointerdown', () => ((tocando = true), esperar()));
-      window.addEventListener('pointerup', () => ((tocando = false), esperar()));
+      // Si el navegador se queda el gesto para hacer scroll, avisa con pointercancel.
+      const soltar = () => ((tocando = false), esperar());
+      window.addEventListener('pointerup', soltar);
+      window.addEventListener('pointercancel', soltar);
+      // Un scroll que no viene de la cinta (el impulso tras soltar el dedo) también espera.
+      fila.addEventListener('scroll', () => Math.abs(fila.scrollLeft - pos) > 2 && esperar(), {
+        passive: true,
+      });
       fila.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && (encima = true));
       fila.addEventListener('pointerleave', () => (encima = false));
       fila.addEventListener('focusin', () => (encima = true));
       fila.addEventListener('focusout', () => (encima = false));
       fila.addEventListener('wheel', esperar, { passive: true });
-      fila.addEventListener('touchmove', esperar, { passive: true });
       for (const f of flechas) f.addEventListener('click', esperar);
       new IntersectionObserver(([e]) => (enPantalla = !!e?.isIntersecting), { threshold: 0.3 }).observe(
         fila,

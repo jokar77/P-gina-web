@@ -21,12 +21,17 @@ fotosColor:
     fotos:
       - ../../assets/piezas/accesorios/marcapaginas-llavero/07.jpg
       - ../../assets/piezas/accesorios/marcapaginas-llavero/08.jpg
+  - color: Rojo y marrón
+    fotos:
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/09.jpg
+      - ../../assets/piezas/accesorios/marcapaginas-llavero/10.jpg
 opciones:
   - nombre: Color
     valores:
       - Rosa
       - Rojo
       - Rosa y crudo
+      - Rojo y marrón
   - nombre: Formato
     valores:
       - Marcapáginas
