@@ -1,0 +1,581 @@
+---
+/**
+ * «Diseña tu funda» para la funda de móvil: como «Diseña tu bolso», porque también es
+ * de trapillo. Se elige el color de la funda (uno o dos hilos juntos), el del asa
+ * trenzada —que es también el del borde de arriba, como en la funda rosa con granate—,
+ * el botón, y se apunta el modelo de móvil para que la medida sea la buena.
+ *
+ * El dibujo usa las mismas piezas que la maqueta del bolso (src/lib/maqueta.ts): el
+ * punto grueso vuelta a vuelta, la cadeneta del borde y la trenza del asa. Se dibuja una
+ * vez en el servidor; al elegir solo cambian los colores (variables CSS).
+ *
+ * Se activa por pieza con «Diseña tu funda» en Pages CMS. Entra en el 3x2 y, como en el
+ * llavero, cada una lleva su id: se pueden pedir dos iguales.
+ */
+import { COLORES } from '../data/colores';
+import { precio } from '../lib/formato';
+import { DOS_COLORES } from '../lib/disena';
+import { cadeneta, tejido, trenza, type Caja, type Punto } from '../lib/maqueta';
+
+interface Props {
+  precio: number;
+  slug: string;
+}
+const { precio: euros, slug } = Astro.props;
+
+const paleta = Object.entries(COLORES)
+  .filter(([id]) => id !== 'bicolor')
+  .map(([id, c]) => ({ id, nombre: c.nombre, muestra: c.muestra }));
+const POR_DEFECTO = { funda: 'rosa', funda2: 'crudo', asa: 'granate' };
+const muestra = (id: string) => paleta.find((c) => c.id === id)!.muestra;
+const BOTONES = [
+  { id: 'dorado', nombre: 'Dorado', color: '#C9A54A' },
+  { id: 'plateado', nombre: 'Plateado', color: '#C3C7CC' },
+];
+
+// --- El dibujo --------------------------------------------------------------------
+const c: Caja = { yT: 122, yB: 286, xLT: 79, xRT: 161, xLB: 78, xRB: 162 };
+const dCuerpo = 'M78 131Q78 122 87 122H153Q162 122 162 131V271Q162 286 147 286H93Q78 286 78 271Z';
+const punto = tejido(c, 8, 4);
+const linea = (a: Punto, b: Punto, n = 24): Punto[] =>
+  Array.from({ length: n + 1 }, (_, i) => [a[0] + ((b[0] - a[0]) * i) / n, a[1] + ((b[1] - a[1]) * i) / n]);
+const borde = cadeneta(linea([80, 124], [160, 124]), 7.5);
+// El asa sale de las dos esquinas de arriba y hace un lazo largo por encima.
+const asa = trenza(
+  [
+    [82, 126],
+    [6, -64],
+    [234, -64],
+    [158, 126],
+  ],
+  7,
+);
+// La lengüeta que baja desde el borde y sujeta el botón.
+const lengueta = cadeneta(linea([120, 118], [120, 150], 10), 9);
+
+const capas = (cad: ReturnType<typeof cadeneta>, grosor: number) => [
+  { clase: 'c-borde', d: cad.linea, ancho: grosor + 2.6 },
+  { clase: 'c-base', d: cad.linea, ancho: grosor },
+  { clase: 'c-hondo', d: cad.linea, ancho: grosor },
+  { clase: 'c-sombra', d: cad.sombra },
+  { clase: 'c-grano', d: cad.lana },
+  { clase: 'c-hebra', d: cad.hebra },
+  { clase: 'c-luz', d: cad.luz },
+];
+---
+
+<section id="disena-funda" class="oscuro scroll-mt-20 px-5 py-section sm:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
+      <h2 class="font-display text-[clamp(2rem,5vw,3.25rem)]">Diseña tu funda</h2>
+      <p class="max-w-[52ch] text-paper/70">
+        Elige el color del trapillo, del asa y el botón, y te la tejo a la medida de tu móvil.
+      </p>
+    </div>
+
+    <form
+      class="mt-12 grid gap-x-12 gap-y-10 lg:grid-cols-[1fr_20rem]"
+      data-disena-funda
+      data-precio={euros}
+      data-slug={slug}
+    >
+      <div class="grid content-start gap-10">
+        <fieldset>
+          <legend class="font-display text-2xl">La funda</legend>
+          <div class="modos mt-5">
+            <label class="modo">
+              <input type="radio" name="modo" value="uno" checked class="sr-only" />
+              <span>Un color</span>
+            </label>
+            <label class="modo">
+              <input type="radio" name="modo" value="dos" class="sr-only" />
+              <span>Dos colores <span class="suplemento">+{precio(DOS_COLORES)}</span></span>
+            </label>
+          </div>
+          <p class="mt-6 text-[15px] text-paper/70" data-rotulo-principal hidden>Color principal</p>
+          <div class="mt-4 flex flex-wrap gap-2.5">
+            {
+              paleta.map((p) => (
+                <label class="opcion-color" title={p.nombre}>
+                  <input type="radio" name="funda" value={p.id} checked={p.id === POR_DEFECTO.funda} class="sr-only" />
+                  <span class="punto" style={`--muestra:${p.muestra}`} aria-hidden="true" />
+                  <span class="sr-only">{p.nombre}</span>
+                </label>
+              ))
+            }
+          </div>
+          <div data-segundo hidden>
+            <p class="mt-6 text-[15px] text-paper/70">Segundo color</p>
+            <div class="mt-3 flex flex-wrap gap-2.5">
+              {
+                paleta.map((p) => (
+                  <label class="opcion-color" title={p.nombre}>
+                    <input
+                      type="radio"
+                      name="funda2"
+                      value={p.id}
+                      checked={p.id === POR_DEFECTO.funda2}
+                      class="sr-only"
+                    />
+                    <span class="punto" style={`--muestra:${p.muestra}`} aria-hidden="true" />
+                    <span class="sr-only">{p.nombre}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <p class="mt-3 max-w-[46ch] text-[14px] text-paper/60">
+              Los dos hilos se tejen juntos, entrelazados en cada punto.
+            </p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="font-display text-2xl">El asa</legend>
+          <p class="mt-1 text-[15px] text-paper/60">Trenzada, y del mismo color va el borde de arriba.</p>
+          <div class="mt-4 flex flex-wrap gap-2.5">
+            {
+              paleta.map((p) => (
+                <label class="opcion-color" title={p.nombre}>
+                  <input type="radio" name="asa" value={p.id} checked={p.id === POR_DEFECTO.asa} class="sr-only" />
+                  <span class="punto" style={`--muestra:${p.muestra}`} aria-hidden="true" />
+                  <span class="sr-only">{p.nombre}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="flex flex-wrap gap-x-14 gap-y-10">
+          <fieldset>
+            <legend class="font-display text-2xl">El botón</legend>
+            <div class="modos mt-5">
+              {
+                BOTONES.map((b, i) => (
+                  <label class="modo">
+                    <input type="radio" name="boton" value={b.id} checked={i === 0} class="sr-only" />
+                    <span>{b.nombre}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+          <label class="block min-w-[16rem] flex-1">
+            <span class="font-display text-2xl">Tu móvil</span>
+            <span class="mt-1 block text-[15px] text-paper/60">El modelo, para hacerla a su medida.</span>
+            <input
+              type="text"
+              name="movil"
+              maxlength="60"
+              placeholder="Ej.: iPhone 13, Samsung A54…"
+              class="campo mt-4 w-full"
+              autocomplete="off"
+            />
+          </label>
+        </div>
+      </div>
+
+      <aside class="panel lg:sticky lg:top-24 lg:self-start">
+        <div class="panel-dibujo">
+          <svg
+            class="dibujo"
+            viewBox="0 -40 240 340"
+            role="img"
+            aria-label="Dibujo de cómo quedaría la funda"
+            data-dibujo
+            style={`--funda:${muestra(POR_DEFECTO.funda)};--funda2:${muestra(POR_DEFECTO.funda)};--asa:${muestra(POR_DEFECTO.asa)};--boton:${BOTONES[0]!.color}`}
+          >
+            <defs>
+              <linearGradient id="funda-bulto" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity=".16"></stop>
+                <stop offset=".4" stop-color="#fff" stop-opacity="0"></stop>
+                <stop offset="1" stop-color="#000" stop-opacity=".26"></stop>
+              </linearGradient>
+              <linearGradient id="funda-lados" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#000" stop-opacity=".26"></stop>
+                <stop offset=".16" stop-color="#000" stop-opacity="0"></stop>
+                <stop offset=".84" stop-color="#000" stop-opacity="0"></stop>
+                <stop offset="1" stop-color="#000" stop-opacity=".26"></stop>
+              </linearGradient>
+              <radialGradient id="funda-suelo">
+                <stop offset="0" stop-color="#000" stop-opacity=".5"></stop>
+                <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+              </radialGradient>
+              <clipPath id="funda-recorte"><path d={dCuerpo}></path></clipPath>
+            </defs>
+
+            <ellipse class="suelo" cx="120" cy="292" rx="58" ry="7"></ellipse>
+
+            {/* El asa va detrás del cuerpo: sale de dentro de las esquinas. */}
+            <g class="cad cad-asa">
+              {capas(asa, 7).map((k) => <path class={k.clase} d={k.d} stroke-width={k.ancho} />)}
+            </g>
+
+            <path class="cuerpo" d={dCuerpo}></path>
+            <path class="hondo" d={dCuerpo}></path>
+            <g clip-path="url(#funda-recorte)">
+              <path class="g-sombra" d={punto.sombra}></path>
+              <path class="g-lana" d={punto.lana}></path>
+              <path class="g-hebra" d={punto.hebra}></path>
+              <path class="g-luz" d={punto.luz}></path>
+              <path class="surcos" d={punto.surcos}></path>
+              <path class="volumen" d={dCuerpo}></path>
+              <path class="costados" d={dCuerpo}></path>
+            </g>
+
+            <g class="cad cad-borde">
+              {capas(borde, 7.5).map((k) => <path class={k.clase} d={k.d} stroke-width={k.ancho} />)}
+            </g>
+            <g class="cad cad-lengueta">
+              {capas(lengueta, 9).map((k) => <path class={k.clase} d={k.d} stroke-width={k.ancho} />)}
+            </g>
+
+            <g class="boton-funda" transform="translate(120 152)">
+              <circle r="7.2" class="boton-sombra" cx="0.6" cy="1.4"></circle>
+              <circle r="7"></circle>
+              <circle r="4.6" class="boton-aro"></circle>
+              <circle r="0.95" cx="-1.6" cy="-1.1" class="boton-agujero"></circle>
+              <circle r="0.95" cx="1.6" cy="1.1" class="boton-agujero"></circle>
+              <ellipse rx="2.6" ry="1.3" cx="-2.3" cy="-3.6" class="boton-luz"></ellipse>
+            </g>
+          </svg>
+        </div>
+        <div class="panel-resumen border-t border-paper/25 pt-6">
+          <p class="text-[15px] text-paper/70">Tu funda</p>
+          <p class="mt-2 font-display text-2xl" data-resumen></p>
+          <p class="mt-1 text-paper/70" data-resumen-detalles></p>
+
+          <div class="mt-7 flex items-baseline justify-between gap-4 border-t border-paper/25 pt-5">
+            <span class="text-[15px] text-paper/70">Precio</span>
+            <span class="flex items-center gap-3">
+              <span class="etiqueta-oferta etiqueta-clara">3x2</span>
+              <span class="font-display text-3xl" data-total>{precio(euros)}</span>
+            </span>
+          </div>
+
+          <button type="button" class="boton boton-claro mt-6 w-full" data-anadir-funda>
+            Añadir al pedido
+          </button>
+          <p class="mt-3 text-[14px] text-paper/60">
+            Se teje cuando la pides. No se paga nada aquí: lo revisáis por WhatsApp antes de
+            que empiece. Entra en el 3x2 de accesorios.
+          </p>
+        </div>
+      </aside>
+    </form>
+  </div>
+</section>
+
+<style>
+  .dibujo {
+    display: block;
+    width: 100%;
+    max-width: 18rem;
+    margin-inline: auto;
+    overflow: visible;
+  }
+  .suelo {
+    fill: url(#funda-suelo);
+  }
+  .cuerpo,
+  .g-lana {
+    fill: var(--funda);
+  }
+  .g-hebra {
+    fill: var(--funda2);
+  }
+  .hondo {
+    fill: rgb(0 0 0 / 0.24);
+  }
+  .g-sombra {
+    fill: rgb(0 0 0 / 0.3);
+  }
+  .g-luz {
+    fill: rgb(255 255 255 / 0.2);
+  }
+  .surcos {
+    fill: none;
+    stroke: rgb(0 0 0 / 0.22);
+    stroke-width: 1.7;
+  }
+  .volumen {
+    fill: url(#funda-bulto);
+  }
+  .costados {
+    fill: url(#funda-lados);
+  }
+  .cuerpo,
+  .g-lana,
+  .g-hebra,
+  .c-base,
+  .c-grano,
+  .c-hebra,
+  .boton-funda circle:not([class]) {
+    transition:
+      fill 320ms var(--ease-salida),
+      stroke 320ms var(--ease-salida);
+  }
+
+  /* Las cadenetas: el asa y el borde del color del asa; la lengüeta, de la funda. */
+  .cad-asa,
+  .cad-borde {
+    --c: var(--asa);
+    --c2: var(--asa);
+  }
+  .cad-lengueta {
+    --c: var(--funda);
+    --c2: var(--funda2);
+  }
+  .c-borde,
+  .c-base,
+  .c-hondo {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .c-borde {
+    stroke: rgb(0 0 0 / 0.38);
+  }
+  .c-base {
+    stroke: var(--c);
+  }
+  .c-hondo {
+    stroke: rgb(0 0 0 / 0.24);
+  }
+  .c-sombra {
+    fill: rgb(0 0 0 / 0.3);
+  }
+  .c-grano {
+    fill: var(--c);
+  }
+  .c-hebra {
+    fill: var(--c2);
+  }
+  .c-luz {
+    fill: rgb(255 255 255 / 0.22);
+  }
+
+  .boton-funda circle:not([class]) {
+    fill: var(--boton);
+    stroke: color-mix(in srgb, var(--boton) 60%, black);
+    stroke-width: 0.8;
+  }
+  .boton-sombra {
+    fill: rgb(0 0 0 / 0.35);
+  }
+  .boton-aro {
+    fill: none;
+    stroke: color-mix(in srgb, var(--boton) 70%, black);
+    stroke-width: 0.8;
+  }
+  .boton-agujero {
+    fill: rgb(0 0 0 / 0.55);
+  }
+  .boton-luz {
+    fill: rgb(255 255 255 / 0.55);
+  }
+
+  .panel-dibujo {
+    margin-bottom: 1.75rem;
+  }
+  @media (max-width: 1023.98px) {
+    .panel {
+      display: contents;
+    }
+    .panel-dibujo {
+      order: -1;
+      position: sticky;
+      top: calc(3.6rem + var(--alto-aviso, 0px));
+      z-index: 10;
+      margin: 0 -1.25rem;
+      padding: 0.5rem 1.25rem 0.75rem;
+      background: var(--color-deep);
+      box-shadow: 0 1rem 1rem -1rem rgb(0 0 0 / 0.5);
+    }
+    .dibujo {
+      width: auto;
+      height: min(30svh, 14rem);
+    }
+  }
+
+  .campo {
+    border-radius: 10px;
+    background: transparent;
+    padding: 0.7rem 0.9rem;
+    font-size: 16px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
+  }
+  .campo::placeholder {
+    color: color-mix(in srgb, var(--color-paper) 45%, transparent);
+  }
+  .campo:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 1.5px var(--color-paper);
+  }
+
+  .suplemento {
+    opacity: 0.65;
+  }
+  .etiqueta-clara {
+    background-color: var(--color-paper);
+    color: var(--color-deep);
+  }
+  .modos {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 1.4rem;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-paper) 35%, transparent);
+  }
+  .modo > span {
+    display: block;
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    font-size: 15px;
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-salida),
+      color 200ms var(--ease-salida);
+  }
+  .modo:has(input:checked) > span {
+    background-color: var(--color-paper);
+    color: var(--color-deep);
+  }
+  .modo:has(input:focus-visible) > span {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 2px;
+  }
+  .opcion-color {
+    cursor: pointer;
+  }
+  .opcion-color:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.22;
+  }
+  .punto {
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background: var(--muestra);
+    box-shadow: inset 0 0 0 1px rgb(230 232 229 / 0.25);
+    transition:
+      transform 200ms var(--ease-salida),
+      box-shadow 200ms var(--ease-salida);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .opcion-color:not(:has(input:disabled)):hover .punto {
+      transform: scale(1.1);
+    }
+  }
+  .opcion-color:has(input:checked) .punto {
+    box-shadow:
+      inset 0 0 0 1px rgb(230 232 229 / 0.25),
+      0 0 0 2px var(--color-deep),
+      0 0 0 3.5px var(--color-paper);
+  }
+  .opcion-color:has(input:focus-visible) .punto {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  import { COLORES, type ColorId } from '../data/colores';
+  import { anadir, leer } from '../lib/carrito';
+  import { precio } from '../lib/formato';
+  import { DOS_COLORES } from '../lib/disena';
+
+  const form = document.querySelector<HTMLFormElement>('[data-disena-funda]');
+
+  if (form) {
+    const euros = Number(form.dataset.precio);
+    const slug = form.dataset.slug!;
+    const dibujo = form.querySelector<SVGElement>('[data-dibujo]')!;
+    const segundo = form.querySelector<HTMLElement>('[data-segundo]')!;
+    const rotulo = form.querySelector<HTMLElement>('[data-rotulo-principal]')!;
+    const resumen = form.querySelector<HTMLElement>('[data-resumen]')!;
+    const detalles = form.querySelector<HTMLElement>('[data-resumen-detalles]')!;
+    const total = form.querySelector<HTMLElement>('[data-total]')!;
+    const boton = form.querySelector<HTMLButtonElement>('[data-anadir-funda]')!;
+    const segundos = [...form.querySelectorAll<HTMLInputElement>('input[name="funda2"]')];
+    const BOTONES: Record<string, { nombre: string; color: string }> = {
+      dorado: { nombre: 'Dorado', color: '#C9A54A' },
+      plateado: { nombre: 'Plateado', color: '#C3C7CC' },
+    };
+
+    // Como en el bolso: con dos colores, el segundo no puede ser el mismo que el primero.
+    const ajustarSegundo = () => {
+      const d = new FormData(form);
+      const dos = d.get('modo') === 'dos';
+      segundo.hidden = !dos;
+      rotulo.hidden = !dos;
+      for (const o of segundos) o.disabled = o.value === d.get('funda');
+      if (segundos.find((o) => o.checked)?.disabled) segundos.find((o) => !o.disabled)!.checked = true;
+    };
+
+    const estado = () => {
+      const d = new FormData(form);
+      const dos = d.get('modo') === 'dos';
+      const a = COLORES[d.get('funda') as ColorId];
+      const b = dos ? COLORES[d.get('funda2') as ColorId] : undefined;
+      const asa = COLORES[d.get('asa') as ColorId];
+      const botonElegido = BOTONES[d.get('boton') as string]!;
+      const movil = String(d.get('movil') ?? '').trim();
+      const color = b ? `${a.nombre} y ${b.nombre.toLowerCase()}` : a.nombre;
+      const coste = Math.round((euros + (b ? DOS_COLORES : 0)) * 100) / 100;
+      return { a, b, asa, botonElegido, movil, color, coste };
+    };
+
+    const pintar = () => {
+      ajustarSegundo();
+      const e = estado();
+      dibujo.style.setProperty('--funda', e.a.muestra);
+      dibujo.style.setProperty('--funda2', (e.b ?? e.a).muestra);
+      dibujo.style.setProperty('--asa', e.asa.muestra);
+      dibujo.style.setProperty('--boton', e.botonElegido.color);
+      // «En rosa», «asa en granate»: así el color no tiene que concordar con nada.
+      resumen.textContent = `En ${e.color.toLowerCase()}`;
+      detalles.textContent = `Asa en ${e.asa.nombre.toLowerCase()} · botón ${e.botonElegido.nombre.toLowerCase()}`;
+      total.textContent = precio(e.coste);
+    };
+
+    form.addEventListener('change', pintar);
+    form.addEventListener('submit', (ev) => ev.preventDefault());
+    pintar();
+
+    const ETIQUETA = boton.textContent!.trim();
+    let confirmando: ReturnType<typeof setTimeout> | undefined;
+    const reponer = () => {
+      clearTimeout(confirmando);
+      confirmando = undefined;
+      boton.textContent = ETIQUETA;
+    };
+
+    boton.addEventListener('click', () => {
+      const e = estado();
+      const nombre = 'Funda para móvil a medida';
+      const detalle = [
+        `En ${e.color.toLowerCase()}`,
+        `asa en ${e.asa.nombre.toLowerCase()}`,
+        `botón ${e.botonElegido.nombre.toLowerCase()}`,
+        e.movil ? `para ${e.movil}` : 'móvil: lo digo por WhatsApp',
+      ].join(' · ');
+      if (!confirmando && leer().some((l) => l.nombre === nombre && l.detalle === detalle && l.precio === e.coste)) {
+        boton.textContent = '¿Seguro? Pulsa otra vez para añadirla igual';
+        confirmando = setTimeout(reponer, 4000);
+        return;
+      }
+      reponer();
+      anadir({
+        id: `funda-medida-${Date.now()}`,
+        nombre,
+        precio: e.coste,
+        detalle,
+        url: `/accesorios/${slug}#disena-funda`,
+        tresPorDos: 'accesorios',
+      });
+      document.querySelector<HTMLDialogElement>('[data-carrito]')?.showModal();
+    });
+  }
+</script>

@@ -9,6 +9,7 @@ import { getImage } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import Galeria from '../../components/Galeria.astro';
 import DisenaLlavero from '../../components/DisenaLlavero.astro';
+import DisenaFunda from '../../components/DisenaFunda.astro';
 import site from '../../data/site.json';
 import { COLORES } from '../../data/colores';
 import { precio } from '../../lib/formato';
@@ -196,6 +197,15 @@ const jsonLd = [
                       </div>
                     </fieldset>
                   ))}
+                  {/* Sin colores que elegir arriba: el atajo a «Diseña tu funda» va aquí. */}
+                  {d.disenaFunda && (
+                    <div class="mb-6">
+                      <a href="#disena-funda" class="disena-atajo">
+                        <span class="arcoiris" aria-hidden="true">+</span>
+                        Diseña tu funda
+                      </a>
+                    </div>
+                  )}
                   <button
                     type="button"
                     class="boton w-full sm:w-auto"
@@ -230,6 +240,7 @@ const jsonLd = [
     </div>
   </article>
   {d.disena && <DisenaLlavero precio={d.precio} slug={accesorio.id} />}
+  {d.disenaFunda && <DisenaFunda precio={d.precio} slug={accesorio.id} />}
 </Layout>
 
 <style>

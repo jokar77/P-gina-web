@@ -229,6 +229,13 @@ content:
           Solo para el marcapáginas o llavero de flores: debajo de la ficha sale un
           apartado para elegir las flores (o flor y lazo), el color del tallo y si va con
           arandela, con un dibujo que cambia. Cuesta lo mismo que la pieza.
+      - name: disenaFunda
+        label: Diseña tu funda (trapillo, asa y botón)
+        type: boolean
+        description: >-
+          Solo para la funda de móvil: debajo de la ficha sale un apartado como el de
+          «Diseña tu bolso» para elegir el color del trapillo, el del asa y el botón, y
+          apuntar el modelo de móvil. Cuesta lo mismo que la pieza.
       - name: orden
         label: Orden
         type: number

@@ -203,6 +203,9 @@ const accesorios = defineCollection({
       /** Debajo de la ficha sale «Diseña el tuyo»: flores, tallo y formato a elegir
        *  (pensado para el marcapáginas o llavero de flores). */
       disena: z.boolean().default(false),
+      /** Debajo de la ficha sale «Diseña tu funda»: color del trapillo, asa, botón y
+       *  modelo de móvil (pensado para la funda de móvil). */
+      disenaFunda: z.boolean().default(false),
     }),
 });
 
