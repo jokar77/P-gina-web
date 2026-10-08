@@ -4,10 +4,10 @@
  * ningún accesorio, se enseñan los que hay a la venta con el 3x2, para añadir alguno
  * de paso.
  *
- * Sale al pulsar cualquier botón con `data-ofrecer-accesorios` («Comprar» en el
- * carrito, «Enviar por WhatsApp» en /pedido), una sola vez por visita: quien dice que
- * no, no lo vuelve a ver hasta otro día. Al seguir, el botón que se había pulsado hace
- * lo suyo de siempre.
+ * Sale cada vez que se pulsa «Comprar» en el carrito (`data-ofrecer-accesorios`). En
+ * /pedido, «Enviar por WhatsApp» (`data-ofrecer-accesorios="si-no-vista"`) solo lo
+ * ofrece si no se acaba de ver: quien llega del carrito ya dijo que sí o que no. Al
+ * seguir, el botón que se había pulsado hace lo suyo de siempre.
  *
  * Las piezas sin nada que elegir se añaden aquí mismo; las que tienen colores o
  * formato llevan a su ficha, que es donde se eligen.
@@ -189,6 +189,7 @@ const hayOferta = accesorios.some((a) => a.data.tresPorDos);
 
   const ventana = document.querySelector<HTMLDialogElement>('[data-oferta-accesorios]');
   const VISTA = 'oferta-accesorios-vista';
+  const RECIENTE = 15 * 60 * 1000; // «acaba de verla»: en el último cuarto de hora
 
   if (ventana) {
     const seguir = ventana.querySelector<HTMLButtonElement>('[data-oferta-seguir]')!;
@@ -198,14 +199,14 @@ const hayOferta = accesorios.some((a) => a.data.tresPorDos);
 
     const vista = () => {
       try {
-        return sessionStorage.getItem(VISTA) === '1';
+        return Date.now() - Number(sessionStorage.getItem(VISTA) ?? 0) < RECIENTE;
       } catch {
         return false;
       }
     };
     const marcarVista = () => {
       try {
-        sessionStorage.setItem(VISTA, '1');
+        sessionStorage.setItem(VISTA, String(Date.now()));
       } catch {}
     };
 
@@ -228,7 +229,8 @@ const hayOferta = accesorios.some((a) => a.data.tresPorDos);
         const boton = (e.target as Element | null)?.closest<HTMLElement>('[data-ofrecer-accesorios]');
         if (!boton || dejarPasar) return;
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        if (vista() || leer().length === 0 || llevaAccesorios()) return;
+        if (leer().length === 0 || llevaAccesorios()) return;
+        if (boton.dataset.ofrecerAccesorios === 'si-no-vista' && vista()) return;
         e.preventDefault();
         e.stopPropagation();
         marcarVista();
