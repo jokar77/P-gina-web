@@ -5,6 +5,6 @@ estado: disponible
 fecha: 2026-10-08
 nota: Ideal para llevarlo encima
 material: Trapillo rosa palo con asa trenzada en granate y botón dorado
-orden: 2
+orden: 3
 foto: ../../assets/piezas/accesorios/funda-movil/01.jpg
 ---
