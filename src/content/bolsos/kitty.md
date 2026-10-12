@@ -6,8 +6,8 @@ fecha: 2026-10-01
 nota: Bolso en forma de lazo, cierre magnético.
 color: rosa
 material: Trapillo rosa.
-ancho: 25
-alto: 25
+ancho: 27
+alto: 16
 orden: 0
 foto: ../../assets/piezas/Kitty/455bf5ee-bebe-4aba-87e2-f96527e07e1c.jpg
 fotos:
