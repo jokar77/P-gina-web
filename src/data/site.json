@@ -6,7 +6,7 @@
   "youtube": "https://youtube.com/@sakinaplatero?si=n-q3_SyEZxu5qVBb",
   "frasePortada": "Piezas únicas, hechas a mano.",
   "aviso": {
-    "mostrar": true,
+    "mostrar": false,
     "texto": "¡Ya somos 100! Sorteo de un bolso de la web: ganador el 18 de octubre.",
     "enlace": "Participa"
   },
