@@ -1,7 +1,7 @@
 ---
 nombre: Gaultier
 precio: 25
-estado: disponible
+estado: vendido
 fecha: 2026-09-08
 nota: Bolso con asa de mano estable, con cuerpo.
 color: bicolor
